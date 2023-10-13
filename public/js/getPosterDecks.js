@@ -15,7 +15,7 @@ const cookieValue = getCookie('meetingId');
 const posterDeckMain = document.getElementById('posterDeckListContainer')
 const posterDeckContainers = []
 const posterDeckFiles = []
-
+console.log(cookieValue)
 if(cookieValue){
     
 fetch(`/getposterdecks/${cookieValue}`, ()=>{
