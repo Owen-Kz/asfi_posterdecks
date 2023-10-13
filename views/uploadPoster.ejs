@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="author" content="Weperch Technologies Ltd">
+	    <meta name="description" content="ASFI, African Science Frontiers Initiative, African Scientists, African Scholars, Scholars, Education">
+        <link rel="stylesheet" href="/css/posterDeck.css">
+		<link rel="stylesheet" href="/css/general.css">
+		
+        
+
+        <!-- Plugins CSS -->
+	<link rel="stylesheet" type="text/css" href="/css/choices.min.css">
+	<link rel="stylesheet" type="text/css" href="/css/bs-stepper.min.css">
+       
+        
+        <!-- Favicon -->
+        <link rel="shortcut icon" href="/files/images/ASFIScholar_Logo.png">
+    
+        <link rel="stylesheet" href="/css/css/fontawesome.css">
+        <link rel="stylesheet" href="/css/css/fontawesome-all.css">
+    
+        <link rel="stylesheet" href="/css/material-design-iconic-font.css">
+        <link rel="stylesheet" href="/css/weather-icons/css/weather-icons-core.css">
+    
+        <title>Posters |  ASFI Scholar</title>
+
+
+        
+</head>
+
+<body>
+
+    <!-- NAVIGATION BAR  -->
+    <!-- <sidebar class="left-navigation-bar bg-shadow ">
+       
+             <script src="/js/navbar.js"></script>
+     </sidebar> -->
+     <!-- END NAVIGATION BAR  -->
+
+<!-- Header START -->
+<header class="navbar-light navbar-sticky">
+	<!-- Logo Nav START -->
+	<nav class="navbar navbar-expand-xl">
+		<div class="container containerReg">
+            <!-- Logo START -->
+			<a class="navbar-brand" href="">
+				<img class="light-mode-item navbar-brand-item" src="/files/images/ASFIScholar_Logo.png" alt="logo">
+				<img class="dark-mode-item navbar-brand-item" src="/files/images/ASFIScholar_Logo.png" alt="logo">
+			</a>
+			<!-- Logo END -->
+			<!-- SignUp or Login -->
+			<a href="/sessionDashboard"><span class="btn btn-primary">Poster Dashboard</span></a>
+		</div>
+	</nav>
+	<!-- Logo Nav END -->
+</header>
+<!-- Header END -->
+
+<!-- **************** MAIN CONTENT START **************** -->
+<main>
+
+<!-- =======================
+Upload Poster START -->
+<section>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8 mx-auto text-center">
+				<h4>Upload Poster</h4>
+				<!-- Content -->
+				<a href="" class="text-center">Preview your poster </a>
+			</div>
+		</div>
+        <br>
+
+		<div class="card-body">
+		<!-- Step 1 content START -->
+		<div class="content">
+			<!-- Title -->
+			
+
+			<hr> <!-- Divider -->
+
+			<!-- Basic information START -->
+			<div class="row g-4">
+				<form id="createPosterDeckForm" enctype="multipart/form-data" action="/createdeck" method="post">
+				<!-- Event title -->
+				<div class="col-12">
+					<label class="form-label">Event*</label>
+					<div class="dropdown">
+						<select class="form-control" name="eventTitle" id="eventTitle" required>
+							<option value="">Select Event you want to add the deck to</option>
+							
+						</select>
+						
+					</div>
+				</div>
+
+				<!-- Poster Title  -->
+				<div class="col-12">
+					<label class="form-label">Title*</label>
+					<div class="dropdown">
+						<input class="form-control" type="text" name="deckTitle" id="deckTitle" value="" required>
+						
+					</div>
+				</div>
+
+				<!-- Short description -->
+				<div class="col-12">
+					<label class="form-label">Abstract</label>
+					<textarea class="form-control" name="shortDescription" id="shortDescription" rows="10" placeholder="Enter A description for your presentation" required></textarea>
+				</div>
+
+				<!-- Presenter Name -->
+				<div class="col-12">
+					<label class="form-label">Presenter Name*</label>
+					<input class="form-control" type="text" name="presenterName" id="presenterName" value="" required>
+				</div>
+
+				<!-- Presenter Email -->
+				<div class="col-12">
+					<label class="form-label">Presenter Email Address*</label>
+					<input class="form-control" type="email" name="presenterEmail" id="presenterEmail" value="" required>
+				</div>
+
+				<div class="col-12">
+					<label class="form-label">Your Poster</label>
+					<p>Please consider accessibility when making your poster PDF, by ensuring text is selectable and images are described (for screen readers).</p>
+				</div>
+
+				<div class="col-12">
+					<label class="form-label">Upload a PDF now (25Mb limit)</label>
+					<div class="input-group mb-3">
+						<input type="file" class="form-control" id="PosterPDF" name="PosterPDF" accept=".pdf" required>
+						<label class="input-group-text">.pdf</label>
+					</div>
+				</div>
+
+          
+				<input type="submit" id="submitPoster" hidden/>
+				<!-- Step 1 button -->
+				<div class="d-flex justify-content-end mt-3">
+					<button type="submit" class="btn btn-primary next-btn mb-0">Submit</button>
+				</div>
+			</div>
+			<!-- Basic information START -->
+		</div>
+		<!-- Step 1 content END -->
+	</form>
+	</div>
+
+		
+		</div>
+	</div>
+</section>
+<!-- =======================
+Upload Poster END -->
+
+</main>
+<!-- **************** MAIN CONTENT END **************** -->
+
+
+<!-- Back to top -->
+<div class="back-top"><i class="bi bi-arrow-up-short position-absolute top-50 start-50 translate-middle"></i></div>
+
+<!-- =======================
+Footer START -->
+<footer class="bg-dark p-3">
+	<div class="container">
+		<div class="row align-items-center">
+            <!-- Widget -->
+            <div><script src="/js/footer.js"></script></div>
+			<!-- Widget -->
+		</div>
+	</div>
+
+</footer>
+<!-- =======================
+Footer END -->
+
+<script>
+    // function showEventDropdown() {
+    //     // Simulated list of event titles (you can replace this with your data)
+    //     const eventTitles = ["Event 1", "Event 2", "Event 3", "Event 4"];
+
+    //     const dropdown = document.getElementById("eventDropdown");
+    //     dropdown.innerHTML = "";
+
+    //     eventTitles.forEach(function (title) {
+    //         const option = document.createElement("div");
+    //         option.textContent = title;
+    //         option.addEventListener("click", function () {
+    //             document.getElementById("eventTitle").value = title;
+    //             dropdown.style.display = "none";
+    //         });
+    //         dropdown.appendChild(option);
+    //     });
+
+    //     dropdown.style.display = "block";
+    // }
+
+    // document.addEventListener("click", function (e) {
+    //     const dropdown = document.getElementById("eventDropdown");
+    //     if (e.target !== dropdown && e.target !== document.getElementById("eventTitle")) {
+    //         dropdown.style.display = "none";
+    //     }
+    // });
+</script>
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+<!-- <script src="/js/mainjs.js"></script> -->
+
+<!-- Back to top -->
+<div class="back-top"><i class="fas fa-arrow-up position-absolute top-50 start-50 translate-middle"></i></div>
+
+<!-- Bootstrap JS -->
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/AllChannels.js"></script>
+<script src="/js/createposter.js"></script>
+
+</body>
+
+</html>

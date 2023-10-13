@@ -1,0 +1,44 @@
+{
+  "name": "poster-decks-logic",
+  "version": "1.0.0",
+  "description": "poster decks for the asfi video conferencing platform",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app"
+  },
+  "keywords": [
+    "Poster",
+    "decks",
+    "ASFI",
+    "Weperch",
+    "Technologies",
+    "Benson",
+    "Michael",
+    "Owen",
+    "African",
+    "Sceince",
+    "Frontiers"
+  ],
+  "author": "Benson Michael Owen",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.5.1",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-mysql-session": "^3.0.0",
+    "express-session": "^1.17.3",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.6.1",
+    "nodemon": "^3.0.1",
+    "path": "^0.12.7",
+    "pdfjs-dist": "^3.11.174",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.10.5"
+  }
+}

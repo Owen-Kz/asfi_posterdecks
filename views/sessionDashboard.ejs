@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="author" content="Weperch Technologies Ltd">
+	    <meta name="description" content="ASFI, African Science Frontiers Initiative, African Scientists, African Scholars, Scholars, Education">
+        <link rel="stylesheet" href="/css/posterDeck.css">
+		<link rel="stylesheet" href="/css/general.css">
+		
+        
+
+        <!-- Plugins CSS -->
+	<link rel="stylesheet" type="text/css" href="/css/choices.min.css">
+	<link rel="stylesheet" type="text/css" href="/vendor/aos/aos.css">
+	<link rel="stylesheet" type="text/css" href="/vendor/glightbox/css/glightbox.css">
+	<link rel="stylesheet" type="text/css" href="/css/bs-stepper.min.css">
+       
+        
+        <!-- Favicon -->
+        <link rel="shortcut icon" href="/files/images/ASFIScholar_Logo.png">
+    
+        <link rel="stylesheet" href="/css/css/fontawesome.css">
+        <link rel="stylesheet" href="/css/css/fontawesome-all.css">
+    
+        <link rel="stylesheet" href="/css/material-design-iconic-font.css">
+        <link rel="stylesheet" href="/css/weather-icons/css/weather-icons-core.css">
+    
+        <title>Session Dashboard</title>
+        <!-- Dark mode -->
+        <script src="/js/colorTheme.js"></script>
+
+
+</head>
+
+<body>
+
+<!-- Header START -->
+<header class="navbar-light navbar-sticky">
+	<!-- Logo Nav START -->
+	<nav class="navbar navbar-expand-xl">
+		<div class="container containerReg">
+            <!-- Logo START -->
+			<a class="navbar-brand" href="">
+				<img class="light-mode-item navbar-brand-item" src="/files/images/ASFIScholar_Logo.png" alt="logo">
+				<img class="dark-mode-item navbar-brand-item" src="/files/images/ASFIScholar_Logo.png" alt="logo">
+			</a>
+			<!-- Logo END -->
+			<!-- SignUp or Login -->
+			<a href="/uploadPoster"><span class="btn btn-primary">Upload Poster</span></a>
+		</div>
+	</nav>
+	<!-- Logo Nav END -->
+</header>
+<br><br>
+<!-- Header END -->
+
+
+<!-- **************** MAIN CONTENT START **************** -->
+<main>
+
+<header class="bg-white shadow">
+	    <div class="p-header">
+		  <div class="tester-side">
+			<h4 class="text-2xl flex font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate">
+			  Tester 
+			  <a href="">Preview</a>
+			</h4>
+		  </div>
+		  <div class="flex">
+			<span class=" rounded-md">
+			  <button type="button" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white action-btn" data-bs-toggle="modal" data-bs-target="#editAction">
+				Edit
+			  </button>
+			</span>
+			
+			<span class="ml-3 shadow-sm rounded-md action-btn2">
+			  <a href="">
+				Publish...
+			  </a>
+			</span>
+			
+		  </div>
+		</div>
+</header>
+
+<section>
+	<div class="overflow-hidden rounded-lg presenter-container">
+		<div class="prep-top">
+			<div class="present-header">
+				<h4>Presentations</h4>
+			</div>
+			<div>
+				<!-- <span>Add</span> -->
+				<span class="inline-flex rounded-md">
+					<button type="button" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 active:bg-gray-50 active:text-gray-800 action-btn" data-bs-toggle="modal" data-bs-target="#addAction">
+					  <svg class="-ml-1 mr-2 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+						<path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path>
+					  </svg>
+					  <span>
+						Add Presenters
+					  </span>
+					</button>
+				</span>
+			</div>
+
+		</div>
+		<ul>
+			<span>Time to invite your poster presenters! <br>
+				Use the Add Presenters button above to add your presenters' names and email addresses. No emails will be sent. <br>
+				
+				When you're ready, send all the invitations at once using the Send Invites button.</span>
+			<li>
+				<a href="">
+					<div>
+						<p>Presentation Title...</p>
+						<p class="p-name">Presenter name <span> -- example@gmail.com</span></p>
+					</div>
+				</a>
+			</li>
+		</ul>
+		<div class="prep-bottom">
+			<div class="presenter-count">
+				<p>1/2 Presenters</p>
+			</div>
+
+		</div>
+	</div>
+
+	
+</section>
+
+</main>
+<!-- **************** MAIN CONTENT END **************** -->
+
+<!--Edit Modal Start-->
+<div class="modal fade" id="editAction" tabindex="-1" aria-labelledby="appDetaillabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg">
+		<div class="modal-content">
+			
+			<!-- Modal header -->
+			<div class="modal-header bg-dark">
+				<h5 class="modal-title text-white" id="appDetaillabel">Edit Session</h5>
+				<button type="button" class="btn btn-sm btn-light mb-0" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+			</div>
+
+			<!-- Modal body -->
+			<div class="modal-body" id="edit_section">
+	<div class="container">
+
+		<div class="card-body">
+		<!-- Step 1 content START -->
+		<div class="content">
+			<!-- Title -->
+
+			<!-- Basic information START -->
+			<div class="row g-4">
+				<form action="">
+				<!-- Event title -->
+				<div class="col-12">
+					<label class="form-label">Event title*</label>
+					<input class="form-control" type="text" name="eventTitle" id="eventTitle"  placeholder="Enter event title">
+				</div>
+
+				<!-- Event organizer -->
+				<div class="col-12">
+					<label class="form-label">Organizer*</label>
+					<input class="form-control" type="text" name="eventOrganizer" id="eventOrganizer" value="">
+				</div>
+
+				<!-- Short description -->
+				<div class="col-12">
+					<label class="form-label">Short description</label>
+					<textarea class="form-control" name="shortDescription" id="shortDescription" rows="10" placeholder="Enter keywords"></textarea>
+				</div>
+
+				<!-- Date of Event -->
+				<div class="col-12">
+					<label class="form-label">Start Date*</label>
+					<input class="form-control" type="date" name="startDate" id="startDate" value="">
+				</div>
+
+				<!-- Event URL -->
+				<div class="col-12">
+					<label class="form-label">Event URL</label>
+					<input class="form-control" type="text" name="eventURL" id="eventURL" value="" placeholder="https://">
+				</div>
+          
+			</div>
+			<!-- Basic information START -->
+		</div>
+		<!-- Step 1 content END -->
+	</div>
+	<!-- Modal footer -->
+	<div class="modal-footer">
+		<button type="button" id="submitModal" class="btn btn-warning-soft my-0">Submit</button>
+	</div>
+
+		
+		</div>
+	</div>
+			</div>
+
+			
+		</div>
+	</form>
+	</div>
+</div> 
+<!--Edit Modal End-->
+
+
+<!--Add Modal Start-->
+<div class="modal fade" id="addAction" tabindex="-1" aria-labelledby="appDetaillabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg">
+		<div class="modal-content">
+			
+			<!-- Modal header -->
+			<div class="modal-header bg-dark">
+				<h5 class="modal-title text-white" id="appDetaillabel">Add Presenter</h5>
+				<button type="button" class="btn btn-sm btn-light mb-0" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+			</div>
+
+			<!-- Modal body -->
+			<div class="modal-body" id="edit_section">
+	          <div class="container">
+
+				<div class="card-body">
+					<!-- Step 1 content START -->
+					<div class="content">
+						<!-- Title -->
+                    <form action="">
+						<!-- Basic information START -->
+						<div class="row g-4">
+							<!-- Event title -->
+							<div class="col-12">
+								<label class="form-label">Name</label>
+								<input class="form-control" type="text" name="eventTitle" id="eventTitle"  placeholder="Enter event title">
+							</div>
+
+							<!-- Event organizer -->
+							<div class="col-12">
+								<label class="form-label">Email Address</label>
+								<input class="form-control" type="text" name="eventOrganizer" id="eventOrganizer" value="">
+							</div>
+					
+						</div>
+						<!-- Basic information START -->
+					</div>
+					<!-- Step 1 content END -->
+				</div>
+				<!-- Modal footer -->
+			<div class="modal-footer">
+				<button type="button" id="submitModal" class="btn btn-warning-soft my-0">Save</button>
+			</div>
+
+		
+		      </div>
+			</form>
+	        </div>
+		</div>
+
+			
+		</div>
+	</div>
+</div> 
+<!--Add Modal End-->
+
+
+
+<!-- Back to top -->
+<div class="back-top"><i class="bi bi-arrow-up-short position-absolute top-50 start-50 translate-middle"></i></div>
+
+<!-- =======================
+Footer START -->
+<footer class="bg-dark p-3">
+	<div class="container">
+		<div class="row align-items-center">
+            <!-- Widget -->
+            <div><script src="/js/footer.js"></script></div>
+			<!-- Widget -->
+		</div>
+	</div>
+</footer>
+<!-- =======================
+Footer END -->
+<script src="/js/jquery-3.4.1.min.js"></script>
+<!-- <script src="/js/mainjs.js"></script> -->
+
+<!-- Back to top -->
+<div class="back-top"><i class="fas fa-arrow-up position-absolute top-50 start-50 translate-middle"></i></div>
+
+<!-- Bootstrap JS -->
+<script src="/js/bootstrap.bundle.min.js"></script>
+
+<!-- Vendors -->
+<!-- <script src="/vendor/tiny-slider/tiny-slider.js"></script>
+<script src="/js/choices.min.js"></script>
+<script src="/js/aos.js"></script>
+<script src="/js/glightbox.js"></script>
+<script src="/js/quill.min.js"></script>
+<script src="/js/bs-stepper.min.js"></script> -->
+
+<!-- Template Functions -->
+<script src="/js/functions.js"></script>
+
+</body>
+
+</html>
