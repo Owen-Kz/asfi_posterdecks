@@ -18,7 +18,11 @@ router.use(express.urlencoded({ extended: true }));
 
 
 router.get("/", (req,res) =>{
-    res.render("posterDeckList")
+  res.redirect("/uploadPoster")
+})
+
+router.get("/posterlist",(rew,res)=>{
+  res.render("posterDeckList")
 })
 router.get('/getposterdecks/:meetingId', async(req,res) =>{
     const meetingId = req.params.meetingId
