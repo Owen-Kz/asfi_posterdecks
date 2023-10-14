@@ -1,7 +1,7 @@
 const { executeQuery } = require('./dbQueries');
 
 async function CreateTableForPosterDecks() {
-    const query = `ALTER TABLE posterdecks ADD presenter_email VARCHAR(100);`;
+    const query = `DELETE FROM posterdecks WHERE poster_deck_descritiption = 'afakfjakf'`;
     return executeQuery(query);
 }
   

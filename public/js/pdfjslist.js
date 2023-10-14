@@ -1,4 +1,4 @@
-function pdfRemderer(urlArray, ContainerArray){
+function pdfRenderer(urlArray, ContainerArray){
   // const posterDeckFile = document.getElementById("posterDeckFile")
 
 const pdfFileUrls = urlArray; // Add more PDF URLs if needed

@@ -55,7 +55,7 @@ fetch(`/getposterdecks/${cookieValue}`, ()=>{
         posterDeckFiles.push(posterMainFile)
         posterDeckContainers.push(posterDeckLink)
         })
-        pdfRemderer(posterDeckFiles,posterDeckContainers);       
+        pdfRenderer(posterDeckFiles,posterDeckContainers);       
 
      
     }else[
