@@ -21,8 +21,9 @@ router.get("/", (req,res) =>{
   res.redirect("/uploadPoster")
 })
 
-router.get("/posterlist",(rew,res)=>{
-  res.render("posterDeckList")
+router.get("/posterlist/:meetingID",(req,res)=>{
+  const meetingID = req.params.meetingID
+  res.render("posterDeckList", {meetingID:meetingID})
 })
 router.get('/getposterdecks/:meetingId', async(req,res) =>{
     const meetingId = req.params.meetingId

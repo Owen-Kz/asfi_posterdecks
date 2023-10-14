@@ -9,13 +9,16 @@ function getCookie(name) {
     return '';
 }
 
+const meetingID = document.getElementById("meetingID")
 // Usage
  // Access the encryption secret value
-const cookieValue = getCookie('meetingId');
+// const cookieValue = getCookie('meetingId');
+const cookieValue = meetingID.value;
+
 const posterDeckMain = document.getElementById('posterDeckListContainer')
 const posterDeckContainers = []
 const posterDeckFiles = []
-console.log(cookieValue)
+// console.log(cookieValue)
 if(cookieValue){
     
 fetch(`/getposterdecks/${cookieValue}`, ()=>{
