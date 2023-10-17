@@ -29,7 +29,7 @@
     
         <title>Session Dashboard</title>
         <!-- Dark mode -->
-        <script src="/js/colorTheme.js"></script>
+        <!-- <script src="/js/colorTheme.js"></script> -->
 
 
 </head>
@@ -60,7 +60,7 @@
 <!-- **************** MAIN CONTENT START **************** -->
 <main>
 
-<header class="bg-white shadow">
+<!-- <header class="bg-white shadow">
 	    <div class="p-header">
 		  <div class="tester-side">
 			<h4 class="text-2xl flex font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate">
@@ -75,15 +75,9 @@
 			  </button>
 			</span>
 			
-			<span class="ml-3 shadow-sm rounded-md action-btn2">
-			  <a href="">
-				Publish...
-			  </a>
-			</span>
-			
 		  </div>
 		</div>
-</header>
+</header> -->
 
 <section>
 	<div class="overflow-hidden rounded-lg presenter-container">
@@ -92,14 +86,13 @@
 				<h4>Presentations</h4>
 			</div>
 			<div>
-				<!-- <span>Add</span> -->
 				<span class="inline-flex rounded-md">
 					<button type="button" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 active:bg-gray-50 active:text-gray-800 action-btn" data-bs-toggle="modal" data-bs-target="#addAction">
 					  <svg class="-ml-1 mr-2 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
 						<path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path>
 					  </svg>
 					  <span>
-						Add Presenters
+						Add Posters
 					  </span>
 					</button>
 				</span>
@@ -107,22 +100,29 @@
 
 		</div>
 		<ul>
-			<span>Time to invite your poster presenters! <br>
-				Use the Add Presenters button above to add your presenters' names and email addresses. No emails will be sent. <br>
-				
-				When you're ready, send all the invitations at once using the Send Invites button.</span>
-			<li>
-				<a href="">
+			<li style="display: flex; justify-content: space-between;">
 					<div>
-						<p>Presentation Title...</p>
-						<p class="p-name">Presenter name <span> -- example@gmail.com</span></p>
+						<h5>Presentation Title...</h5>
+						<p id="posterDescription">Description goes here...</p>
+						<p class="p-name" id="posterName">Presenter name <span id="posterEmail"> -- example@gmail.com</span></p>
 					</div>
-				</a>
+				<div style="display: flex;">
+					<span class=" rounded-md">
+						<button type="button" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white action-btn" data-bs-toggle="modal" data-bs-target="#editAction">
+						  Edit
+						</button>
+					</span>
+					<div class="tester-side">
+						<h4 class="text-2xl flex font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate">
+						  <a href="">Preview</a>
+						</h4>
+					</div>
+				</div>
 			</li>
 		</ul>
 		<div class="prep-bottom">
 			<div class="presenter-count">
-				<p>1/2 Presenters</p>
+				<p>1/2 Posters</p>
 			</div>
 
 		</div>
@@ -159,33 +159,32 @@
 				<form action="">
 				<!-- Event title -->
 				<div class="col-12">
-					<label class="form-label">Event title*</label>
-					<input class="form-control" type="text" name="eventTitle" id="eventTitle"  placeholder="Enter event title">
+					<label class="form-label">Event*</label>
+					<div class="dropdown">
+						<select class="form-control" name="eventTitle" id="eventTitleEdit" required>
+							<option value="">Select Event you want to add the deck to</option>
+							
+						</select>
+						
+					</div>
 				</div>
 
-				<!-- Event organizer -->
+				<!-- Poster Title  -->
 				<div class="col-12">
-					<label class="form-label">Organizer*</label>
-					<input class="form-control" type="text" name="eventOrganizer" id="eventOrganizer" value="">
+					<label class="form-label">Poster Title*</label>
+					<div class="dropdown">
+						<input class="form-control" type="text" name="deckTitle" id="deckTitleEdit" value="" required>
+						
+					</div>
 				</div>
 
 				<!-- Short description -->
 				<div class="col-12">
-					<label class="form-label">Short description</label>
-					<textarea class="form-control" name="shortDescription" id="shortDescription" rows="10" placeholder="Enter keywords"></textarea>
+					<label class="form-label">Abstract</label>
+					<textarea class="form-control" name="shortDescription" id="shortDescriptionEdit" rows="10" placeholder="Enter A description for your presentation" required></textarea>
 				</div>
 
-				<!-- Date of Event -->
-				<div class="col-12">
-					<label class="form-label">Start Date*</label>
-					<input class="form-control" type="date" name="startDate" id="startDate" value="">
-				</div>
-
-				<!-- Event URL -->
-				<div class="col-12">
-					<label class="form-label">Event URL</label>
-					<input class="form-control" type="text" name="eventURL" id="eventURL" value="" placeholder="https://">
-				</div>
+				
           
 			</div>
 			<!-- Basic information START -->
@@ -194,7 +193,7 @@
 	</div>
 	<!-- Modal footer -->
 	<div class="modal-footer">
-		<button type="button" id="submitModal" class="btn btn-warning-soft my-0">Submit</button>
+		<button type="submit" id="submitModalEdit" class="btn btn-warning-soft my-0">Submit</button>
 	</div>
 
 		
@@ -217,7 +216,7 @@
 			
 			<!-- Modal header -->
 			<div class="modal-header bg-dark">
-				<h5 class="modal-title text-white" id="appDetaillabel">Add Presenter</h5>
+				<h5 class="modal-title text-white" id="appDetaillabel">Upload Poster</h5>
 				<button type="button" class="btn btn-sm btn-light mb-0" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
 			</div>
 
@@ -225,43 +224,9 @@
 			<div class="modal-body" id="edit_section">
 	          <div class="container">
 
-				<div class="card-body">
-					<!-- Step 1 content START -->
-					<div class="content">
-						<!-- Title -->
-                    <form action="">
-						<!-- Basic information START -->
-						<div class="row g-4">
-							<!-- Event title -->
-							<div class="col-12">
-								<label class="form-label">Name</label>
-								<input class="form-control" type="text" name="eventTitle" id="eventTitle"  placeholder="Enter event title">
-							</div>
+				<%- include ("AdminUploadPoster.ejs") %>
 
-							<!-- Event organizer -->
-							<div class="col-12">
-								<label class="form-label">Email Address</label>
-								<input class="form-control" type="text" name="eventOrganizer" id="eventOrganizer" value="">
-							</div>
-					
-						</div>
-						<!-- Basic information START -->
-					</div>
-					<!-- Step 1 content END -->
-				</div>
-				<!-- Modal footer -->
-			<div class="modal-footer">
-				<button type="button" id="submitModal" class="btn btn-warning-soft my-0">Save</button>
-			</div>
-
-		
-		      </div>
-			</form>
-	        </div>
-		</div>
-
-			
-		</div>
+				
 	</div>
 </div> 
 <!--Add Modal End-->
@@ -293,16 +258,9 @@ Footer END -->
 <!-- Bootstrap JS -->
 <script src="/js/bootstrap.bundle.min.js"></script>
 
-<!-- Vendors -->
-<!-- <script src="/vendor/tiny-slider/tiny-slider.js"></script>
-<script src="/js/choices.min.js"></script>
-<script src="/js/aos.js"></script>
-<script src="/js/glightbox.js"></script>
-<script src="/js/quill.min.js"></script>
-<script src="/js/bs-stepper.min.js"></script> -->
 
-<!-- Template Functions -->
-<script src="/js/functions.js"></script>
+<script src="/js/AllChannels.js"></script>
+<script src="/js/createposter.js"></script>
 
 </body>
 

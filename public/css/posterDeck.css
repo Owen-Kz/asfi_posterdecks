@@ -22822,6 +22822,12 @@ logoHere{
   display: block;
 }
 
+.dropdown-id {
+  display: flex;
+  border: 1px solid #dde0e3;
+  border-radius: 0.325rem;
+}
+
 .dropdown-content {
   display: none;
   position: absolute;
@@ -22834,6 +22840,13 @@ logoHere{
 .dropdown-content div {
   padding: 12px 16px;
   cursor: pointer;
+}
+
+.password-toggle {
+  cursor: pointer;
+  display: inline-block;
+  padding: 10px;
+  color: #007bff;
 }
 
 
