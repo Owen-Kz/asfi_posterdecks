@@ -82,7 +82,7 @@ Upload Poster START -->
 			
 
 			<hr> <!-- Divider -->
-
+			
 			<!-- Basic information START -->
 			<div class="row g-4">
 				<form id="createPosterDeckForm" enctype="multipart/form-data" action="/createdeck" method="post">
@@ -98,9 +98,16 @@ Upload Poster START -->
 					</div>
 				</div>
 
+				<div class="col-12">
+					<label class="form-label">Poster ID Number*</label>
+					<div class="dropdown">
+						<input class="form-control" type="password" name="posterSecretId" id="posterSecretId" value="" required>
+						
+					</div>
+				</div>
 				<!-- Poster Title  -->
 				<div class="col-12">
-					<label class="form-label">Title*</label>
+					<label class="form-label">Poster Title*</label>
 					<div class="dropdown">
 						<input class="form-control" type="text" name="deckTitle" id="deckTitle" value="" required>
 						
@@ -114,6 +121,21 @@ Upload Poster START -->
 				</div>
 
 				<!-- Presenter Name -->
+				<div class="col-12">
+					<label class="form-label">Presenter Prefix*</label>
+					<div class="dropdown">
+						<select class="form-control" name="PresenterPrefix" id="PresenterPrefix" required>
+							<option value="">Select your preffered prefix</option>
+							<option value="Prof">Prof</option>
+							<option value="Dr">Dr</option> 
+							<option value="Mr">Mr</option>
+							<option value="Mrs">Mrs</option>
+							<option value="Miss">Mis</option>
+							
+						</select>
+						
+					</div>
+				</div>
 				<div class="col-12">
 					<label class="form-label">Presenter Name*</label>
 					<input class="form-control" type="text" name="presenterName" id="presenterName" value="" required>

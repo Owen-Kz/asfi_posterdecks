@@ -15,8 +15,6 @@ router.use(express.urlencoded({ extended: true }));
 
 
 
-
-
 router.get("/", (req,res) =>{
   res.redirect("/uploadPoster")
 })

@@ -15,7 +15,7 @@ async function PosterDeckPreviews(req,res){
 
         // res.json({PosterDecks:JSON.stringify(DeckView)})
     } catch (error) {
-        // res.render("success", {status:"Internal Server Error", page:"/" })
+        res.render("error", {status:"404 Not Found", page:"/" })
         console.error("Error", error.message)
     }
 }
