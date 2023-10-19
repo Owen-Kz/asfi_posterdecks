@@ -1,5 +1,5 @@
 const ChannelsContainer = document.getElementById("eventTitle")
-const ChannelsContainerEdit = document.getElementById("eventTitleEdit")
+// const ChannelsContainerEdit = document.getElementById("eventTitleEdit")
 
 fetch("/allchannels", ()=>{
     method: "GET"
@@ -16,17 +16,12 @@ fetch("/allchannels", ()=>{
 
             ChannelsContainer.innerHTML += `<option value='${ChannelName}'>${ChannelTitle}</option>`
 
-            if(ChannelsContainerEdit){
-            ChannelsContainerEdit.innerHTML += `<option value='${ChannelName}'>${ChannelTitle}</option>`
-            }
 
             
             
         });
     }else{
         ChannelsContainer.innerHTML = `<option value=''>No available Meetings, Navigate to the "Session button" to create One</option>`
-        if(ChannelsContainerEdit){
-        ChannelsContainerEdit.innerHTML = `<option value=''>No available Meetings, Navigate to the "Session button" to create One</option>`
-        }
+   
     }
 }) 

@@ -8,6 +8,7 @@ router.use(express.json())
 const bodyParser = require("body-parser");
 const path = require("path");
 const PosterDeckPreviews = require("../controllers/previewDeck");
+const { RetrievePosterDecksTableForAdmin, validateIdNumber } = require("./queries");
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(express.urlencoded({ extended: true }));
@@ -17,7 +18,11 @@ router.use(express.urlencoded({ extended: true }));
 router.get("/", (req,res) =>{
   res.redirect("/uploadPoster")
 })
-
+router.get("/posteradmin", async(req,res) =>{
+  console.log("trent")
+const PosterAdmin = await RetrievePosterDecksTableForAdmin(req,res)
+res.json({PosterDecks:JSON.stringify(PosterAdmin)})
+})
 router.get("/posterlist/:meetingID",(req,res)=>{
   const meetingID = req.params.meetingID
   res.render("posterDeckList", {meetingID:meetingID})
@@ -47,7 +52,7 @@ const storage = multer.diskStorage({
     cb(null, file.fieldname + '-' + uniqueSuffix + fileExtension);
   }
 });
-
+ 
 const upload = multer({ storage });
 
 router.post("/createdeck", upload.single('PosterPDF'), async (req, res) => {
@@ -55,7 +60,11 @@ router.post("/createdeck", upload.single('PosterPDF'), async (req, res) => {
   await CreateDeck(req, res, newFileName);
 });
 
-
+// validate poster Id numbers 
+router.get("/validateKey/:key", async(req,res)=>{
+  const key = req.params.key
+  validateIdNumber(req,res,key)
+})
 router.get("/poster", async (req,res)=>{
     res.render("poster")
 })
@@ -78,7 +87,7 @@ router.get("/record", (req,res)=>{
   res.render("recorderTest")
 })
 
-router.get("/*", (req,res)=>{
+router.get("*", (req,res)=>{
   res.render("error", {status:"Page Not Found", page:"/"})
 })
 

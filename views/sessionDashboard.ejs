@@ -99,30 +99,12 @@
 			</div>
 
 		</div>
-		<ul>
-			<li style="display: flex; justify-content: space-between;">
-					<div>
-						<h5>Presentation Title...</h5>
-						<p id="posterDescription">Description goes here...</p>
-						<p class="p-name" id="posterName">Presenter name <span id="posterEmail"> -- example@gmail.com</span></p>
-					</div>
-				<div style="display: flex;">
-					<span class=" rounded-md">
-						<button type="button" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white action-btn" data-bs-toggle="modal" data-bs-target="#editAction">
-						  Edit
-						</button>
-					</span>
-					<div class="tester-side">
-						<h4 class="text-2xl flex font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate">
-						  <a href="">Preview</a>
-						</h4>
-					</div>
-				</div>
-			</li>
+		<ul id="posterDeckMain">
+		
 		</ul>
 		<div class="prep-bottom">
 			<div class="presenter-count">
-				<p>1/2 Posters</p>
+				<!-- <p>1/2 Posters</p> -->
 			</div>
 
 		</div>
@@ -179,10 +161,10 @@
 				</div>
 
 				<!-- Short description -->
-				<div class="col-12">
-					<label class="form-label">Abstract</label>
-					<textarea class="form-control" name="shortDescription" id="shortDescriptionEdit" rows="10" placeholder="Enter A description for your presentation" required></textarea>
-				</div>
+				<!-- <div class="col-12"> -->
+					<!-- <label class="form-label">Abstract</label> -->
+					<textarea class="form-control" name="shortDescription" id="shortDescriptionEdit" rows="10" placeholder="Enter A description for your presentation" required hidden></textarea>
+				<!-- </div> -->
 
 				
           
@@ -261,7 +243,7 @@ Footer END -->
 
 <script src="/js/AllChannels.js"></script>
 <script src="/js/createposter.js"></script>
-
+<script src="/js/SessionDashboard.js"></script>
 </body>
 
 </html>
