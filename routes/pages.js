@@ -75,7 +75,13 @@ router.get("/uploadPoster", async(req,res)=>{
     res.render("uploadPoster")
 })
 
+router.get("/record", (req,res)=>{
+  res.render("recorderTest")
+})
 
+router.get("*", (req,res)=>{
+  res.render("error", {status:"Page Not Found", page:"/"})
+})
 
 
 
