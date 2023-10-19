@@ -1,18 +1,10 @@
 const express = require("express");
-const pool = require("./routes/db.config");
-const pdfJsPath = require.resolve('pdfjs-dist/build/pdf.js');
-// console.log(pdfJsPath);
-
-const { Client } = require('pg');
-const connectionString = process.env.DATABASE_URL;
-const dotenv = require("dotenv").config();
-
 
 const app =  express();
 const cookie = require("cookie-parser");
 const PORT = process.env.PORT || 2020;
 const server = require("http").Server(app)
-const session = require("express-session"); 
+
 
 const bodyParser = require("body-parser");
 // const { CreateTableForPosterDecks } = require("./routes/queries");

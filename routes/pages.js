@@ -1,5 +1,4 @@
 const express = require("express");
-const pool = require("./db.config");
 const fetchDataFromTable = require("../controllers/PosterDecksResult");
 const posterDeckTable = require("../controllers/posterDeckTable");
 const CreateDeck = require("../controllers/createPosterDeck");
@@ -79,7 +78,7 @@ router.get("/record", (req,res)=>{
   res.render("recorderTest")
 })
 
-router.get("*", (req,res)=>{
+router.get("/*", (req,res)=>{
   res.render("error", {status:"Page Not Found", page:"/"})
 })
 

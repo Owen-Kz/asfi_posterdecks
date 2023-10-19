@@ -1,5 +1,5 @@
 const { executeQuery } = require('./dbQueries');
-const secretKeys = require('./secretKeys');
+// const secretKeys = require('./secretKeys');
 
 async function CreateTableForPosterDecks() {
     const query = `CREATE TABLE poster_decks_secret_container (
