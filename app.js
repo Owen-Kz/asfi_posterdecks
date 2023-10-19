@@ -15,7 +15,7 @@ const server = require("http").Server(app)
 const session = require("express-session"); 
 
 const bodyParser = require("body-parser");
-const { CreateTableForPosterDecks } = require("./routes/queries");
+// const { CreateTableForPosterDecks } = require("./routes/queries");
 
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
