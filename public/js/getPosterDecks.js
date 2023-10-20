@@ -46,7 +46,7 @@ fetch(`/getposterdecks/${cookieValue}`, ()=>{
 				</div>
 				<div class="posterInfo">
 					<div class='posterTitle'>${posterDeckTitle}</div>
-					<div class='posterDescription'>${posterDeckDescription}</div>
+				
 					<div class='small'><small>${posterDeckOwner}</small></div>
 
 				</div>
@@ -58,9 +58,10 @@ fetch(`/getposterdecks/${cookieValue}`, ()=>{
         pdfRenderer(posterDeckFiles,posterDeckContainers);       
 
      
-    }else[
+    }else{
         posterDeckMain.innerHTML = `<div class='empty'> No poster Decks available </div>`
-    ]
+    }
+    
 })
 }else{
     posterDeckMain.innerHTML = `<div class='empty'> Unathorized Access </div>`

@@ -34,7 +34,31 @@
 //         alert(data.message)
 //     })
 // })
+const KeyMessage = document.getElementById("KeyMessage")
 
+const PosteEventId = document.getElementById("posterSecretId")
+PosteEventId.addEventListener("change", function(){
+    if(PosteEventId.value !== ""){
+    fetch(`/validateKey/${PosteEventId.value}`, ()=>{
+        method:"GET"
+    }).then(res => res.json())
+    .then(data =>{
+        if(data.status === "error"){
+            KeyMessage.removeAttribute("style")
+            KeyMessage.innerText = data.message
+            KeyMessage.setAttribute("style", "display:block; color:red;")
+        }else if(data.status === "valid"){
+            KeyMessage.removeAttribute("style")
+            KeyMessage.innerText = data.message
+            KeyMessage.setAttribute("style", "display:block; color:teal;")
+        }
+    })
+}else{
+    KeyMessage.removeAttribute("style")
+    KeyMessage.innerText = "Poster id Number can not be Empty"
+    KeyMessage.setAttribute("style", "display:block; color:red;")
+}
+})
 
 
 function togglePasswordField() {
@@ -63,6 +87,18 @@ document.getElementById("PosterPDF").addEventListener("change", function () {
     }
 });
 
+document.getElementById("PresenterPic").addEventListener("change", function () {
+    const fileInput = this;
+    const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+
+    if (fileInput.files.length > 0) {
+        const fileSize = fileInput.files[0].size; // Get the size of the selected file
+        if (fileSize > maxSize) {
+            alert("File size exceeds the 10MB limit. Please choose a smaller file.");
+            fileInput.value = ""; // Clear the file input
+        }
+    }
+});
 
 
 

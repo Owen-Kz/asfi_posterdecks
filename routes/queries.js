@@ -1,5 +1,5 @@
 const { executeQuery } = require('./dbQueries');
-const secretKeys = require('./secretKeys');
+// const secretKeys = require('./secretKeys');
 
 async function CreateTableForPosterDecks() {
     const query = `CREATE TABLE poster_decks_secret_container (
@@ -32,8 +32,10 @@ async function CreateSerials(data_secret){
     )`
     return executeQuery(query)
 }
+
+// Validate Poster Id number
 async function ValidateSecretKey(secret){
-    console.log(secret)
+    // console.log(secret)
     const query = `SELECT * FROM poster_decks_secret_container WHERE poster_deck_id = '${secret}' AND use_count = '0'`
     return executeQuery(query)
 }
@@ -73,17 +75,17 @@ function getRandomString() {
   }
 async function InsertIntoPosterDecks(req, res, newFileName){
 //    console.log(newFileName)
-    const {posterSecretId, eventTitle, deckTitle, shortDescription,PresenterPrefix, presenterName, presenterEmail} = req.body
+    const {posterSecretId, eventTitle, deckTitle, PresenterPrefix, presenterName, presenterEmail} = req.body
     
 const FullPresenterName = `${PresenterPrefix}. ${presenterName}`
 
 const ValidateSecreeResult = await ValidateSecretKey(posterSecretId)
   await updateKeyCount(posterSecretId)
     .then(() =>{
-        if(ValidateSecreeResult[0]){  
+        if(ValidateSecreeResult[0]){ 
   const DeckId = getRandomString()
         
-       CreateNewDeck(posterSecretId, eventTitle, deckTitle, shortDescription, FullPresenterName, presenterEmail, newFileName, DeckId)
+       CreateNewDeck(posterSecretId, eventTitle, deckTitle, FullPresenterName, presenterEmail, newFileName, DeckId)
         res.render("success", {status:"Poster Uploaded Successfully", page:`/event/poster/${DeckId}`})
 }else{
     // console.log("Error")
@@ -92,12 +94,12 @@ const ValidateSecreeResult = await ValidateSecretKey(posterSecretId)
 })
 }
 
-async function CreateNewDeck(posterSecretId, eventTitle, deckTitle, shortDescription, presenterName, presenterEmail, newFileName, DeckId){
+async function CreateNewDeck(posterSecretId, eventTitle, deckTitle, presenterName, presenterEmail, newFileName, DeckId){
     function escapeSpecialCharacters(input) {
         return input.replace(/'/g, "''").replace(/\0/g, '\\0').replace(/\\/g, '\\\\');
       }
     const sanitizedPresenterName = escapeSpecialCharacters(presenterName);
-    const sanitizedDescription = escapeSpecialCharacters(shortDescription)
+    // const sanitizedDescription = escapeSpecialCharacters(shortDescription)
     const sanitizedDeckTitle = escapeSpecialCharacters(deckTitle)
     const query = `INSERT INTO posterdecks (
         poster_deck_title,
@@ -110,7 +112,7 @@ async function CreateNewDeck(posterSecretId, eventTitle, deckTitle, shortDescrip
         presenter_email
     ) VALUES (
         '${sanitizedDeckTitle}',
-        '${sanitizedDescription}',
+        'description_for_${DeckId}',
         '${DeckId}',
         '${newFileName}',
         'https://asfiposterdecks.com/${DeckId}',
@@ -127,6 +129,23 @@ async function RetrievePosterDecksTable(req,res, meetingId){
     return executeQuery(query)
 }
 
+// validate Poster id number 
+async function validateIdNumber(req,res, key){
+    const ValidateSecreeResult = await ValidateSecretKey(key)
+    if(ValidateSecreeResult[0]){ 
+    res.json({status:"valid", message:"Valid Poster Id provided"})
+
+    }else{
+    res.json({status:"error", message:"Poster Id has already been used or is Invalid"})
+    }
+}
+
+
+async function RetrievePosterDecksTableForAdmin(req,res){
+    const query = `SELECT * FROM posterdecks`
+    return executeQuery(query)
+}
+
 async function PreviewDeck(req,res){
     const posterDeckLink = req.params.posterDeckLink
     const query = `SELECT * FROM posterdecks WHERE poster_deck_id = '${posterDeckLink}'`
@@ -134,7 +153,7 @@ async function PreviewDeck(req,res){
 }
 
 async function getAllFromTable() {
-  const query = 'SELECT * FROM channels';
+  const query = `SELECT * FROM channels`;
   return executeQuery(query);
 }
 
@@ -151,5 +170,7 @@ module.exports = {
     RetrievePosterDecksTable,
     getAllFromTable,
     ValidateSecretKey,
-    updateKeyCount
+    updateKeyCount,
+    RetrievePosterDecksTableForAdmin,
+    validateIdNumber
 };
