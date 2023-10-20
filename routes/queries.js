@@ -10,7 +10,17 @@ async function CreateTableForPosterDecks() {
       
     return executeQuery(query);
 }
+async function AlterTable(){
+    const query = `ALTER TABLE posterdecks
+    ADD COLUMN presenter_image VARCHAR(200) DEFAULT 'default_image.jpg',
+    ADD COLUMN likes_count VARCHAR(20) DEFAULT 0,
+    ADD COLUMN views_count VARCHAR(20) DEFAULT 0,
+    ADD COLUMN dislike_count VARCHAR(20) DEFAULT 0;
+    ;`
+    return executeQuery(query);
+}
 
+// AlterTable()
 async function DeleteSecrets() {
     const query = `DELETE FROM poster_decks_secret_container`
     return executeQuery(query)
@@ -41,7 +51,7 @@ async function ValidateSecretKey(secret){
 }
 
 async function updateKeyCount(DeckId){
-    console.log(DeckId)
+    
     const query = `UPDATE poster_decks_secret_container SET use_count = '1' WHERE poster_deck_id = '${DeckId}'`
     return executeQuery(query)
 }
@@ -73,8 +83,8 @@ function getRandomString() {
     }
     return bufferID
   }
-async function InsertIntoPosterDecks(req, res, newFileName){
-//    console.log(newFileName)
+async function InsertIntoPosterDecks(req, res, newFileName, ImageFile){
+   console.log(ImageFile)
     const {posterSecretId, eventTitle, deckTitle, PresenterPrefix, presenterName, presenterEmail} = req.body
     
 const FullPresenterName = `${PresenterPrefix}. ${presenterName}`
@@ -85,7 +95,7 @@ const ValidateSecreeResult = await ValidateSecretKey(posterSecretId)
         if(ValidateSecreeResult[0]){ 
   const DeckId = getRandomString()
         
-       CreateNewDeck(posterSecretId, eventTitle, deckTitle, FullPresenterName, presenterEmail, newFileName, DeckId)
+       CreateNewDeck(posterSecretId, eventTitle, deckTitle, FullPresenterName, presenterEmail, newFileName, ImageFile, DeckId)
         res.render("success", {status:"Poster Uploaded Successfully", page:`/event/poster/${DeckId}`})
 }else{
     // console.log("Error")
@@ -94,7 +104,9 @@ const ValidateSecreeResult = await ValidateSecretKey(posterSecretId)
 })
 }
 
-async function CreateNewDeck(posterSecretId, eventTitle, deckTitle, presenterName, presenterEmail, newFileName, DeckId){
+async function CreateNewDeck(posterSecretId, eventTitle, deckTitle, presenterName, presenterEmail, newFileName, ImageFile, DeckId){
+   console.log(ImageFile)
+
     function escapeSpecialCharacters(input) {
         return input.replace(/'/g, "''").replace(/\0/g, '\\0').replace(/\\/g, '\\\\');
       }
@@ -108,6 +120,7 @@ async function CreateNewDeck(posterSecretId, eventTitle, deckTitle, presenterNam
         poster_deck_image,
         poster_deck_link,
         poster_deck_owner,
+        presenter_image,
         poster_deck_meeting,
         presenter_email
     ) VALUES (
@@ -117,6 +130,7 @@ async function CreateNewDeck(posterSecretId, eventTitle, deckTitle, presenterNam
         '${newFileName}',
         'https://asfiposterdecks.com/${DeckId}',
         '${sanitizedPresenterName}',
+        '${ImageFile}',
         '${eventTitle}',
         '${presenterEmail}'
     );`;
@@ -157,9 +171,77 @@ async function getAllFromTable() {
   return executeQuery(query);
 }
 
+// get Total Dislikes
+async function TotalDisLikes(req,res,posterId, currentCount){
+    const AddedCount = Math.floor(new Number(currentCount)-1)
+    const query = `SELECT dislike_count FROM posterdecks WHERE poster_deck_id = '${posterId}'`
+    return executeQuery(query)
+}
+// reduce dislikes
+async function ReduceDisLikes(req,res,posterId, currentCount){
+    const TOtalDisLikes = await TotalDisLikes(req,res,posterId, currentCount)
+    const AddedCount = Math.floor(new Number(TOtalDisLikes[0].dislike_count)-1)
+    console.log(TOtalDisLikes)
+    const query = `UPDATE posterdecks SET dislike_count = '${AddedCount}' WHERE poster_deck_id = '${posterId}'`
+    return executeQuery(query)
+}
 
 
+// Like a poster 
+async function LikePoster(req,res,posterId, currentCount){
+    let LikeCounter 
+    if(currentCount == "NaN"){
+        LikeCounter = 0
+    }else{
+        LikeCounter = currentCount
+    }
+    await ReduceDisLikes(req,res, posterId, currentCount)
+    const AddedCount = Math.floor(new Number(LikeCounter)+1)
+    const query = `UPDATE posterdecks SET likes_count = '${AddedCount}' WHERE poster_deck_id = '${posterId}'`
+    return executeQuery(query)
+}
 
+// get Total Likes 
+async function TotalLikes(req,res,posterId, currentCount){
+    const AddedCount = Math.floor(new Number(currentCount)-1)
+    const query = `SELECT likes_count FROM posterdecks WHERE poster_deck_id = '${posterId}'`
+    return executeQuery(query)
+}
+
+// reduce Likes 
+async function ReduceLikes(req,res,posterId, currentCount){
+    const TOtalLikes = await TotalLikes(req,res,posterId, currentCount)
+    const AddedCount = Math.floor(new Number(TOtalLikes[0].likes_count)-1)
+    const query = `UPDATE posterdecks SET likes_count = '${AddedCount}' WHERE poster_deck_id = '${posterId}'`
+    return executeQuery(query)
+}
+// Dislike a poster 
+async function DisLikePoster(req,res,posterId, currentCount){
+    let DislikeCounter 
+    if(currentCount == "NaN"){
+        DislikeCounter = 0
+    }else{
+        DislikeCounter = currentCount
+    }
+    await ReduceLikes(req,res, posterId, currentCount)
+    const AddedCount = Math.floor(new Number(DislikeCounter)+1)
+    const query = `UPDATE posterdecks SET dislike_count = '${AddedCount}' WHERE poster_deck_id = '${posterId}'`
+    return executeQuery(query)
+}
+
+// View Poster 
+// Dislike a poster 
+async function ViewPoster(req,res,posterId, currentCount){
+    let DislikeCounter 
+    if(currentCount == "NaN"){
+        DislikeCounter = 0
+    }else{
+        DislikeCounter = currentCount
+    }
+    const AddedCount = Math.floor(new Number(DislikeCounter)+1)
+    const query = `UPDATE posterdecks SET views_count = '${AddedCount}' WHERE poster_deck_id = '${posterId}'`
+    return executeQuery(query)
+}
 
 
 
@@ -172,5 +254,8 @@ module.exports = {
     ValidateSecretKey,
     updateKeyCount,
     RetrievePosterDecksTableForAdmin,
-    validateIdNumber
+    validateIdNumber,
+    LikePoster,
+    DisLikePoster,
+    ViewPoster,
 };

@@ -24,19 +24,27 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^1.5.1",
+    "child_process": "^1.0.2",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.3.1",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "express-mysql-session": "^3.0.0",
     "express-session": "^1.17.3",
+    "extendable-media-recorder": "^9.1.2",
+    "ffmpeg": "^0.0.4",
+    "fs": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
+    "moment": "^2.29.4",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.6.1",
     "nodemon": "^3.0.1",
     "path": "^0.12.7",
     "pdfjs-dist": "^3.11.174",
-    "pg": "^8.11.3"
+    "pg": "^8.11.3",
+    "puppeteer": "^21.3.8",
+    "puppeteer-recorder": "^1.0.7",
+    "socket.io": "^4.7.2"
   },
   "devDependencies": {
     "@types/pg": "^8.10.5"

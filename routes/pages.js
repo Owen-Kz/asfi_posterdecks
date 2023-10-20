@@ -8,7 +8,9 @@ router.use(express.json())
 const bodyParser = require("body-parser");
 const path = require("path");
 const PosterDeckPreviews = require("../controllers/previewDeck");
-const { RetrievePosterDecksTableForAdmin, validateIdNumber } = require("./queries");
+const { RetrievePosterDecksTableForAdmin, validateIdNumber, LikePoster, DisLikePoster, ViewPoster } = require("./queries");
+const ScreenCapture = require("../puppetter");
+const setValue = require("../zetValues");
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(express.urlencoded({ extended: true }));
@@ -41,24 +43,46 @@ router.get("/allchannels",async (req, res) => {
 
 
 const uploadPath = path.join(__dirname, '../public/useruploads/');
-const storage = multer.diskStorage({
+const uploadImage = path.join(__dirname, '../public/useruploads/Images/');
+
+const storagen = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, uploadPath);  // Destination folder
+    cb(null, uploadPath);  // Destination folder for PDF files
   },
   filename: function (req, file, cb) {
     // Rename the file here
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     const fileExtension = path.extname(file.originalname);
-    cb(null, file.fieldname + '-' + uniqueSuffix + fileExtension);
+    cb(null, 'PosterPDF-' + uniqueSuffix + fileExtension);
   }
 });
- 
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    if (file.fieldname === 'PosterPDF') {
+      cb(null, uploadPath); // Destination folder for PDFs
+    } else if (file.fieldname === 'PresenterPic') {
+      cb(null, uploadImage); // Destination folder for images
+    }
+  },
+  filename: function (req, file, cb) {
+    const fileExtension = path.extname(file.originalname);
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + (file.fieldname === 'PosterPDF' ? '.pdf' : fileExtension ));
+  },
+});
+
+
+
 const upload = multer({ storage });
 
-router.post("/createdeck", upload.single('PosterPDF'), async (req, res) => {
-  const newFileName = req.file.filename;
-  await CreateDeck(req, res, newFileName);
+router.post("/createdeck", upload.fields([{ name: 'PosterPDF', maxCount: 1 }, { name: 'PresenterPic', maxCount: 1 }]), async (req, res) => {
+  const pdfFiles = req.files['PosterPDF'][0].filename;
+  const imageFiles = req.files['PresenterPic'][0].filename;
+  // Now you can use newFileName and profileImage in your CreateDeck function
+  await CreateDeck(req, res, pdfFiles, imageFiles);
 });
+
 
 // validate poster Id numbers 
 router.get("/validateKey/:key", async(req,res)=>{
@@ -72,9 +96,34 @@ router.get("/event/poster/:posterDeckLink", async(req,res)=>{
     
     await PosterDeckPreviews(req,res)
 })
-// router.get("/previewPosters", async (req,res) =>{
-//     res.render("previewPoster")
-// })
+
+// like a poster 
+router.get("/likeposter/:posterId/:currentCount", async (req,res)=>{
+  const posterId = req.params.posterId
+  const currentCount = req.params.currentCount
+  
+  await LikePoster(req,res,posterId, currentCount)
+  res.json({message:"liked"})
+})
+
+// Dislike poster 
+router.get("/dislikeposter/:posterId/:currentCount", async (req,res)=>{
+  const posterId = req.params.posterId
+  const currentCount = req.params.currentCount
+  await DisLikePoster(req,res,posterId, currentCount)
+  res.json({message:"disliked"})
+})
+
+// View Poster 
+// Dislike poster 
+router.get("/viewposter/:posterId/:currentCount", async (req,res)=>{
+  const posterId = req.params.posterId
+  const currentCount = req.params.currentCount
+  console.log(posterId, currentCount)
+
+  await ViewPoster(req,res,posterId, currentCount)
+  res.json({message:"viewed"})
+})
 
 router.get("/sessionDashboard", async(req,res)=>{
     res.render("sessionDashboard")
@@ -87,10 +136,10 @@ router.get("/record", (req,res)=>{
   res.render("recorderTest")
 })
 
+
 router.get("*", (req,res)=>{
   res.render("error", {status:"Page Not Found", page:"/"})
 })
-
 
 
 

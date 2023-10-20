@@ -33,10 +33,8 @@ app.use("/js", express.static(__dirname + "/public/js", { type: 'text/javascript
 app.use("/js", express.static(__dirname + "/public/js", { type: 'text/javascript' }))
 
 app.use("/files/images", express.static(__dirname + "/public/images", { type: 'file/images' }))
-
-
+app.use("/uploads/profileimage", express.static(__dirname + "/public/useruploads/images", { type: 'file/images' }))
 app.use("/uploads/posters", express.static(__dirname + "/public/useruploads", { type: 'file/pdf' }))
-
 app.use("/pdfjs", express.static(__dirname + "/node_modules/pdfjs-dist/build/", { type: 'file/pdf' }))
 
 
