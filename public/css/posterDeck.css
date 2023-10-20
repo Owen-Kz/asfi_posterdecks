@@ -22849,6 +22849,40 @@ logoHere{
   color: #007bff;
 }
 
+.title-top {
+  display: flex;
+  justify-content: space-between;
+}
+
+.presenter-info {
+  display: flex;
+}
+.circular-image {
+  width: 70px; /* Adjust the width and height to your preference */
+  height: 70px;
+  border-radius: 50%; /* Makes it circular */
+  object-fit: cover; /* Keeps the image centered and aligned within the circular container */
+  margin-right: 6px;
+}
+.presenter-info p {
+  margin-top: 15px;
+  padding: 10px;
+}
+
+.views {
+  cursor: pointer;
+}
+
+.likes {
+  margin-top: 6%;
+}
+.like {
+  margin-right: 5px;
+  cursor: pointer;
+}
+.dislike {
+  cursor: pointer;
+}
 
 .navbar > .containerReg {
   display: -webkit-box;
