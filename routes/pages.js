@@ -43,7 +43,7 @@ router.get("/allchannels",async (req, res) => {
 
 
 const uploadPath = path.join(__dirname, '../public/useruploads/');
-const uploadImage = path.join(__dirname, '../public/useruploads/Images/');
+const uploadImage = path.join(__dirname, '../public/useruploads/images/');
 
 const storagen = multer.diskStorage({
   destination: function (req, file, cb) {

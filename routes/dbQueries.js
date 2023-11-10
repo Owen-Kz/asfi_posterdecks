@@ -9,7 +9,7 @@ async function executeQuery(query) {
         ssl: {
           rejectUnauthorized: false
         }
-      });      
+      });
   try {
     await client.connect()
     .then(() => console.log('Connected to the database on port 2020'))
