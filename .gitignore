@@ -2,3 +2,4 @@
 .env
 secretKeys.js
 recorderTest.ejs
+/public/useruploads
