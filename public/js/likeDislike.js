@@ -37,6 +37,7 @@ function getCookie(cookieName) {
 const LikedTrue =  getCookie("youLiked");
 const DislikeTrue = getCookie("disLiked");
 const PageViewed = getCookie("pageViewed")
+const Downloaded = getCookie("posterDownloaded")
 
 const currentLikesCount = like_count_container.value
 const currentDislikeCount = dislike_count_container.value
@@ -121,4 +122,29 @@ function ViewPoster(){
 }
 
 ViewPoster()
+}
+
+
+// Download Poster 
+const downloadPoster = document.getElementById("downloadPoster")
+const download_count_container = document.getElementById("download_count_container")
+const CurrentDownloadCount = download_count_container.value
+
+if(!Downloaded){
+function DownloadCount(){
+downloadPoster.addEventListener("click", function(){
+    fetch(`/downloadpostercount/${posterID.value}/${CurrentDownloadCount}`, ()=>{
+        method: "GET"
+    }).then(res => res.json())
+    .then(data =>{
+        if(data.message === "downloaded"){
+            setCookie('posterDownloaded', "Poster has been downloaded", hoursToKeep)
+            CurrentDownloadCount.value = Math.floor(new Number(CurrentDownloadCount.value)+1)
+            CurrentDownloadCount.innerHTML = `<span>${new Number(CurrentDownloadCount.value)}</span>`
+        }
+    })
+})
+}
+
+DownloadCount()
 }

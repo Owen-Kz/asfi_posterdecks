@@ -1,5 +1,5 @@
 /node_modules
+/public/useruploads
 .env
 secretKeys.js
 recorderTest.ejs
-/public/useruploads

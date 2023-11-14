@@ -8,7 +8,7 @@ router.use(express.json())
 const bodyParser = require("body-parser");
 const path = require("path");
 const PosterDeckPreviews = require("../controllers/previewDeck");
-const { RetrievePosterDecksTableForAdmin, validateIdNumber, LikePoster, DisLikePoster, ViewPoster } = require("./queries");
+const { RetrievePosterDecksTableForAdmin, validateIdNumber, LikePoster, DisLikePoster, ViewPoster, DownloadCount } = require("./queries");
 const ScreenCapture = require("../puppetter");
 const setValue = require("../zetValues");
 router.use(bodyParser.json());
@@ -21,7 +21,7 @@ router.get("/", (req,res) =>{
   res.redirect("/uploadPoster")
 })
 router.get("/posteradmin", async(req,res) =>{
-  console.log("trent")
+
 const PosterAdmin = await RetrievePosterDecksTableForAdmin(req,res)
 res.json({PosterDecks:JSON.stringify(PosterAdmin)})
 })
@@ -90,7 +90,8 @@ router.get("/validateKey/:key", async(req,res)=>{
   validateIdNumber(req,res,key)
 })
 router.get("/poster", async (req,res)=>{
-    res.render("poster")
+    // res.render("poster")
+    res.redirect("/")
 })
 router.get("/event/poster/:posterDeckLink", async(req,res)=>{
     
@@ -113,6 +114,14 @@ router.get("/dislikeposter/:posterId/:currentCount", async (req,res)=>{
   await DisLikePoster(req,res,posterId, currentCount)
   res.json({message:"disliked"})
 })
+// DOWNLOAD POSTER COUNT
+router.get("/downloadpostercount/:posterId/:currentCount", async (req,res)=>{
+  const PosterID = req.params.posterId
+  const CurrentCount = req.params.currentCount
+  await DownloadCount(req,res, PosterID, CurrentCount)
+  res.json({message:"downloaded"})
+})
+
 
 // View Poster 
 // Dislike poster 
@@ -130,6 +139,10 @@ router.get("/sessionDashboard", async(req,res)=>{
 })
 router.get("/uploadPoster", async(req,res)=>{
     res.render("uploadPoster")
+})
+
+router.get("/polls", (req,res)=>{
+  res.render("polls")
 })
 
 router.get("/record", (req,res)=>{

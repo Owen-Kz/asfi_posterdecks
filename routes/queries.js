@@ -19,18 +19,26 @@ async function AlterTable(){
     ;`
     return executeQuery(query);
 }
+async function CreateDownloadCount(){
+    const query = `ALTER TABLE posterdecks
+    ADD COLUMN downloads_count VARCHAR(20) DEFAULT 0;`
+    return executeQuery(query);
+}
 
 // AlterTable()
+// CreateDownloadCount()
+
+
 async function DeleteSecrets() {
     const query = `DELETE FROM poster_decks_secret_container`
     return executeQuery(query)
 }
 async function DeleteInvalidDecks(){
-    const query = `DELETE FROM posterdecks WHERE poster_deck_title = 'jjjjjj' OR poster_deck_title = 'Abstract Poster Upload 3'`
+    const query = `DELETE FROM posterdecks`
     return executeQuery(query)
 }
 
-// DeleteInvalidDecks()
+// DeleteInvalidDecks() 
 // DeleteSecrets()
 
 async function CreateSerials(data_secret){
@@ -239,10 +247,25 @@ async function ViewPoster(req,res,posterId, currentCount){
         DislikeCounter = currentCount
     }
     const AddedCount = Math.floor(new Number(DislikeCounter)+1)
+
     const query = `UPDATE posterdecks SET views_count = '${AddedCount}' WHERE poster_deck_id = '${posterId}'`
     return executeQuery(query)
 }
 
+
+
+async function DownloadCount(re,res,posterId,currentCount){
+    let DownloadCounter 
+    if(currentCount == "NaN"){
+        DownloadCounter = 0
+    }else{
+        DownloadCounter = currentCount
+    }
+    const AddedCount = Math.floor(new Number(DownloadCounter)+1)
+
+    const query = `UPDATE posterdecks SET downloads_count = '${AddedCount}' WHERE poster_deck_id = '${posterId}'`
+    return executeQuery(query)
+}
 
 
 module.exports = {
@@ -258,4 +281,5 @@ module.exports = {
     LikePoster,
     DisLikePoster,
     ViewPoster,
+    DownloadCount
 };
