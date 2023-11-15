@@ -141,7 +141,7 @@ router.get("/uploadPoster", async(req,res)=>{
     res.render("uploadPoster")
 })
 
-router.get("/polls", (req,res)=>{
+router.get("/polls/:meetingID", (req,res)=>{
   res.render("polls")
 })
 

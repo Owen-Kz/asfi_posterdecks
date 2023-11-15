@@ -38,6 +38,12 @@ async function DeleteInvalidDecks(){
     return executeQuery(query)
 }
 
+async function DeleteInvalidChannels(){
+    const query = `DELETE FROM channels WHERE channel_secret = '797c248c13224924953cbfd3b5ffcb0c'`
+    return executeQuery(query)
+}
+
+// DeleteInvalidChannels()
 // DeleteInvalidDecks() 
 // DeleteSecrets()
 
