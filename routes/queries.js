@@ -7,9 +7,100 @@ async function CreateTableForPosterDecks() {
         poster_deck_id TEXT NOT NULL,
         use_count VARCHAR(100) NOT NULL DEFAULT '0'
       )`;
-      
     return executeQuery(query);
 }
+
+async function CreatePollsTable() {
+    const query = `CREATE TABLE polls (
+        id SERIAL PRIMARY KEY,
+        buffer TEXT NOT NULL,
+        question VARCHAR(300),
+        meeting_id TEXT NOT NULL
+      )`;
+    return executeQuery(query);
+}
+
+async function CreateTableForPollOptions() {
+    const query = `CREATE TABLE polls_question (
+        id SERIAL PRIMARY KEY,
+        poll_id TEXT NOT NULL,
+        options VARCHAR(100),
+        number_of_votes VARCHAR(80)
+      )`;
+    return executeQuery(query);
+}
+
+async function UpdatePolls(){
+    const query = `DELETE FROM polls WHERE buffer != 'byJHiCCqzLhNKJzO'`
+    return executeQuery(query)
+}
+
+// UpdatePolls()
+
+async function SelectVoteCount(optionID){
+    const query = `SELECT number_of_votes FROM polls_questions WHERE option_id = ${optionID}`
+    return executeQuery(query)
+}
+
+async function VotePoll(optionID){
+    const VoteCount  = await SelectVoteCount(optionID)
+    const NewCount = Math.floor(new Number(VoteCount) + 1)
+        const query = `UPDATE polls_questions SET number_of_votes = '${NewCount}' option_id = '${optionID}'`
+        return executeQuery(query)
+}
+
+async function DEleteTAbelPolls_question(){
+    const query = `DROP TABLE polls_question`
+    return executeQuery(query)
+}
+
+// CREATE A POLL QUESTION 
+async function CreateQuestion(buffer, question, meetingID){
+    const query = `INSERT INTO polls (
+        buffer,
+        question,
+        meeting_id
+    ) VALUES(
+        '${buffer}',
+        '${question}',
+        '${meetingID}'
+    )`
+    return executeQuery(query)
+}
+
+// Create Poll Options  
+async function CreateOptions(buffer, option, OptionId){
+    // await CreateQuestion(buffer, question, meetingId)
+    // console.log(buffer, option, OptionId)
+    const query = `INSERT INTO polls_question (
+        number_of_votes,
+        options,
+        poll_id,
+        question_id
+    ) VALUES (
+        '0',
+        '${option}',
+        '${buffer}',
+        '${OptionId}'
+    )`
+    return executeQuery(query)
+}
+// CreatePollsTable()
+// CreateTableForPollOptions()
+// UpdatePolls()
+
+// FIND A QUESTION FRO THE MEETING 
+async function FindQuestion(meetingId){
+   const query = `SELECT * FROM polls WHERE meeting_id = '${meetingId}'`
+   return executeQuery(query) 
+}
+
+// FIND RELATEED QUESTIONS 
+async function FindOption(questionId){
+    const query = `SELECT * FROM polls_questions WHERE poll_id = '${questionId}'`
+    return executeQuery(query)
+}
+
 async function AlterTable(){
     const query = `ALTER TABLE posterdecks
     ADD COLUMN presenter_image VARCHAR(200) DEFAULT 'default_image.jpg',
@@ -96,7 +187,7 @@ function getRandomString() {
         bufferID += chars.substring(randomNumber, randomNumber + 1);
     }
     return bufferID
-  }
+}
 async function InsertIntoPosterDecks(req, res, newFileName, ImageFile){
    console.log(ImageFile)
     const {posterSecretId, eventTitle, deckTitle, PresenterPrefix, presenterName, presenterEmail} = req.body
@@ -287,5 +378,10 @@ module.exports = {
     LikePoster,
     DisLikePoster,
     ViewPoster,
-    DownloadCount
+    DownloadCount,
+    VotePoll,
+    CreateOptions,
+    CreateQuestion,
+    FindQuestion,
+    FindOption
 };

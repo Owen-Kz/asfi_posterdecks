@@ -34,6 +34,8 @@ function getCookie(cookieName) {
     }
     return null; // Cookie not found
 }
+
+
 const LikedTrue =  getCookie("youLiked");
 const DislikeTrue = getCookie("disLiked");
 const PageViewed = getCookie("pageViewed")

@@ -8,7 +8,7 @@ router.use(express.json())
 const bodyParser = require("body-parser");
 const path = require("path");
 const PosterDeckPreviews = require("../controllers/previewDeck");
-const { RetrievePosterDecksTableForAdmin, validateIdNumber, LikePoster, DisLikePoster, ViewPoster, DownloadCount } = require("./queries");
+const { RetrievePosterDecksTableForAdmin, validateIdNumber, LikePoster, DisLikePoster, ViewPoster, DownloadCount, CreateQuestion, CreateOptions, FindQuestion, FindOption } = require("./queries");
 const ScreenCapture = require("../puppetter");
 const setValue = require("../zetValues");
 router.use(bodyParser.json());
@@ -128,7 +128,6 @@ router.get("/downloadpostercount/:posterId/:currentCount", async (req,res)=>{
 router.get("/viewposter/:posterId/:currentCount", async (req,res)=>{
   const posterId = req.params.posterId
   const currentCount = req.params.currentCount
-  console.log(posterId, currentCount)
 
   await ViewPoster(req,res,posterId, currentCount)
   res.json({message:"viewed"})
@@ -141,9 +140,62 @@ router.get("/uploadPoster", async(req,res)=>{
     res.render("uploadPoster")
 })
 
+// POLLS 
 router.get("/polls/:meetingID", (req,res)=>{
-  res.render("polls")
+  const meetingId = req.params.meetingID
+  res.render("polls", {meetingId:meetingId})
 })
+router.get('/polls/create/new',(req,res)=>{
+  res.render("createPoll")
+})
+router.post('/polls/create/new', async (req,res)=>{
+
+  function getRandomString() {
+    var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    var passwordLength = 15;
+    var bufferID = "";
+    for (var i = 0; i <= passwordLength; i++) {
+        var randomNumber = Math.floor(Math.random() * chars.length);
+        bufferID += chars.substring(randomNumber, randomNumber + 1);
+    }
+    return bufferID
+}
+const buffer = getRandomString()
+let CountQuery = 0
+  const {meetingId, question, options} = req.body
+  async function CreateOptionsFunction(){
+    options.forEach(option =>{
+      console.log(option)
+    const OptionId =  getRandomString()
+    CreateOptions(buffer, option, OptionId)
+    CountQuery++
+  })
+  }
+
+  await CreateQuestion(buffer, question, meetingId)
+  await CreateOptionsFunction()
+  res.json({message:'Poll Created'})
+
+})
+router.get("/polls/poll/question/:meetingId", async(req,res) =>{
+  const MeetingId = req.params.meetingId
+  const result = await FindQuestion(MeetingId)
+  res.json({question:JSON.stringify(result)}) 
+})
+router.get("/polls/poll/question/options/:questionID", async(req,res)=>{
+  const QuestionId = req.params.questionID
+  const result = await FindOption(QuestionId)
+  res.json({options:JSON.stringify(result)})
+})
+
+router.get("/increasePollsCount/:optionId/:pollCounts", (req,res) =>{
+  const OptionsId = req.params.optionId
+  const pollsCounts = req.params.pollCounts
+  
+  console.log(OptionsId, pollsCounts)
+
+})
+// END POLLS 
 
 router.get("/record", (req,res)=>{
   res.render("recorderTest")
