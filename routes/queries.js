@@ -31,23 +31,28 @@ async function CreateTableForPollOptions() {
 }
 
 async function UpdatePolls(){
-    const query = `DELETE FROM polls WHERE buffer != 'byJHiCCqzLhNKJzO'`
+    const query = `DELETE FROM polls_question`
     return executeQuery(query)
 }
-
 // UpdatePolls()
 
 async function SelectVoteCount(optionID){
-    const query = `SELECT number_of_votes FROM polls_questions WHERE option_id = ${optionID}`
+    const query = `SELECT number_of_votes FROM polls_question WHERE question_id = '${optionID}'`
     return executeQuery(query)
 }
 
 async function VotePoll(optionID){
     const VoteCount  = await SelectVoteCount(optionID)
-    const NewCount = Math.floor(new Number(VoteCount) + 1)
-        const query = `UPDATE polls_questions SET number_of_votes = '${NewCount}' option_id = '${optionID}'`
+    const NewCount = Math.floor(new Number(VoteCount[0].number_of_votes) + 1)
+        const query = `UPDATE polls_question SET number_of_votes = '${NewCount}' WHERE question_id = '${optionID}'`
         return executeQuery(query)
 }
+async function ResetPolls(){
+    const query = "UPDATE polls_question SET number_of_votes = '0' WHERE number_of_votes = 'NaN'"
+    return executeQuery(query)
+}
+
+// ResetPolls()
 
 async function DEleteTAbelPolls_question(){
     const query = `DROP TABLE polls_question`
@@ -95,9 +100,9 @@ async function FindQuestion(meetingId){
    return executeQuery(query) 
 }
 
-// FIND RELATEED QUESTIONS 
+// FIND RELATEED question 
 async function FindOption(questionId){
-    const query = `SELECT * FROM polls_questions WHERE poll_id = '${questionId}'`
+    const query = `SELECT * FROM polls_question WHERE poll_id = '${questionId}'`
     return executeQuery(query)
 }
 
@@ -160,6 +165,7 @@ async function updateKeyCount(DeckId){
     const query = `UPDATE poster_decks_secret_container SET use_count = '1' WHERE poster_deck_id = '${DeckId}'`
     return executeQuery(query)
 }
+
 // async function insertSecrets() {
 //     for (const secretKey of secretKeys) {
 //       try {
