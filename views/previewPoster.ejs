@@ -34,6 +34,20 @@
 </head>
 
 <body>
+
+	<div class="loader-overlay" id="loader-overlay">
+		<div class="wrapper">
+			<div class="circle"></div>
+			<div class="circle"></div>
+			<div class="circle"></div>
+			<div class="shadow"></div>
+			<div class="shadow"></div>
+			<div class="shadow"></div>
+			<span>Loading</span>
+		</div>
+	</div>
+	
+
 <input type="hidden" id="posterID" value=<%=PosterId%> readonly >
     <!-- NAVIGATION BAR  -->
     <!-- <sidebar class="left-navigation-bar bg-shadow ">
@@ -72,15 +86,15 @@ Preview Poster START -->
                    <div class="preview-img" style='overflow-y:scroll; display:flex;'>
 					<input type="hidden" id="posterDeckFile" value="<%=PosterFile%>">
 					<a href="/uploads/posters/<%=PosterFile%>">
-						<div id="pdf-container-1" style="margin: auto; width:100%; height: 100%; display:flex;flex-direction:column; align-items:center;"></div>
+						<div id="pdf-container-1" class="img-upload"></div>
 					</a>
 					
 				   </div>
 
 				   <div class="preview-content">
 					<div class="title-top">
-						<h4><%=PosterTitle%></h4> 
 						<span class="views"><svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 576 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/></svg><button id="view_count_container" value="<%=ViewsCount%>" type="button"><%=ViewsCount%></button></span>
+						<h4><%=PosterTitle%></h4> 
 					</div>
 					 <br>
 					<!-- <p>Authors... Lorem ipsum dolor sit, amet consectetur adipisicing elit. Neque nemo eos illum delectus, excepturi consequatur dignissimos tempore perferendis, amet beatae aliquid doloremque ad inventore eveniet facilis aspernatur repellendus est minus?</p> -->
@@ -99,14 +113,14 @@ Preview Poster START -->
 						<i>For Gmail users please copy presenter email and then click on gmail</i>
 					</div>
 					
-					<a href="#">Copy Presenter Email</a>
-					<br>
+					<a href="<%=PresenterEmail%>" id="copyEmailLink">Copy Presenter Email</a>
+					<br><br>
 					<a href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox?compose=new" target="_blank">
-						<button type="button">Gmail</button>
+						<button type="button" style="background-color: #6f42c1; margin-right: 6px; color: whitesmoke;">Gmail</button>
 					</a>
 
 					<a href="mailto:<%=PresenterEmail%>">
-						<button type="button">Other</button>
+						<button type="button" style="background-color: #6f42c1; color: whitesmoke;">Other</button>
 					</a>
 
 					   <div class="likes" >
@@ -141,6 +155,51 @@ Preview Poster END -->
 
 <!-- Back to top -->
 <div class="back-top"><i class="bi bi-arrow-up-short position-absolute top-50 start-50 translate-middle"></i></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var loaderOverlay = document.getElementById('loader-overlay');
+
+  // Ensure the loader fades out gradually after the entire page has loaded
+  window.addEventListener('load', function () {
+    loaderOverlay.style.opacity = 0;
+    loaderOverlay.style.visibility = 'hidden';
+  });
+});
+</script>
+
+<!-- JavaScript -->
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+	  var copyEmailLink = document.getElementById('copyEmailLink');
+	  
+	  copyEmailLink.addEventListener('click', function (event) {
+		event.preventDefault();
+	
+		// Extract the email address from the href attribute
+		var presenterEmail = copyEmailLink.getAttribute('href');
+	
+		// Create a temporary input element
+		var tempInput = document.createElement('input');
+		tempInput.value = presenterEmail;
+	
+		// Append the input element to the document
+		document.body.appendChild(tempInput);
+	
+		// Select the input text
+		tempInput.select();
+	
+		// Copy the selected text to the clipboard
+		document.execCommand('copy');
+	
+		// Remove the temporary input element
+		document.body.removeChild(tempInput);
+	
+		// Change the link text to indicate that the email has been copied
+		copyEmailLink.textContent = 'Copied';
+	  });
+	});
+	</script>
 
 
 <script src="/js/jquery-3.4.1.min.js"></script>
