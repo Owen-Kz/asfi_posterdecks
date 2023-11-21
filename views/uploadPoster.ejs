@@ -33,6 +33,18 @@
 
 <body>
 
+	<div class="loader-overlay" id="loader-overlay">
+		<div class="wrapper">
+			<div class="circle"></div>
+			<div class="circle"></div>
+			<div class="circle"></div>
+			<div class="shadow"></div>
+			<div class="shadow"></div>
+			<div class="shadow"></div>
+			<span>Loading</span>
+		</div>
+	</div>
+
     <!-- NAVIGATION BAR  -->
     <!-- <sidebar class="left-navigation-bar bg-shadow ">
        
@@ -186,6 +198,19 @@ Upload Poster END -->
 
 </main>
 <!-- **************** MAIN CONTENT END **************** -->
+
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+	  var loaderOverlay = document.getElementById('loader-overlay');
+	
+	  // Ensure the loader fades out gradually after the entire page has loaded
+	  window.addEventListener('load', function () {
+		loaderOverlay.style.opacity = 0;
+		loaderOverlay.style.visibility = 'hidden';
+	  });
+	});
+</script>
+	
 
 
 <script src="/js/jquery-3.4.1.min.js"></script>
