@@ -44,7 +44,8 @@
     "pg": "^8.11.3",
     "puppeteer": "^21.3.8",
     "puppeteer-recorder": "^1.0.7",
-    "socket.io": "^4.7.2"
+    "socket.io": "^4.7.2",
+    "ssh2-sftp-client": "^9.1.0"
   },
   "devDependencies": {
     "@types/pg": "^8.10.5"

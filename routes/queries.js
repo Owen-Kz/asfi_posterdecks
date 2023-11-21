@@ -130,7 +130,7 @@ async function DeleteSecrets() {
     return executeQuery(query)
 }
 async function DeleteInvalidDecks(){
-    const query = `DELETE FROM posterdecks`
+    const query = `DELETE FROM posterdecks WHERE poster_deck_id = 'vtpWrtxBuaPDmmqd'`
     return executeQuery(query)
 }
 
