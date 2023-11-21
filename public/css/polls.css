@@ -1,6 +1,19 @@
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
+    margin: 0px;
+    padding: 0px;
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+  }
+  main{
+    height: inherit;
+    width: inherit;
+    align-items: center;
+    justify-content: center;
+    display: flex;
   }
 .TotalVotes{
   display: flex;
@@ -38,6 +51,7 @@ body {
     float: right;
     padding: 10px;
     /* background-color: #4caf50; */
+    background-color:transparent;
     color: #333;
     border: none;
     border-radius: 5px;
@@ -45,11 +59,20 @@ body {
   }
 
   button:hover {
-    background-color: #45a049;
+    /* background-color: #45a049; */
   }
 
   progress {
     width: 100%;
     height: 20px;
     margin-bottom: 10px;
+  }
+
+  .noDataMessage{
+    width: 50%;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
   }

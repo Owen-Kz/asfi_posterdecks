@@ -8,7 +8,7 @@ router.use(express.json())
 const bodyParser = require("body-parser");
 const path = require("path");
 const PosterDeckPreviews = require("../controllers/previewDeck");
-const { RetrievePosterDecksTableForAdmin, validateIdNumber, LikePoster, DisLikePoster, ViewPoster, DownloadCount, CreateQuestion, CreateOptions, FindQuestion, FindOption } = require("./queries");
+const { RetrievePosterDecksTableForAdmin, validateIdNumber, LikePoster, DisLikePoster, ViewPoster, DownloadCount, CreateQuestion, CreateOptions, FindQuestion, FindOption, VotePoll } = require("./queries");
 const ScreenCapture = require("../puppetter");
 const setValue = require("../zetValues");
 router.use(bodyParser.json());
@@ -188,11 +188,13 @@ router.get("/polls/poll/question/options/:questionID", async(req,res)=>{
   res.json({options:JSON.stringify(result)})
 })
 
-router.get("/increasePollsCount/:optionId/:pollCounts", (req,res) =>{
+router.get("/polls/increasePollsCount/:optionId/:pollCounts", (req,res) =>{
   const OptionsId = req.params.optionId
   const pollsCounts = req.params.pollCounts
-  
-  console.log(OptionsId, pollsCounts)
+  VotePoll(OptionsId)
+  res.json({message: "Voted succesfully"})
+
+  // console.log(OptionsId, pollsCounts)
 
 })
 // END POLLS 
