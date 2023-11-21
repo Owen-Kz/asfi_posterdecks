@@ -140,7 +140,7 @@ async function DeleteInvalidChannels(){
 }
 
 // DeleteInvalidChannels()
-// DeleteInvalidDecks() 
+// DeleteInvalidDecks()
 // DeleteSecrets()
 
 async function CreateSerials(data_secret){
@@ -156,7 +156,7 @@ async function CreateSerials(data_secret){
 // Validate Poster Id number
 async function ValidateSecretKey(secret){
     // console.log(secret)
-    const query = `SELECT * FROM poster_decks_secret_container WHERE poster_deck_id = '${secret}' AND use_count = '0'`
+    const query = `SELECT * FROM poster_decks_secret_container WHERE poster_deck_id = '${secret}'`
     return executeQuery(query)
 }
 

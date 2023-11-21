@@ -37,28 +37,28 @@
 const KeyMessage = document.getElementById("KeyMessage")
 
 const PosteEventId = document.getElementById("posterSecretId")
-// PosteEventId.addEventListener("change", function(){
-//     if(PosteEventId.value !== ""){
-//     fetch(`/validateKey/${PosteEventId.value}`, ()=>{
-//         method:"GET"
-//     }).then(res => res.json())
-//     .then(data =>{
-//         if(data.status === "error"){
-//             KeyMessage.removeAttribute("style")
-//             KeyMessage.innerText = data.message
-//             KeyMessage.setAttribute("style", "display:block; color:red;")
-//         }else if(data.status === "valid"){
-//             KeyMessage.removeAttribute("style")
-//             KeyMessage.innerText = data.message
-//             KeyMessage.setAttribute("style", "display:block; color:teal;")
-//         }
-//     })
-// }else{
-//     KeyMessage.removeAttribute("style")
-//     KeyMessage.innerText = "Poster id Number can not be Empty"
-//     KeyMessage.setAttribute("style", "display:block; color:red;")
-// }
-// })
+PosteEventId.addEventListener("change", function(){
+    if(PosteEventId.value !== ""){
+    fetch(`/validateKey/${PosteEventId.value}`, ()=>{
+        method:"GET"
+    }).then(res => res.json())
+    .then(data =>{
+        if(data.status === "error"){
+            KeyMessage.removeAttribute("style")
+            KeyMessage.innerText = data.message
+            KeyMessage.setAttribute("style", "display:block; color:red;")
+        }else if(data.status === "valid"){
+            KeyMessage.removeAttribute("style")
+            KeyMessage.innerText = data.message
+            KeyMessage.setAttribute("style", "display:block; color:teal;")
+        }
+    })
+}else{
+    KeyMessage.removeAttribute("style")
+    KeyMessage.innerText = "Poster id Number can not be Empty"
+    KeyMessage.setAttribute("style", "display:block; color:red;")
+}
+})
 
 
 function togglePasswordField() {
