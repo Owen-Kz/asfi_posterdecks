@@ -1,32 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta name="author" content="Weperch Technologies Ltd">
+            <meta name="description" content="ASFI, African Science Frontiers Initiative, African Scientists, African Scholars, Scholars, Education">
+            
+                
     <style>
-        .createPollForm{
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .createPollForm {
             display: flex;
             flex-direction: column;
             width: 50%;
             max-height: 600px;
             margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+            box-sizing: border-box;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            display: inline-block;
+        }
+
+        button {
+            padding: 10px;
+            background-color: rgb(128, 0, 122);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .add-more {
+            padding: 10px;
+            background-color: rgb(30, 31, 30);
+            width: 20%;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .add-more:hover {
+            background-color: rgb(187, 186, 186);
+            color: black;
+        }
+
+        button:hover {
+            background-color: rgb(128, 0, 122);
+        }
+
+        #submitForm {
+            margin-top: 20px;
+        }
+
+        .new-poll-head {
+            width: 30%;
+            margin: 0 auto;
+            text-align: center;
+            margin-top: 40px;
+        }
+        .new-poll-head h4 {
+            color: rgba(48, 47, 47, 0.932);
         }
     </style>
-</head>
-<body>
+    <link rel="stylesheet" href="/css/posterDeck.css">
+    <link rel="stylesheet" href="/css/general.css">
+    
+            <!-- Plugins CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/choices.min.css">
+        <link rel="stylesheet" type="text/css" href="/vendor/aos/aos.css">
+        <link rel="stylesheet" type="text/css" href="/vendor/glightbox/css/glightbox.css">
+        <link rel="stylesheet" type="text/css" href="/css/bs-stepper.min.css">
+           
+            
+            <!-- Favicon -->
+            <link rel="shortcut icon" href="/files/images/ASFIScholar_Logo.png">
+        
+            <link rel="stylesheet" href="/css/css/fontawesome.css">
+            <link rel="stylesheet" href="/css/css/fontawesome-all.css">
+        
+            <link rel="stylesheet" href="/css/material-design-iconic-font.css">
+            <link rel="stylesheet" href="/css/weather-icons/css/weather-icons-core.css">
+        
+            <title>Create New Poll</title>
+            
+    </head>
+    
+    <body>
+    
+        <!-- NAVIGATION BAR  -->
+        <!-- <sidebar class="left-navigation-bar bg-shadow ">
+           
+                 <script src="/js/navbar.js"></script>
+         </sidebar> -->
+         <!-- END NAVIGATION BAR  -->
+    
+    <!-- Header START -->
+    <header class="navbar-light navbar-sticky">
+        <!-- Logo Nav START -->
+        <nav class="navbar navbar-expand-xl">
+            <div class="container containerReg">
+                <!-- Logo START -->
+                <a class="navbar-brand" href="">
+                    <!-- <img class="light-mode-item navbar-brand-item" src="/images/ASFIScholar_Logo.png" alt="logo">
+                    <img class="dark-mode-item navbar-brand-item" src="/images/ASFIScholar_Logo.png" alt="logo"> -->
+                    ASFI-POLLS
+                </a>
+                <!-- Logo END -->
+                <!-- SignUp or Login -->
+                <a href="/polls/create"><span class="btn btn-primary">Polls</span></a>
+            </div>
+        </nav>
+        <!-- Logo Nav END -->
+    </header>
+    <!-- Header END -->
+
+    <div class="new-poll-head">
+        <h4>CREATE A NEW POLL</h4>
+    </div>
+    
     <form method="post" class="createPollForm">
         <select class="form-control" name="meetingId" id="eventTitle" required>
             <option value="">Select Event you want to add the deck to</option>
-        </select>        
+        </select>
 
         <label for="question">What would you like to ask?</label>
         <input type="text" name="question" id="question">
 
         <label for="options">Add Options</label>
-        <input type="text" name="options" id="options" placeholder="option 1">
-        <input type="text" name="options" id="options" placeholder="option 2">
-        <button type="button">Add More</button>
+        <div id="optionsContainer">
+            <input type="text" name="options" class="optionInput" placeholder="option 1">
+            <input type="text" name="options" class="optionInput" placeholder="option 2">
+        </div>
+        <button type="button" class="add-more" onclick="addOption()">+ Add More</button>
 
         <input type="submit" id="submitPoll" hidden>
 
@@ -34,6 +176,20 @@
     </form>
    <script src="/js/AllChannels.js"></script>
    <script src="/js/polls/createPoll.js"></script>
+   <script>
+    let number = 2
+    function addOption() {
+        
+        number++
+        var optionsContainer = document.getElementById('optionsContainer');
+        var input = document.createElement('input');
+        input.type = 'text';
+        input.name = 'options';
+        input.className = 'optionInput';
+        input.placeholder = `option ${number}`;
+        optionsContainer.appendChild(input);
+    }
+</script>
 
 </body>
 </html>
