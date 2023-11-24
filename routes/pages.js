@@ -16,7 +16,7 @@ router.use(bodyParser.urlencoded({ extended: true }));
 router.use(express.urlencoded({ extended: true }));
 const fs = require("fs")
 router.get("/", (req,res) =>{
-  res.redirect("https://asfischolar.com")
+  res.redirect("https://asfischolar.org")
 })
 // For Posters 
 router.get("/posters", (req,res) =>{
