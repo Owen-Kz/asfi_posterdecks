@@ -3,4 +3,4 @@ const submitPoll = document.getElementById("submitPoll")
 
 submitForm.addEventListener("click", function(){
     submitPoll.click()
-})
+}) 
