@@ -35,7 +35,7 @@ fetch(`/getposterdecks/${cookieValue}`, ()=>{
             const posterDeckDescription = posterDeck.poster_deck_descritiption
             const posterDeckImage = posterDeck.poster_deck_image
             // let posterMainFile
-            const posterMainFile = `/uploads/posters/${posterDeckImage}`
+            const posterMainFile = `${posterDeckImage}`
             
             posterDeckMain.innerHTML += `<a href="/event/poster/${posterDeckLink}" target="_blank">
 			<div class="posterContainer">
@@ -55,8 +55,7 @@ fetch(`/getposterdecks/${cookieValue}`, ()=>{
         posterDeckFiles.push(posterMainFile)
         posterDeckContainers.push(posterDeckLink)
         })
-        pdfRenderer(posterDeckFiles,posterDeckContainers);       
-
+        pdfRenderer(posterDeckFiles,posterDeckContainers);
      
     }else{
         posterDeckMain.innerHTML = `<div class='empty'> No poster Decks available </div>`

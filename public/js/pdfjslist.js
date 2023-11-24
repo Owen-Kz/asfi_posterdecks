@@ -1,44 +1,57 @@
-function pdfRenderer(urlArray, ContainerArray){
-  // const posterDeckFile = document.getElementById("posterDeckFile")
+function pdfRenderer(urlArray, containerArray) {
+  const pdfFileList = urlArray; // Array of PDF URLs
+  const containersArray = containerArray; // Array of container IDs
 
-const pdfFileUrls = urlArray; // Add more PDF URLs if needed
+  // Function to render a single PDF
+  function renderPDF(url, containerId) {
+    const container = document.getElementById(containerId);
 
-// Function to render a PDF
-function renderPDF(url, containerId) {
-  const container = document.getElementById(containerId);
+    // Fetch the PDF file
+    fetch(url)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.blob(); // Get the response as a Blob
+      })
+      .then(blob => {
+        // Create a URL for the Blob object
+        const fileURL = URL.createObjectURL(blob);
 
-  // Fetch the PDF file
-  const loadingTask = pdfjsLib.getDocument(url);
-  loadingTask.promise.then(pdf => {
-    for (let pageNum = 1; pageNum <= 1; pageNum++) {
-      pdf.getPage(pageNum).then(page => {
-        const canvas = document.createElement('canvas');
-        container.appendChild(canvas);
-        const context = canvas.getContext('2d');
-        const viewport = page.getViewport({ scale:1 });
-        const scale = Math.min(canvas.width / viewport.width, canvas.height / viewport.height);
-              // Make it visually fill the positioned parent
-        canvas.style.width ='100%';
-        canvas.style.height='100%';
-        // ...then set the internal size to match
-        canvas.width  = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
-        const renderViewport = page.getViewport({ scale });
+        // Get the PDF document
+        pdfjsLib.getDocument(fileURL).promise.then(pdf => {
+          // for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+            pdf.getPage(1).then(page => {
+              const canvas = document.createElement('canvas');
+              container.appendChild(canvas);
+              const context = canvas.getContext('2d');
+              const viewport = page.getViewport({ scale: 1 });
 
+              // Set canvas dimensions
+              canvas.width = viewport.width;
+              canvas.height = viewport.height;
 
-        
-        const renderTask = page.render({ canvasContext: context, viewport: renderViewport });
-        renderTask.promise.then(() => {
-          console.log(`Page ${pageNum} rendered`);
+              const renderContext = {
+                canvasContext: context,
+                viewport: viewport,
+              };
+ 
+              const renderTask = page.render(renderContext);
+              renderTask.promise.then(() => {
+                console.log(`Page 1 rendered`);
+              });
+            });
+          // }
         });
+      })
+      .catch(error => {
+        console.error('There was a problem fetching the PDF:', error);
       });
-    }
+  }
+
+  // Load and render each PDF
+  
+  pdfFileList.forEach((posterFile, index) => {
+    renderPDF(`/files/uploaded/posterpdf/${posterFile}`, containersArray[index]);
   });
-}
-
-// Load and render each PDF
-for (let i = 0; i < pdfFileUrls.length; i++) {
-  renderPDF(pdfFileUrls[i], ContainerArray[i]);
-}
-
 }

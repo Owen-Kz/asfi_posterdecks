@@ -85,7 +85,8 @@ Preview Poster START -->
 			    <div class="preview-container">
                    <div class="preview-img" style='overflow-y:scroll; display:flex;'>
 					<input type="hidden" id="posterDeckFile" value="<%=PosterFile%>">
-					<a href="/uploads/posters/<%=PosterFile%>">
+					<input type="hidden" id="presenterImageFile" value="<%=PresenterImage%>">
+					<a class="pdfLink" id="pdfLink" download="<%=PosterTitle%>-<%=Presenter%>-asfischolar.pdf">
 						<div id="pdf-container-1" class="img-upload"></div>
 					</a>
 					
@@ -102,7 +103,7 @@ Preview Poster START -->
 					<span>
 						<h5>Presented By</h5>
 						<div class="presenter-info">
-							<img src="/uploads/profileimage/<%=PresenterImage%>" alt="Presenter Pic" class="circular-image">
+							<img alt="Loading...." class="circular-image" id="presenterImage">
 							<p><%=Presenter%></p>
 						</div>
 						
@@ -131,7 +132,7 @@ Preview Poster START -->
 							<button id="dislike_count_container" value="<%=DislikesCount%>" type="button"><%=DislikesCount%></button>
 							</button></span>
 
-						<a href="/uploads/posters/<%=PosterFile%>"download="<%=PosterTitle%>-<%=Presenter%>-asfischolar.pdf" id="downloadPoster">
+						<a class="pdfLink" download="<%=PosterTitle%>-<%=Presenter%>-asfischolar.pdf" id="downloadPoster">
 								<span class="download" id="DownloadButton"><i class="fa fa-download" aria-hidden="true"></i>
 								Download
 								<button id="download_count_container" value="<%=DownloadsCount%>" type="button"><%=DownloadsCount%></button>
@@ -224,6 +225,7 @@ document.addEventListener('DOMContentLoaded', function () {
 <script src="/pdfjs/pdf.js"></script>
 <script src="/js/likeDislike.js"></script>
 <script src="/js/pdfjs.js"></script>
+<script src="/js/fetchFiles.js"></script>
 </body>
 
 </html>

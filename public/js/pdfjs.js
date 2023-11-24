@@ -35,7 +35,7 @@ function renderPDF(url, containerId) {
   });
 }
 
-// Load and render each PDF
-for (let i = 0; i < pdfFileUrls.length; i++) {
-  renderPDF(pdfFileUrls[i], `pdf-container-${i + 1}`);
-}
+// // Load and render each PDF
+// for (let i = 0; i < pdfFileUrls.length; i++) {
+//   renderPDF(pdfFileUrls[i], `pdf-container-${i + 1}`);
+// }

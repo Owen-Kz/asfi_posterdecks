@@ -14,9 +14,12 @@ const setValue = require("../zetValues");
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(express.urlencoded({ extended: true }));
-
-
+const fs = require("fs")
 router.get("/", (req,res) =>{
+  res.redirect("https://asfischolar.com")
+})
+// For Posters 
+router.get("/posters", (req,res) =>{
   res.redirect("/uploadPoster")
 })
 router.get("/posteradmin", async(req,res) =>{
@@ -41,24 +44,17 @@ router.get("/allchannels",async (req, res) => {
 })
 
 
+const Storage = require('megajs');
+const { executeQuery, UploadFiles } = require("./dbQueries");
+
 const uploadPath = path.join(__dirname, '../public/useruploads/');
 const uploadImage = path.join(__dirname, '../public/useruploads/images/');
 
-const storagen = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadPath);  // Destination folder for PDF files
-  },
-  filename: function (req, file, cb) {
-    // Rename the file here
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const fileExtension = path.extname(file.originalname);
-    cb(null, 'PosterPDF-' + uniqueSuffix + fileExtension);
-  }
-});
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     if (file.fieldname === 'PosterPDF') {
+ 
       cb(null, uploadPath); // Destination folder for PDFs
     } else if (file.fieldname === 'PresenterPic') {
       cb(null, uploadImage); // Destination folder for images
@@ -72,15 +68,96 @@ const storage = multer.diskStorage({
 });
 
 
-
 const upload = multer({ storage });
 
 router.post("/createdeck", upload.fields([{ name: 'PosterPDF', maxCount: 1 }, { name: 'PresenterPic', maxCount: 1 }]), async (req, res) => {
-  const pdfFiles = req.files['PosterPDF'][0].filename;
-  const imageFiles = req.files['PresenterPic'][0].filename;
-  // Now you can use newFileName and profileImage in your CreateDeck function
-  await CreateDeck(req, res, pdfFiles, imageFiles);
+  const pdfFile = req.files.PosterPDF[0]; // Get the PDF file object
+  const imageFile = req.files.PresenterPic[0]; // Get the image file object
+
+  // Check if both files exist
+  if (!pdfFile || !imageFile) {
+    return console.log('PDF file or image file is missing.');
+  }
+  // Read the uploaded file into a buffer
+  const buffer = fs.readFileSync(pdfFile.path);
+  const imageBuffer = fs.readFileSync(imageFile.path)
+
+  const query = `INSERT INTO files (filename, filedata) VALUES ($1, $2)`;
+  const values = [pdfFile.filename, buffer];
+
+  const imageValues = [imageFile.filename, imageBuffer]
+
+  // await executeQuery(query, values)
+ await UploadFiles(query, values)
+  await UploadFiles(query, imageValues)
+
+  console.log("File uploaded to postgress successfully")
+ await CreateDeck(req, res, pdfFile.filename, imageFile.filename);
+
+  // if(PdfBufferUploaded && ImageBufferUploaded && PosterDeckUploaded){
+      fs.unlink(pdfFile.path, (unlinkErr) => {
+    if (unlinkErr) {
+      console.error('Error deleting local PDF file:', unlinkErr);
+    } else {
+      console.log('Local PDF file deleted successfully.');
+    }
+  });  
+  fs.unlink(imageFile.path, (unlinkErr) => {
+    if (unlinkErr) {
+      console.error('Error deleting local PDF file:', unlinkErr);
+    } else {
+      console.log('Local PDF file deleted successfully.');
+    }
+  });
+  // }
+
+  
 });
+
+router.get("/fetchFiles", (req,res)=>{
+  res.render("tempFilePreview")
+})
+
+router.get("/files/uploaded/posterpdf/:filename", async (req, res) => {
+  const fileName = req.params.filename;
+
+  const query = 'SELECT * FROM files WHERE filename = $1';
+  const values = [fileName];
+
+  try {
+    const result = await UploadFiles(query, values);
+    const fileData = result[0].filedata;
+
+    // Set appropriate headers for the response
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+    res.end(fileData); // Send the file data as the response
+  } catch (error) {
+    console.error('Error retrieving file:', error);
+    res.status(500).send('Error retrieving file');
+  }
+});
+
+router.get("/files/uploaded/presenterImage/:filename", async (req, res) => {
+  const fileName = req.params.filename;
+
+  const query = 'SELECT * FROM files WHERE filename = $1';
+  const values = [fileName];
+
+  try {
+    const result = await UploadFiles(query, values);
+    const fileData = result[0].filedata;
+
+    // Set appropriate headers for the response
+    res.setHeader('Content-Type', 'image/*');
+    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+    res.end(fileData); // Send the file data as the response
+  } catch (error) {
+    console.error('Error retrieving file:', error);
+    res.status(500).send('Error retrieving file');
+  }
+});
+
 
 
 // validate poster Id numbers 
@@ -191,7 +268,7 @@ router.get("/polls/increasePollsCount/:optionId/:pollCounts", (req,res) =>{
   const OptionsId = req.params.optionId
   const pollsCounts = req.params.pollCounts
   VotePoll(OptionsId)
-  res.json({message: "Voted succesfully"})
+  res.json({message: "Voted successfully"})
 
   // console.log(OptionsId, pollsCounts)
 
@@ -201,7 +278,9 @@ router.get("/polls/increasePollsCount/:optionId/:pollCounts", (req,res) =>{
 router.get("/record", (req,res)=>{
   res.render("recorderTest")
 })
+  
 
+// End Posters
 
 router.get("*", (req,res)=>{
   res.render("error", {status:"Page Not Found", page:"/"})

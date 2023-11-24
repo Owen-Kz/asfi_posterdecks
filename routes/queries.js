@@ -9,6 +9,17 @@ async function CreateTableForPosterDecks() {
       )`;
     return executeQuery(query);
 }
+async function CreateFileStorageTable(){
+    const query = `CREATE TABLE files (
+        fileid SERIAL PRIMARY KEY,
+        filename VARCHAR(255) NOT NULL,
+        filedata BYTEA NOT NULL
+      );
+      `
+      return executeQuery(query)
+}
+
+// CreateFileStorageTable()
 
 async function CreatePollsTable() {
     const query = `CREATE TABLE polls (
@@ -130,7 +141,12 @@ async function DeleteSecrets() {
     return executeQuery(query)
 }
 async function DeleteInvalidDecks(){
-    const query = `DELETE FROM posterdecks WHERE poster_deck_id = 'vtpWrtxBuaPDmmqd'`
+    const query = `DELETE FROM posterdecks`
+    return executeQuery(query)
+}
+
+async function DeleteFiles(){
+    const query = `DELETE FROM files`
     return executeQuery(query)
 }
 
@@ -141,6 +157,7 @@ async function DeleteInvalidChannels(){
 
 // DeleteInvalidChannels()
 // DeleteInvalidDecks()
+// DeleteFiles()
 // DeleteSecrets()
 
 async function CreateSerials(data_secret){
@@ -195,7 +212,7 @@ function getRandomString() {
     return bufferID
 }
 async function InsertIntoPosterDecks(req, res, newFileName, ImageFile){
-   console.log(ImageFile)
+
     const {posterSecretId, eventTitle, deckTitle, PresenterPrefix, presenterName, presenterEmail} = req.body
     
 const FullPresenterName = `${PresenterPrefix}. ${presenterName}`
@@ -216,7 +233,7 @@ const ValidateSecreeResult = await ValidateSecretKey(posterSecretId)
 }
 
 async function CreateNewDeck(posterSecretId, eventTitle, deckTitle, presenterName, presenterEmail, newFileName, ImageFile, DeckId){
-   console.log(ImageFile)
+
 
     function escapeSpecialCharacters(input) {
         return input.replace(/'/g, "''").replace(/\0/g, '\\0').replace(/\\/g, '\\\\');
@@ -292,7 +309,7 @@ async function TotalDisLikes(req,res,posterId, currentCount){
 async function ReduceDisLikes(req,res,posterId, currentCount){
     const TOtalDisLikes = await TotalDisLikes(req,res,posterId, currentCount)
     const AddedCount = Math.floor(new Number(TOtalDisLikes[0].dislike_count)-1)
-    console.log(TOtalDisLikes)
+
     const query = `UPDATE posterdecks SET dislike_count = '${AddedCount}' WHERE poster_deck_id = '${posterId}'`
     return executeQuery(query)
 }
