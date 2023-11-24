@@ -38,7 +38,7 @@ function pdfRenderer(urlArray, containerArray) {
  
               const renderTask = page.render(renderContext);
               renderTask.promise.then(() => {
-                console.log(`Page 1 rendered`);
+                // console.log(`Page 1 rendered`);
               });
             });
           // }

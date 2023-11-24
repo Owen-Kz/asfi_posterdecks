@@ -308,7 +308,14 @@ async function TotalDisLikes(req,res,posterId, currentCount){
 // reduce dislikes
 async function ReduceDisLikes(req,res,posterId, currentCount){
     const TOtalDisLikes = await TotalDisLikes(req,res,posterId, currentCount)
-    const AddedCount = Math.floor(new Number(TOtalDisLikes[0].dislike_count)-1)
+
+    let  AddedCount
+    if(new Number(TOtalDisLikes[0].dislike_count) > 0){
+    AddedCount = Math.floor(new Number(TOtalDisLikes[0].dislike_count)-1)
+    }else{
+    AddedCount = "0"
+
+    }
 
     const query = `UPDATE posterdecks SET dislike_count = '${AddedCount}' WHERE poster_deck_id = '${posterId}'`
     return executeQuery(query)
@@ -339,7 +346,16 @@ async function TotalLikes(req,res,posterId, currentCount){
 // reduce Likes 
 async function ReduceLikes(req,res,posterId, currentCount){
     const TOtalLikes = await TotalLikes(req,res,posterId, currentCount)
-    const AddedCount = Math.floor(new Number(TOtalLikes[0].likes_count)-1)
+
+    let AddedCount
+    if(new Number(TOtalLikes[0].likes_count) > 0){
+    AddedCount = Math.floor(new Number(TOtalLikes[0].likes_count)-1)
+    } 
+    else{
+    AddedCount = "0"
+
+    }
+
     const query = `UPDATE posterdecks SET likes_count = '${AddedCount}' WHERE poster_deck_id = '${posterId}'`
     return executeQuery(query)
 }

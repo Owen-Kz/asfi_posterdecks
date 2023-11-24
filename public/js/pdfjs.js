@@ -28,7 +28,7 @@ function renderPDF(url, containerId) {
   
   const renderTask = page.render({ canvasContext: context, viewport });
         renderTask.promise.then(() => {
-          console.log(`Page ${pageNum} rendered`);
+          // console.log(`Page ${pageNum} rendered`);
         });
       });
     }

@@ -36,10 +36,10 @@ function getCookie(cookieName) {
 }
 
 
-const LikedTrue =  getCookie("youLiked");
-const DislikeTrue = getCookie("disLiked");
-const PageViewed = getCookie("pageViewed")
-const Downloaded = getCookie("posterDownloaded")
+const LikedTrue =  getCookie(`${posterID.value}-liked`);
+const DislikeTrue = getCookie(`${posterID.value}-disliked`);
+const PageViewed = getCookie(`${posterID.value}`)
+const Downloaded = getCookie(`${posterID.value}-download`)
 
 const currentLikesCount = like_count_container.value
 const currentDislikeCount = dislike_count_container.value
@@ -61,7 +61,7 @@ LikeButton.addEventListener("click", function(){
     }).then(res => res.json())
     .then(data =>{
         if(data.message === "liked"){
-    setCookie('youLiked', "User Liked", hoursToKeep)
+    setCookie(`${posterID.value}-liked`, "User Liked", hoursToKeep)
     ClickCount++
 
     if(ClickCount == 1){
@@ -69,7 +69,7 @@ LikeButton.addEventListener("click", function(){
     like_count_container.value = Math.floor(new Number(like_count_container.value) + 1)
     dislike_count_container.innerHTML = `<span>${Math.floor(new Number(dislike_count_container.value) - 1)}</span>`
     dislike_count_container.value = Math.floor(new Number(dislike_count_container.value) - 1)
-    deleteCookie("disLiked");
+    deleteCookie(`${posterID.value}-disliked`);
 
     }
         }
@@ -88,14 +88,14 @@ DisLikeButton.addEventListener("click", function(){
     }).then(res => res.json())
     .then(data =>{
         if(data.message === "disliked"){
-    setCookie('disLiked', "User Disliked", hoursToKeep)
+    setCookie(`${posterID.value}-disliked`, `${posterID.value}`, hoursToKeep)
     ClickCount++
     if(ClickCount == 1){
     dislike_count_container.innerHTML = `<span>${Math.floor(new Number(dislike_count_container.value) + 1)}</span>`
     dislike_count_container.value = Math.floor(new Number(dislike_count_container.value) + 1)
     like_count_container.innerHTML = `<span>${Math.floor(new Number(like_count_container.value)- 1)}</span>`
     like_count_container.value = Math.floor(new Number(like_count_container.value) - 1)
-    deleteCookie("youLiked");
+    deleteCookie(`${posterID.value}-liked`);
 
     }
         }
@@ -108,6 +108,7 @@ DisLikeButton.addEventListener("click", function(){
 
 
 // VIew the Postetr Page and increase view count 
+
 if(!PageViewed){
 function ViewPoster(){
     fetch(`/viewposter/${posterID.value}/${view_count_container.value}`, ()=>{
@@ -115,10 +116,9 @@ function ViewPoster(){
     }).then(res => res.json())
     .then(data =>{
         if(data.message === "viewed"){
-    setCookie('pageViewed', "Poster has been viewed", hoursToKeep)
+    setCookie(`${posterID.value}`, `${posterID.value}-viewed`, hoursToKeep)
     view_count_container.value = Math.floor(new Number(view_count_container.value)+1)
     view_count_container.innerHTML = `<span>${new Number(view_count_container.value)}</span>`
-
         }
     })
 }
@@ -140,9 +140,9 @@ downloadPoster.addEventListener("click", function(){
     }).then(res => res.json())
     .then(data =>{
         if(data.message === "downloaded"){
-            setCookie('posterDownloaded', "Poster has been downloaded", hoursToKeep)
-            CurrentDownloadCount.value = Math.floor(new Number(CurrentDownloadCount.value)+1)
-            CurrentDownloadCount.innerHTML = `<span>${new Number(CurrentDownloadCount.value)}</span>`
+            setCookie(`${posterID.value}-download`, `${posterID.value}-downloaded`, hoursToKeep)
+            download_count_container.value = Math.floor(new Number(CurrentDownloadCount)+1)
+            download_count_container.innerHTML = `<span>${Math.floor(new Number(CurrentDownloadCount)+1)}</span>`
         }
     })
 })
