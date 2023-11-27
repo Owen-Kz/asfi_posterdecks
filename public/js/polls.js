@@ -128,7 +128,7 @@ fetch(`/polls/poll/question/${cookieValue}`, ()=>{
 
  
     });
-    console.log(PollsCountMain)
+   
   });
 // }
 

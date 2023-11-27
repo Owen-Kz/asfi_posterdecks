@@ -103,27 +103,27 @@ const upload = multer({ storage });
 
 router.post("/createdeck", upload.fields([{ name: 'PosterPDF', maxCount: 1 }, { name: 'PresenterPic', maxCount: 1 }]), async (req, res) => {
   const pdfFile = req.files.PosterPDF[0]; // Get the PDF file object
-  const imageFile = req.files.PresenterPic[0]; // Get the image file object
+  // const imageFile = req.files.PresenterPic[0]; // Get the image file object
 
   // Check if both files exist
-  if (!pdfFile || !imageFile) {
+  if (!pdfFile) {
     return console.log('PDF file or image file is missing.');
   }
   // Read the uploaded file into a buffer
   const buffer = fs.readFileSync(pdfFile.path);
-  const imageBuffer = fs.readFileSync(imageFile.path)
+  // const imageBuffer = fs.readFileSync(imageFile.path)
 
   const query = `INSERT INTO files (filename, filedata) VALUES ($1, $2)`;
   const values = [pdfFile.filename, buffer];
 
-  const imageValues = [imageFile.filename, imageBuffer]
+  // const imageValues = [imageFile.filename, imageBuffer]
 
   // await executeQuery(query, values)
  await UploadFiles(query, values)
-  await UploadFiles(query, imageValues)
+  // await UploadFiles(query, imageValues)
 
   console.log("File uploaded to postgress successfully")
- await CreateDeck(req, res, pdfFile.filename, imageFile.filename);
+ await CreateDeck(req, res, pdfFile.filename, "avatar.jpg");
 
   // if(PdfBufferUploaded && ImageBufferUploaded && PosterDeckUploaded){
       fs.unlink(pdfFile.path, (unlinkErr) => {
@@ -133,13 +133,13 @@ router.post("/createdeck", upload.fields([{ name: 'PosterPDF', maxCount: 1 }, { 
       console.log('Local PDF file deleted successfully.');
     }
   });  
-  fs.unlink(imageFile.path, (unlinkErr) => {
-    if (unlinkErr) {
-      console.error('Error deleting local PDF file:', unlinkErr);
-    } else {
-      console.log('Local PDF file deleted successfully.');
-    }
-  });
+  // fs.unlink(imageFile.path, (unlinkErr) => {
+  //   if (unlinkErr) {
+  //     console.error('Error deleting local PDF file:', unlinkErr);
+  //   } else {
+  //     console.log('Local PDF file deleted successfully.');
+  //   }
+  // });
   // }
 
   

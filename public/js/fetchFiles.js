@@ -83,27 +83,27 @@ fetch(`/files/uploaded/posterpdf/${PosterDeckFile.value}`, ()=>{
 
 
 //   For Presenter Profile Image 
-if(PresenterImageFile){
-fetch(`/files/uploaded/presenterImage/${PresenterImageFile.value}`, ()=>{
-    method:"GET"
-})
-.then(response => {
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    return response.blob(); // Get the response as a Blob
-  })
-  .then(blob => {
-    // Create a URL for the Blob object
-    const fileURL = URL.createObjectURL(blob);
+// if(PresenterImageFile){
+// fetch(`/files/uploaded/presenterImage/${PresenterImageFile.value}`, ()=>{
+//     method:"GET"
+// })
+// .then(response => {
+//     if (!response.ok) {
+//       throw new Error('Network response was not ok');
+//     }
+//     return response.blob(); // Get the response as a Blob
+//   })
+//   .then(blob => {
+//     // Create a URL for the Blob object
+//     const fileURL = URL.createObjectURL(blob);
 
-    // Use the fileURL to display the PDF in an iframe or link to download
-    presenterImage.setAttribute("src", fileURL)
+//     // Use the fileURL to display the PDF in an iframe or link to download
+//     presenterImage.setAttribute("src", fileURL)
  
 
-  })
-  .catch(error => {
-    console.error('There was a problem fetching the image:', error);
-    // Handle errors, display a message, etc.
-  });
-}
+//   })
+//   .catch(error => {
+//     console.error('There was a problem fetching the image:', error);
+//     // Handle errors, display a message, etc.
+//   });
+// }
