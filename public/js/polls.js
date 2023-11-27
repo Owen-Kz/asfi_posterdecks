@@ -1,4 +1,6 @@
 const MeetingID = document.getElementById("meetingID")
+const hostName = document.getElementById("hostName")
+
 // const pollContainer = document.getElementById('poll-container');
 const mainQuestionContainer = document.getElementById("mainQuestionContainer")
 const mainBody = document.getElementById("mainBody")
@@ -86,16 +88,13 @@ fetch(`/polls/poll/question/${cookieValue}`, ()=>{
   const pollCounts = document.querySelectorAll(".pollCounts")
 
 
-  if(Voted){
-    console.log("Already Voted")
-  }else{
+  // if(Voted){
+  //   console.log("Already Voted")
+  // }else{
 
 
   options.forEach((option, index) => {
     option.addEventListener('click', function() {
-
-      setCookie('votedAlready', "UserAlreadyVoted", hoursToKeep)
-    //   progressBars[index].value += 1;
 
       const TotalCountMain = Math.floor(new Number(totalVotes.value) + 1)
 
@@ -108,24 +107,30 @@ fetch(`/polls/poll/question/${cookieValue}`, ()=>{
       totalVotes.value = `${TotalCountMain}`
       const PollsCountMain =  Math.floor(((new Number(pollCounts[index].value) * 100) / new Number(TotalCountMain)))
 
-      pollCounts[index].innerHTML = `<span>${PollsCountMain}%</span>`
-      totalVotes.innerHTML = `<span>${TotalCountMain}</span>`
 
-
-      fetch(`/polls/increasePollsCount/${optionID}/${OptionValue}`, () =>{
+      fetch(`/polls/increasePollsCount/${optionID}/${OptionValue}/${hostName.value}/${cookieValue}`, () =>{
         method : "GET"
       }).then(res => res.json())
-      .then(data =>[
-        console.log("Voted")
-      ])
+      .then(data =>{
+        if(data.message === 'Voted'){
+          alert("You can't vote twice")
+        }else{
+          pollCounts[index].innerHTML = `<span>${PollsCountMain}%</span>`
+          totalVotes.innerHTML = `<span>${TotalCountMain}</span>`
+          progressBars[index].max = 100
+          progressBars[index].value = PollsCountMain
 
-    progressBars[index].max = 100
-    progressBars[index].value = PollsCountMain
+          
+          ChangeProgessBar(TotalCountMain, index)
+        }
+    })
     
-    ChangeProgessBar(TotalCountMain, index)
+
+ 
     });
+    console.log(PollsCountMain)
   });
-}
+// }
 
 function ChangeProgessBar(TotalCountMain, index){
 

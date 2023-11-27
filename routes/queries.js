@@ -58,8 +58,35 @@ async function VotePoll(optionID){
         const query = `UPDATE polls_question SET number_of_votes = '${NewCount}' WHERE question_id = '${optionID}'`
         return executeQuery(query)
 }
+async function CreateVotersTable(){
+    const query = `CREATE TABLE voters (
+        id SERIAL PRIMARY KEY,
+        device_name TEXT NOT NULL,
+        poll_id TEXT NOT NULL
+    )`
+    return executeQuery(query)
+}
+
+// CreateVotersTable()
+
+async function CheckVoted(hostName, poll_id){
+    const query = `SELECT * FROM voters WHERE device_name = '${hostName}' AND poll_id = '${[poll_id]}'`
+    return executeQuery(query)
+}
+
+async function CreateVoter(hostName, poll_id){
+    const query = `INSERT INTO voters (
+        device_name, 
+        poll_id
+    ) VALUES (
+        '${hostName}',
+        '${poll_id}'
+    )`
+    return executeQuery(query)
+}
+
 async function ResetPolls(){
-    const query = "UPDATE polls_question SET number_of_votes = '0' WHERE number_of_votes = 'NaN'"
+    const query = "UPDATE polls_question SET number_of_votes = '0'"
     return executeQuery(query)
 }
 
@@ -422,5 +449,8 @@ module.exports = {
     CreateOptions,
     CreateQuestion,
     FindQuestion,
-    FindOption
+    FindOption,
+    CheckVoted,
+    CreateVoter,
+
 };

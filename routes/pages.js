@@ -8,13 +8,44 @@ router.use(express.json())
 const bodyParser = require("body-parser");
 const path = require("path");
 const PosterDeckPreviews = require("../controllers/previewDeck");
-const { RetrievePosterDecksTableForAdmin, validateIdNumber, LikePoster, DisLikePoster, ViewPoster, DownloadCount, CreateQuestion, CreateOptions, FindQuestion, FindOption, VotePoll } = require("./queries");
+const { RetrievePosterDecksTableForAdmin, validateIdNumber, LikePoster, DisLikePoster, ViewPoster, DownloadCount, CreateQuestion, CreateOptions, FindQuestion, FindOption, VotePoll, CheckVoted, CreateVoter } = require("./queries");
 const ScreenCapture = require("../puppetter");
 const setValue = require("../zetValues");
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(express.urlencoded({ extended: true }));
 const fs = require("fs")
+const os = require('os');
+
+// Get the system's hostname
+const hostname = os.hostname();
+
+
+// Get the system's IP addresses
+// const networkInterfaces = os.networkInterfaces();
+// const ipAddresses = {};
+
+// Object.keys(networkInterfaces).forEach(interfaceName => {
+//   const interfaces = networkInterfaces[interfaceName];
+//   interfaces.forEach(interfaceDetails => {
+//     if (interfaceDetails.family === 'IPv4') {
+//       ipAddresses[interfaceName] = interfaceDetails.address;
+//     }
+//   });
+// });
+
+// console.log('IP Addresses:', ipAddresses);
+
+
+// Object.keys(networkInterfaces).forEach(interfaceName => {
+//   const interfaces = networkInterfaces[interfaceName];
+//   interfaces.forEach(interfaceDetails => {
+//     if (interfaceDetails.mac && interfaceDetails.family === 'IPv4') {
+//       console.log(`Interface: ${interfaceName}, MAC Address: ${interfaceDetails.mac}`);
+//     }
+//   });
+// });
+
 router.get("/", (req,res) =>{
   res.redirect("https://asfischolar.org")
 })
@@ -219,7 +250,7 @@ router.get("/uploadPoster", async(req,res)=>{
 // POLLS 
 router.get("/polls/:meetingID", (req,res)=>{
   const meetingId = req.params.meetingID
-  res.render("polls", {meetingId:meetingId})
+  res.render("polls", {meetingId:meetingId, hostName: hostname})
 })
 router.get('/polls/create/new',(req,res)=>{
   res.render("createPoll")
@@ -264,13 +295,20 @@ router.get("/polls/poll/question/options/:questionID", async(req,res)=>{
   res.json({options:JSON.stringify(result)})
 })
 
-router.get("/polls/increasePollsCount/:optionId/:pollCounts", (req,res) =>{
+router.get("/polls/increasePollsCount/:optionId/:pollCounts/:hostName/:pollId", async (req,res) =>{
   const OptionsId = req.params.optionId
   const pollsCounts = req.params.pollCounts
-  VotePoll(OptionsId)
-  res.json({message: "Voted successfully"})
+  const HostName = req.params.hostName
+  const poll_id = req.params.pollId
 
-  // console.log(OptionsId, pollsCounts)
+  const VetVote = await CheckVoted(HostName, poll_id)
+  if(VetVote.length > 0){
+    res.json({message:"Voted"})
+  }else{
+    await CreateVoter(HostName, poll_id)
+    await VotePoll(OptionsId)
+    res.json({message: "Voted successfully"})
+  }
 
 })
 // END POLLS 
