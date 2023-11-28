@@ -247,7 +247,9 @@ async function InsertIntoPosterDecks(req, res, newFileName, ImageFile){
 
     const {posterSecretId, eventTitle, deckTitle, PresenterPrefix, presenterName, presenterEmail} = req.body
     
-const FullPresenterName = `${PresenterPrefix}. ${presenterName}`
+// const FullPresenterName = `${PresenterPrefix}. ${presenterName}`
+const FullPresenterName = `${presenterName}`
+
 
 const ValidateSecreeResult = await ValidateSecretKey(posterSecretId)
   await updateKeyCount(posterSecretId)
@@ -302,7 +304,7 @@ async function RetrievePosterDecksTable(req,res, meetingId){
     const query = `SELECT * FROM posterdecks WHERE poster_deck_meeting = '${meetingIdMain}'`
     return executeQuery(query)
 }
-
+ 
 // validate Poster id number 
 async function validateIdNumber(req,res, key){
     const ValidateSecreeResult = await ValidateSecretKey(key)

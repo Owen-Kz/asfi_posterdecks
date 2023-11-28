@@ -132,7 +132,7 @@ router.post("/createdeck", upload.fields([{ name: 'PosterPDF', maxCount: 1 }, { 
     } else {
       console.log('Local PDF file deleted successfully.');
     }
-  });  
+    }); 
   // fs.unlink(imageFile.path, (unlinkErr) => {
   //   if (unlinkErr) {
   //     console.error('Error deleting local PDF file:', unlinkErr);
