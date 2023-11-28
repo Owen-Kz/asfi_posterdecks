@@ -84,7 +84,12 @@ async function CreateVoter(hostName, poll_id){
     )`
     return executeQuery(query)
 }
+async function DELETEVOTER(){
+    const query = `DELETE FROM voters`
+    return executeQuery(query)
+}
 
+// DELETEVOTER()
 async function ResetPolls(){
     const query = "UPDATE polls_question SET number_of_votes = '0'"
     return executeQuery(query)

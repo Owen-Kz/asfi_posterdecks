@@ -48,12 +48,17 @@ fetch(`/polls/poll/question/${cookieValue}`, ()=>{
     const MainQUestion = one.question
     const questionId = one.buffer
 
+    const TotalVotesArray = []
+
+    let TotalSum
+
+
 
     let PollsContainerCreated = `<div id="poll-container">
     <h2 id="mainQuestionContainer">${MainQUestion}</h2>
    <div class="TotalVotes">
     <b> Total Votes</b>
-    <button id="totalVotes" value="0">0</button>
+    <button id="totalVotes" value="${TotalSum}">${TotalSum}</button>
    </div>`
 
    
@@ -63,24 +68,40 @@ fetch(`/polls/poll/question/${cookieValue}`, ()=>{
     }).then(res => res.json())
     .then(data => {
       const Options = JSON.parse(data.options)
+  
 
       Options.forEach(choice =>{
         const voteCount = choice.number_of_votes
         const Option = choice.options
         const optionId = choice.question_id
- 
+     
+        
+
+        TotalVotesArray.push(new Number(voteCount))
+        
+        const sum = TotalVotesArray.reduce((accumulator, currentValue) => {
+          return accumulator + currentValue;
+        }, 0);
+
+        const PollsCountMain =  Math.floor(((new Number(voteCount) * 100) / new Number(sum)))
+      
+        TotalSum = sum
+
+
         PollsContainerCreated += `
         <button class="pollCounts" value="${voteCount}" id="${optionId}">${voteCount}</button>
         <div class="option">
         <input type="radio" name="color" value="${optionId}"> ${Option}
-        <progress value="" max="100"></progress>
+        <progress value="${PollsCountMain}" max="100"></progress>
         </div>`
 
       })
 
       mainBody.innerHTML += PollsContainerCreated
+      const VoteTotalContainer = document.getElementById("totalVotes")
 
-
+ VoteTotalContainer.value = TotalSum
+ VoteTotalContainer.innerHTML = `<span>${TotalSum}</span>`
 
   const options = document.querySelectorAll('.option input');
   const progressBars = document.querySelectorAll('progress');
@@ -117,7 +138,7 @@ fetch(`/polls/poll/question/${cookieValue}`, ()=>{
         }else{
           pollCounts[index].innerHTML = `<span>${PollsCountMain}%</span>`
           totalVotes.innerHTML = `<span>${TotalCountMain}</span>`
-          progressBars[index].max = 100
+          // progressBars[index].max = 100
           progressBars[index].value = PollsCountMain
 
           
