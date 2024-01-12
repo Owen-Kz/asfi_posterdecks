@@ -6,9 +6,11 @@ const pdfJsPath = require.resolve('pdfjs-dist/build/pdf.js');
 const { Client } = require('pg');
 const connectionString = process.env.DATABASE_URL;
 const dotenv = require("dotenv").config();
+const cors = require('cors');
 
 
 const app =  express();
+app.use(cors());
 const cookie = require("cookie-parser");
 const PORT = process.env.PORT || 2020;
 const server = require("http").Server(app)

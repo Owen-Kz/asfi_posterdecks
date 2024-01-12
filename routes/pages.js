@@ -8,12 +8,13 @@ router.use(express.json())
 const bodyParser = require("body-parser");
 const path = require("path");
 const PosterDeckPreviews = require("../controllers/previewDeck");
-const { RetrievePosterDecksTableForAdmin, validateIdNumber, LikePoster, DisLikePoster, ViewPoster, DownloadCount, CreateQuestion, CreateOptions, FindQuestion, FindOption, VotePoll, CheckVoted, CreateVoter } = require("./queries");
+const { RetrievePosterDecksTableForAdmin, validateIdNumber, LikePoster, DisLikePoster, ViewPoster, DownloadCount, CreateQuestion, CreateOptions, FindQuestion, FindOption, VotePoll, CheckVoted, CreateVoter, SelectMeetings, TotalMeetingsCount, DeleteChannel, SelectPosters, TotalPostersCount, DeletePoster, GetMeetingName } = require("./queries");
 const ScreenCapture = require("../puppetter");
 const setValue = require("../zetValues");
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(express.urlencoded({ extended: true }));
+
 const fs = require("fs")
 const os = require('os');
 
@@ -312,6 +313,81 @@ router.get("/polls/increasePollsCount/:optionId/:pollCounts/:hostName/:pollId", 
 
 })
 // END POLLS 
+
+// APIs For External - ASFI Admin 
+// GEt a LIST OF MEETINGS 
+router.get("/admin/meetings/list", async (req,res) =>{ 
+    const page = req.query.page
+    const itemsPerPage = 5; // Number of items to display per page
+    const searchQuery = req.query.q
+    let totalItems
+    const MeetingList = await SelectMeetings(page, itemsPerPage, searchQuery)
+    const total = await TotalMeetingsCount()
+    
+    if(searchQuery && searchQuery != ""){
+      totalItems  = MeetingList.length
+    }else{
+    totalItems = total[0].total_channels
+    }
+
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    res.json({meetingsList: JSON.stringify(MeetingList), totalPages: totalPages, currentPage:page})
+})
+// Delete a CHannel 
+router.get("/admin/meetings/delete", async (req,res)=>{
+  const channelSecret = req.query.channel
+  const DeletedChannel = await DeleteChannel(channelSecret)
+
+  res.json({message: "channelDeleted"})
+  
+})
+
+
+// GET List of Posters
+router.get("/admin/posters/list", async (req,res)=>{
+  const page = req.query.page
+  const itemsPerPage = 5; // Number of items to display per page
+  const searchQuery = req.query.q
+  let totalItems
+ 
+  const PosterList = await SelectPosters(page, itemsPerPage, searchQuery)
+  const total = await TotalPostersCount()
+  
+  if(searchQuery && searchQuery != ""){
+    totalItems  = PosterList.length
+  }else{
+  totalItems = total[0].total_posters
+  }
+
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  res.json({PosterList: JSON.stringify(PosterList), totalPages: totalPages, currentPage:page})
+})
+
+router.get("/admin/posters/list/total", async (req,res)=>{
+  const TotalCount = await TotalPostersCount()
+  
+  res.json({TotalPosters: TotalCount[0].total_posters})
+})
+
+router.get("/admin/poster/delete", async (req,res)=>{
+  const posterId = req.query.posterID
+  const DeletedPoster = await DeletePoster(posterId)
+  res.json({message: "posterDeleted"})
+})
+
+
+// GET Meeting NAme 
+router.get("/admin/meeting", async (req,res)=>{
+  const meetingId = req.query.name
+  const MeetingName = await GetMeetingName(meetingId)
+  res.json({MeetingTitle: JSON.stringify(MeetingName)})
+})
+// Count Number of Meetings 
+router.get("/admin/meetings/list/total", async (req,res)=>{
+  const TotalCount = await TotalMeetingsCount()
+  
+  res.json({TotalChannels: TotalCount[0].total_channels})
+})
 
 router.get("/record", (req,res)=>{
   res.render("recorderTest")

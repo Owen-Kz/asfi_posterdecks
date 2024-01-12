@@ -1,4 +1,4 @@
-const { executeQuery } = require('./dbQueries');
+const { executeQuery, UploadFiles } = require('./dbQueries');
 // const secretKeys = require('./secretKeys');
 
 async function CreateTableForPosterDecks() {
@@ -164,6 +164,17 @@ async function CreateDownloadCount(){
     return executeQuery(query);
 }
 
+async function UpdatePosterDeckTables(){
+    const query = `
+    ALTER TABLE posterdecks
+    ALTER COLUMN poster_deck_owner TYPE VARCHAR(255),
+    ALTER COLUMN poster_deck_title TYPE VARCHAR(255),
+    ALTER COLUMN presenter_email TYPE VARCHAR(255);
+    `
+
+    return executeQuery(query)
+}
+// UpdatePosterDeckTables()
 // AlterTable()
 // CreateDownloadCount()
 
@@ -438,6 +449,58 @@ async function DownloadCount(re,res,posterId,currentCount){
 }
 
 
+async function SelectMeetings(page, itemsPerPage, searchQuery){
+    const pageMain = page || 1; // Current page, default is 1
+    const offset = (pageMain - 1) * itemsPerPage; 
+
+    if(searchQuery && searchQuery != ""){
+        const query = `SELECT * FROM channels WHERE title ILIKE $1 LIMIT $2 OFFSET $3`;
+        return UploadFiles(query, [`%${searchQuery}%`, itemsPerPage, offset]); 
+    }else{
+    const query = `SELECT * FROM channels LIMIT $1 OFFSET $2`;
+    return UploadFiles(query, [itemsPerPage, offset])
+    }
+    
+}
+
+async function DeleteChannel(channelSecret){
+    const query = `DELETE FROM channels WHERE channel_secret = $1`
+    return UploadFiles(query, [channelSecret])
+}
+
+async function TotalMeetingsCount(){
+    const query = `SELECT COUNT(*) AS total_channels FROM channels`
+    return executeQuery(query)
+}
+
+
+async function SelectPosters(page, itemsPerPage, searchQuery){
+    const pageMain = page || 1; // Current page, default is 1
+    const offset = (pageMain - 1) * itemsPerPage; 
+
+    if(searchQuery && searchQuery != ""){
+        const query = `SELECT * FROM posterdecks WHERE poster_deck_title ILIKE $1 LIMIT $2 OFFSET $3`;
+        return UploadFiles(query, [`%${searchQuery}%`, itemsPerPage, offset]); 
+    }else{
+    const query = `SELECT * FROM posterdecks LIMIT $1 OFFSET $2`;
+    return UploadFiles(query, [itemsPerPage, offset])
+    }
+    
+}
+async function TotalPostersCount(){
+    const query = `SELECT COUNT(*) AS total_posters FROM posterdecks`
+    return executeQuery(query)
+}
+async function DeletePoster(posterdeck_id){
+    const query = `DELETE FROM posterdecks WHERE poster_deck_id = $1`
+    return UploadFiles(query, [posterdeck_id])
+}
+
+async function GetMeetingName(meeting_id){
+    const query = `SELECT title FROM channels WHERE channel_secret = $1`
+    return UploadFiles(query, [meeting_id])
+}
+
 module.exports = {
     CreateTableForPosterDecks,
     InsertIntoPosterDecks,
@@ -459,5 +522,11 @@ module.exports = {
     FindOption,
     CheckVoted,
     CreateVoter,
-
+    SelectMeetings,
+    TotalMeetingsCount,
+    DeleteChannel,
+    SelectPosters,
+    TotalPostersCount,
+    DeletePoster,
+    GetMeetingName,
 };
