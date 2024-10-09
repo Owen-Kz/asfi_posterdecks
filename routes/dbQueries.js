@@ -4,7 +4,7 @@ config()
 // Setup connection pool
 const pool = mysql.createPool({
   host: process.env.RIHANNA,
-  user: process.env.DB_SARAH,
+  user: process.env.SARAH,
   password: process.env.MANASEY,
   database: process.env.TENI
 });
