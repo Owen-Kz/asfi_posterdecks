@@ -48,5 +48,5 @@ app.use("/", require("./routes/pages"));
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
-// client.end();  // Close the client when you're done with your queries
+ 
+// client.end();  // Close the client when you're done with your queries  

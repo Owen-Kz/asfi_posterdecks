@@ -25,7 +25,7 @@ function pdfRenderer(urlArray, containerArray) {
               const canvas = document.createElement('canvas');
               container.appendChild(canvas);
               const context = canvas.getContext('2d');
-              const viewport = page.getViewport({ scale: 1 });
+              const viewport = page.getViewport({ scale: 0.2 });
 
               // Set canvas dimensions
               canvas.width = viewport.width;

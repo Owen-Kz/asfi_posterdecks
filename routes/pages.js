@@ -78,6 +78,11 @@ router.get("/allchannels",async (req, res) => {
 
 const Storage = require('megajs');
 const { executeQuery, UploadFiles } = require("./dbQueries");
+const GraphChannels = require("../controllers/graphChannels");
+const waitingRoom = require("../controllers/waitingRoom");
+const loginPage = require("../controllers/loginPage");
+const login = require("../controllers/login");
+const loggedIn = require("../controllers/loggedIn");
 
 const uploadPath = path.join(__dirname, '../public/useruploads/');
 const uploadImage = path.join(__dirname, '../public/useruploads/images/');
@@ -114,7 +119,7 @@ router.post("/createdeck", upload.fields([{ name: 'PosterPDF', maxCount: 1 }, { 
   const buffer = fs.readFileSync(pdfFile.path);
   // const imageBuffer = fs.readFileSync(imageFile.path)
 
-  const query = `INSERT INTO files (filename, filedata) VALUES ($1, $2)`;
+  const query = `INSERT INTO files (filename, filedata) VALUES (?, ?)`;
   const values = [pdfFile.filename, buffer];
 
   // const imageValues = [imageFile.filename, imageBuffer]
@@ -153,7 +158,7 @@ router.get("/fetchFiles", (req,res)=>{
 router.get("/files/uploaded/posterpdf/:filename", async (req, res) => {
   const fileName = req.params.filename;
 
-  const query = 'SELECT * FROM files WHERE filename = $1';
+  const query = 'SELECT * FROM files WHERE filename = ?';
   const values = [fileName];
 
   try {
@@ -173,7 +178,7 @@ router.get("/files/uploaded/posterpdf/:filename", async (req, res) => {
 router.get("/files/uploaded/presenterImage/:filename", async (req, res) => {
   const fileName = req.params.filename;
 
-  const query = 'SELECT * FROM files WHERE filename = $1';
+  const query = 'SELECT * FROM files WHERE filename = ?';
   const values = [fileName];
 
   try {
@@ -202,15 +207,15 @@ router.get("/poster", async (req,res)=>{
     res.redirect("/")
 })
 router.get("/event/poster/:posterDeckLink", async(req,res)=>{
-    
     await PosterDeckPreviews(req,res)
 })
+
+
 
 // like a poster 
 router.get("/likeposter/:posterId/:currentCount", async (req,res)=>{
   const posterId = req.params.posterId
   const currentCount = req.params.currentCount
-  
   await LikePoster(req,res,posterId, currentCount)
   res.json({message:"liked"})
 })
@@ -244,8 +249,12 @@ router.get("/viewposter/:posterId/:currentCount", async (req,res)=>{
 router.get("/sessionDashboard", async(req,res)=>{
     res.render("sessionDashboard")
 })
-router.get("/uploadPoster", async(req,res)=>{
-    res.render("uploadPoster")
+router.get("/uploadPoster", loggedIn, async(req,res)=>{
+  if(req.cookies.posterUser){
+    res.render("uploadPoster", {firstname:req.user.first_name, lastname:req.user.last_name, email:req.user.email, prefix:req.user.prefix})
+  }else{
+    res.render("loginExternal")
+  }
 })
 
 // POLLS 
@@ -395,6 +404,18 @@ router.get("/record", (req,res)=>{
   
 
 // End Posters
+router.get("/channels/graph", GraphChannels)
+
+// Waiting Rooms 
+router.post("/v1/channel/join", waitingRoom)
+
+// Login User 
+router.get("/login",loginPage )
+router.post("/api/login", login)
+router.get("/logout", async(req,res)=>{
+  res.clearCookie('posterUser');
+  res.redirect('/login');
+})
 
 router.get("*", (req,res)=>{
   res.render("error", {status:"Page Not Found", page:"/"})

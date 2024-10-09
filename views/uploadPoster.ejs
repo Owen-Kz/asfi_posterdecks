@@ -133,6 +133,7 @@ Upload Poster START -->
 					<label class="form-label">Presenter Prefix*</label>
 					<div class="dropdown">
 						<select class="form-control" name="PresenterPrefix" id="PresenterPrefix">
+							<option value="<%= prefix  %>"><%= prefix  %></option>
 							<option value="N/A">Select your preffered prefix (if any)</option>
 							<option value="Prof">Prof</option>
 							<option value="Dr">Dr</option> 
@@ -146,13 +147,13 @@ Upload Poster START -->
 				</div>
 				<div class="col-12">
 					<label class="form-label">Presenter Name*</label>
-					<input class="form-control" type="text" name="presenterName" id="presenterName" value="" required>
+					<input class="form-control" type="text" name="presenterName" id="presenterName" value="<%=firstname%> <%= lastname %>" required>
 				</div>
 
 				<!-- Presenter Email -->
 				<div class="col-12">
 					<label class="form-label">Presenter Email Address*</label>
-					<input class="form-control" type="email" name="presenterEmail" id="presenterEmail" value="" required>
+					<input class="form-control" type="email" name="presenterEmail" id="presenterEmail" value="<%= email  %>" required>
 				</div>
 
 				<div class="col-12" style="display: none;">
@@ -179,7 +180,11 @@ Upload Poster START -->
           
 				<input type="submit" id="submitPoster" hidden/>
 				<!-- Step 1 button -->
-				<div class="d-flex justify-content-end mt-3">
+				<div class="d-flex justify-content-between mt-3">
+					<a href="/logout">
+						<button type="button" class="btn btn-primary next-btn mb-0">Cancel and Logout</button>
+					</a>
+
 					<button type="submit" class="btn btn-primary next-btn mb-0">Submit</button>
 				</div>
 			</div>

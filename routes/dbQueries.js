@@ -1,52 +1,26 @@
-const { Client } = require('pg');
-const connectionString = process.env.DATABASE_URL;
+const { config } = require('dotenv');
+const mysql = require('mysql2/promise');
+config()
+// Setup connection pool
+const pool = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME
+});
 
-
-// Function to execute a query
-async function executeQuery(query) {
-    const client = new Client({
-        connectionString,
-        ssl: {
-          rejectUnauthorized: false
-        }
-      });
-  try {
-    await client.connect()
-    .then(() => console.log('Connected to the database on port 2020'))
-    .catch(error => console.error('Error connecting to the database', error));
-
-    const result = await client.query(query);
-    return result.rows;
-  } catch (error) {
-    throw new Error('Error executing query: ' + error.message);
-  } finally {
-    await client.end();
-  }
+// Function to execute query
+async function executeQuery(query, values) {
+    const [results] = await pool.execute(query, values);
+    return results;
 }
 
-async function UploadFiles(query, values){
-  const client = new Client({
-    connectionString,
-    ssl: {
-      rejectUnauthorized: false
-    }
-  });
-  try {
-    await client.connect()
-    .then(() => console.log('Connected to the database on port 2020'))
-    .catch(error => console.error('Error connecting to the database', error));
-
-    // Execute the SQL query
-    const result = await client.query(query, values);
-    return result.rows;
-  } catch (error) {
-    throw new Error('Error executing query: ' + error.message);
-  } finally {
-    await client.end();
-  }
+async function UploadFiles(query, values) {
+    return executeQuery(query, values);
 }
+
 
 module.exports = {
-  executeQuery, 
+  executeQuery,
   UploadFiles
-};
+}

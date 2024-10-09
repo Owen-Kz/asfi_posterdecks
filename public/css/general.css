@@ -9,6 +9,7 @@
 body{
 height: 100vh;
 }
+
 :root{
   --golden-Yellow: rgb(106, 6, 107);
   --purple: #7f417d;
