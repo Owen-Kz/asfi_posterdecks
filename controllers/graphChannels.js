@@ -13,5 +13,4 @@ const GraphChannels = async (req, res) => {
     console.error('Error fetching channels:', error);
   } 
 } 
-
 module.exports = GraphChannels;
