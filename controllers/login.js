@@ -1,6 +1,5 @@
 const login = async (req,res) =>{
     const {user, pass} = req.body
-    console.log(req.body)
 
     const response = await fetch(`${process.env.ASFISCHOLAR_ENDPOINT}/api/login`, {
         method:"POST",
