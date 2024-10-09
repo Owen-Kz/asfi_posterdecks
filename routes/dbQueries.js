@@ -5,7 +5,7 @@ config()
 const pool = mysql.createPool({
   host: process.env.RIHANNA,
   user: process.env.SARAH,
-  password: process.env.MANASEY,
+  password: process.env.DB_PASSWORD,
   database: process.env.TENI
 });
 
