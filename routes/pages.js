@@ -48,7 +48,7 @@ const hostname = os.hostname();
 // });
 
 router.get("/", (req,res) =>{
-  res.redirect("https://asfischolar.org")
+  res.redirect("/login")
 })
 // For Posters 
 router.get("/posters", (req,res) =>{
