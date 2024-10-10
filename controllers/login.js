@@ -1,4 +1,5 @@
 const login = async (req,res) =>{
+    try{
     const {user, pass} = req.body
 
     const response = await fetch(`${process.env.ASFISCHOLAR_ENDPOINT}/api/login`, {
@@ -23,6 +24,9 @@ const login = async (req,res) =>{
     }else{
         return res.json({status:"error", error:responseData.error})
     }
+}catch(error){
+    return res.json({error:error.message})
+}
 }
 
 module.exports = login

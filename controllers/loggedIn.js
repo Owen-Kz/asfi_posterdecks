@@ -1,4 +1,5 @@
 const loggedIn = async (req,res, next) =>{
+    try{
     if(req.cookies.posterUser){
         await fetch(`${process.env.ASFISCHOLAR_ENDPOINT}/external/api/validateLogin`,{
             method:"POST",
@@ -20,6 +21,9 @@ const loggedIn = async (req,res, next) =>{
     }else{
         return res.redirect("/login")
     }
+}catch(error){
+    return res.json({error:error.message})
+}
 }
 
 
