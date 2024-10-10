@@ -12,5 +12,5 @@ async function posterDeckTable(req,res, meetingId){
         return res.json({error:error.message})
     }
 }
-
+ 
     module.exports = posterDeckTable

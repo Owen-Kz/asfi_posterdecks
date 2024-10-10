@@ -7,7 +7,7 @@ const GraphChannels = async (req, res) => {
   try {
     const channels = await getAllChannels(token);
     res.json({ channels: channels });
-    console.log('Available channels:', channels);
+    console.log('Available channels:', channels); 
   } catch (error) {
     res.status(500).json({ error: error.message });
     console.error('Error fetching channels:', error);
