@@ -3,7 +3,7 @@ const mysql = require('mysql2/promise');
 config()
 // Setup connection pool
 const pool = mysql.createPool({
-  host: "db4free.net",
+  host: process.env.RIHANNA,
   user: process.env.SARAH,
   password: process.env.SAMMUEL,
   database: process.env.TENI
