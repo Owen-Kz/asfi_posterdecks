@@ -83,6 +83,7 @@ const waitingRoom = require("../controllers/waitingRoom");
 const loginPage = require("../controllers/loginPage");
 const login = require("../controllers/login");
 const loggedIn = require("../controllers/loggedIn");
+const generatePosterId = require("../controllers/generatePosterID");
 
 const uploadPath = path.join(__dirname, '../public/useruploads/');
 const uploadImage = path.join(__dirname, '../public/useruploads/images/');
@@ -416,6 +417,16 @@ router.get("/logout", async(req,res)=>{
   res.clearCookie('posterUser');
   res.redirect('/login');
 })
+
+// Create Poster Id 
+router.get("/create/secret", async (req,res) =>{
+  if(req.cookies.posterUser){
+    res.render("createPosterSecret")
+  }else{
+    res.render("loginExternal")
+  }
+})
+router.post("/create/new/posterid", generatePosterId)
 
 router.get("*", (req,res)=>{
   res.render("error", {status:"Page Not Found", page:"/"})

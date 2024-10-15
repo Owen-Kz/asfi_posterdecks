@@ -183,17 +183,17 @@ function getRandomString() {
 async function InsertIntoPosterDecks(req, res, newFileName, ImageFile){
     const {posterSecretId, eventTitle, deckTitle, PresenterPrefix, presenterName, presenterEmail} = req.body
     const FullPresenterName = `${PresenterPrefix} ${presenterName}`
-    // const ValidateSecreeResult = await ValidateSecretKey(posterSecretId)
+    const ValidateSecreeResult = await ValidateSecretKey(posterSecretId)
 
-    // await updateKeyCount(posterSecretId).then(() =>{
-    //     if(ValidateSecreeResult[0]){ 
+    await updateKeyCount(posterSecretId).then(() =>{
+        if(ValidateSecreeResult[0]){ 
             const DeckId = getRandomString()
             CreateNewDeck(posterSecretId, eventTitle, deckTitle, FullPresenterName, presenterEmail, newFileName, ImageFile, DeckId)
             res.render("success", {status:"Poster Uploaded Successfully", page:`/event/poster/${DeckId}`})
-    //     } else {
-    //         res.render("error", {status:"Poster ID already used or is invalid", page:"/uploadPoster"})
-    //     }
-    // })
+        } else {
+            res.render("error", {status:"Poster ID already used or is invalid", page:"/uploadPoster"})
+        }
+    })
 }
 
 async function CreateNewDeck(posterSecretId, eventTitle, deckTitle, presenterName, presenterEmail, newFileName, ImageFile, DeckId) {
@@ -390,4 +390,5 @@ module.exports = {
     TotalPostersCount,
     DeletePoster,
     GetMeetingName,
+    CreateSerials
 };
