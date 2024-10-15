@@ -1,3 +1,4 @@
+const sendEmail = require('../controllers/sendEmail');
 const { executeQuery, UploadFiles } = require('./dbQueries');
 
 async function CreateTableForPosterDecks() {
@@ -199,6 +200,7 @@ async function CreateNewDeck(posterSecretId, eventTitle, deckTitle, presenterNam
     const sanitizedPresenterName = presenterName.replace(/'/g, "''").replace(/\\/g, '\\\\');
     const sanitizedDeckTitle = deckTitle.replace(/'/g, "''").replace(/\\/g, '\\\\');
 
+    await sendEmail(presenterEmail, sanitizedPresenterName, eventTitle, sanitizedDeckTitle, DeckId)
     // First, ensure the posterdecks table exists
     const createTableQuery = `CREATE TABLE IF NOT EXISTS posterdecks (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -232,7 +234,7 @@ async function CreateNewDeck(posterSecretId, eventTitle, deckTitle, presenterNam
         'description_for_${DeckId}',
         '${DeckId}',
         '${newFileName}',
-        'https://asfiposterdecks.com/${DeckId}',
+        'https://posters.asfischolar.com/${DeckId}',
         '${sanitizedPresenterName}',
         '${ImageFile}',
         '${eventTitle}',

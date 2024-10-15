@@ -50,6 +50,7 @@
     "pg": "^8.11.3",
     "puppeteer": "^21.3.8",
     "puppeteer-recorder": "^1.0.7",
+    "sib-api-v3-sdk": "^8.5.0",
     "socket.io": "^4.7.2",
     "ssh2-sftp-client": "^9.1.0",
     "utf8-encode": "^1.0.0"

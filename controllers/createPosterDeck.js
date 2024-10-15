@@ -4,6 +4,7 @@ async function CreateDeck(req,res, newFileName, ImageFile){
     try {
     
         const TableData  = await InsertIntoPosterDecks(req,res,newFileName,ImageFile)
+        
         // res.render("success", {status:"Poster Uploaded Successfully", page:"/sessionDashboard"})
        
         // const DummyDeck = await InsertDummyPosterDecks(req,res)
