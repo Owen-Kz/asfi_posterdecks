@@ -23091,6 +23091,11 @@ logoHere{
   width:30%;
   transition:300ms ease-in-out;
 }
+@media screen and (max-width:480px), (max-width:720px){
+  .chatBox{
+    width:100%
+  }
+}
 
 .small{
   width:0px;
