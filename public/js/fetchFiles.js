@@ -41,6 +41,14 @@ fetch(`/files/uploaded/posterpdf/${PosterDeckFile.value}`, ()=>{
 }
 
 
+const chatPresenter = document.getElementById("chatPresenter")
+const chatBox = document.getElementById("chatBox")
+if(chatPresenter){
+  chatPresenter.addEventListener("click", function(e){
+    e.preventDefault()
+    chatBox.classList.toggle("small")
+  })
+}
 
 // // READ FILE LIST FUNCTION 
 // function readPDFList(pdfFileList, containersArray){

@@ -84,6 +84,7 @@ const loginPage = require("../controllers/loginPage");
 const login = require("../controllers/login");
 const loggedIn = require("../controllers/loggedIn");
 const generatePosterId = require("../controllers/generatePosterID");
+const ChatPresenterPage = require("../controllers/chatPresenter");
 
 const uploadPath = path.join(__dirname, '../public/useruploads/');
 const uploadImage = path.join(__dirname, '../public/useruploads/images/');
@@ -427,6 +428,9 @@ router.get("/create/secret", async (req,res) =>{
   }
 })
 router.post("/create/new/posterid", generatePosterId)
+
+// Chat presenter 
+router.get("/chat/presenter/:email", ChatPresenterPage)
 
 router.get("*", (req,res)=>{
   res.render("error", {status:"Page Not Found", page:"/"})
