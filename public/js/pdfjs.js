@@ -17,12 +17,12 @@ function renderPDF(url, containerId) {
         const viewport = page.getViewport({ scale:1 });
         const scale = Math.min(canvas.width / viewport.width, canvas.height / viewport.height);
         // Make it visually fill the positioned parent
-        canvas.style.width ='100%';
-        canvas.style.height='100%';
-        // ...then set the internal size to match
-        canvas.width  = viewport.width;
-        canvas.height = viewport.height; 
-        const renderViewport = page.getViewport({ scale });
+  canvas.style.width ='100%';
+  canvas.style.height='100%';
+  // ...then set the internal size to match
+  canvas.width  = viewport.width;
+  canvas.height = viewport.height; 
+  const renderViewport = page.getViewport({ scale });
 
 
   
