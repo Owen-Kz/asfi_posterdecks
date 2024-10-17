@@ -208,7 +208,7 @@ router.get("/poster", async (req,res)=>{
     // res.render("poster")
     res.redirect("/")
 })
-router.get("/event/poster/:posterDeckLink", async(req,res)=>{
+router.get("/event/poster/:posterDeckLink", loggedIn, async(req,res)=>{
     await PosterDeckPreviews(req,res)
 })
 

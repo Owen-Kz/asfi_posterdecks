@@ -3,6 +3,7 @@ const { PreviewDeck } = require("../routes/queries")
 
 async function PosterDeckPreviews(req,res){
     try {
+        if(req.user){
         const DeckView  = await PreviewDeck(req,res)
         const PosterTitle = DeckView[0].poster_deck_title
         const Description = DeckView[0].poster_deck_descritiption
@@ -18,7 +19,9 @@ async function PosterDeckPreviews(req,res){
     
        
         res.render("previewPoster", {PosterTitle:PosterTitle, Description:Description, Presenter:Presenter, PosterFile:PosterFile, PosterId:PosterId, PresenterEmail:PresenterEmail, PresenterImage:PresenterImage, DislikesCount:DislikesCount, ViewsCount:ViewsCount, likes_count:likes_count, DownloadsCount:DownloadsCount})
-
+        }else{
+            res.render("loginExternal")
+        }
         // res.json({PosterDecks:JSON.stringify(DeckView)})
     } catch (error) {
         res.render("error", {status:"404 Not Found", page:"/" })

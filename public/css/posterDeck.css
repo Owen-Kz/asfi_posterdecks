@@ -22823,6 +22823,10 @@ logoHere{
 }
 .img-upload canvas{
   margin:20px;
+  max-width:4%;
+}
+.img-upload-preview canvas{
+  margin:20px;
   max-width:100%;
 }
 .preview-content {
