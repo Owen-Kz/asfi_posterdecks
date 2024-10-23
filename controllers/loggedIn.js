@@ -14,12 +14,13 @@ const loggedIn = async (req,res, next) =>{
                 next()
             }else{
                 console.log(data.error)
-                return res.redirect("/login")
+                return res.render("loginExternal")
+                next();
             }
 
         })
     }else{
-        return res.redirect("/login")
+        return res.render("loginExternal")
     }
 }catch(error){
     return res.json({error:error.message})

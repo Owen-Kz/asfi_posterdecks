@@ -160,9 +160,27 @@ Preview Poster END -->
 <iframe src="/chat/presenter/<%=PresenterEmail%>" frameborder="0"></iframe>
 </div>
 
+
+
 </main>
 <!-- **************** MAIN CONTENT END **************** -->
+<style>
+	.OtherPosters{
+		align-items: center;
+		display:flex;
+		flex-direction: column;
+	}
 
+	#posterListFrame{
+		display: flex;
+		width: 100% !important;
+		height: 100vh;
+	}
+</style>
+<div class="OtherPosters">
+	<h4>More Related Posters</h4>
+	<iframe src="/posterlist/<%=meeting%>" frameborder="0" id="posterListFrame"></iframe>
+</div>
 <!-- Back to top -->
 <div class="back-top"><i class="bi bi-arrow-up-short position-absolute top-50 start-50 translate-middle"></i></div>
 
@@ -235,6 +253,7 @@ document.addEventListener('DOMContentLoaded', function () {
 <script src="/js/likeDislike.js"></script>
 <script src="/js/pdfjs.js"></script>
 <script src="/js/fetchFiles.js"></script>
+
 </body>
 
 </html>

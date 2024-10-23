@@ -19933,6 +19933,7 @@ main {
   background-color: var(--bs-body-bg);
   display:flex;
   flex-direction:row;
+  max-height:700px !important;
 }
 
 header {
@@ -19970,7 +19971,10 @@ section {
   padding-bottom: 2.8rem;
   width:100%;
   display:flex;
-  height:100%;
+  /* align-items:center; */
+  overflow:scroll;
+  /* height:100%; */
+  /* max-height:700px; */
 }
 
 @media (max-width: 767.98px) {
@@ -22796,6 +22800,7 @@ logoHere{
   flex-direction: row;
   width: 100%;
   height: 100% ;
+  max-height:700px;
   overflow:scroll;
   border-radius: 20px;
   box-shadow: 10px 10px 12px rgba(0, 0, 0, 0.2);
@@ -22828,6 +22833,7 @@ logoHere{
 .img-upload-preview canvas{
   margin:20px;
   max-width:100%;
+  max-height:500pc;
 }
 .preview-content {
   width: 50%;

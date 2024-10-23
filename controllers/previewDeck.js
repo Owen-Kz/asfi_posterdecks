@@ -16,9 +16,10 @@ async function PosterDeckPreviews(req,res){
         const DislikesCount = DeckView[0].dislike_count
         const ViewsCount = DeckView[0].views_count
         const DownloadsCount = DeckView[0].downloads_count
+        const PosterMeeting = DeckView[0].poster_deck_meeting
     
        
-        res.render("previewPoster", {PosterTitle:PosterTitle, Description:Description, Presenter:Presenter, PosterFile:PosterFile, PosterId:PosterId, PresenterEmail:PresenterEmail, PresenterImage:PresenterImage, DislikesCount:DislikesCount, ViewsCount:ViewsCount, likes_count:likes_count, DownloadsCount:DownloadsCount})
+        res.render("previewPoster", {PosterTitle:PosterTitle, Description:Description, Presenter:Presenter, PosterFile:PosterFile, PosterId:PosterId, PresenterEmail:PresenterEmail, PresenterImage:PresenterImage, DislikesCount:DislikesCount, ViewsCount:ViewsCount, likes_count:likes_count, DownloadsCount:DownloadsCount, meeting: PosterMeeting})
         }else{
             res.render("loginExternal")
         }
