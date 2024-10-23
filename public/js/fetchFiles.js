@@ -4,6 +4,13 @@ const presenterImage = document.querySelector("#presenterImage")
 const PosterDeckFile = document.getElementById("posterDeckFile")
 const PresenterImageFile = document.getElementById("presenterImageFile")
 
+const ZoomItem = document.getElementById("pdfLink")
+const filePreviewContainer = document.getElementById("filePreviewContainer")
+
+ZoomItem.addEventListener("click", function(e){
+  e.preventDefault()
+  filePreviewContainer.classList.toggle("huge-preview")
+})
 
 if(PosterDeckFile) {
 fetch(`/files/uploaded/posterpdf/${PosterDeckFile.value}`, ()=>{

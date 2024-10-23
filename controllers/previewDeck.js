@@ -17,9 +17,26 @@ async function PosterDeckPreviews(req,res){
         const ViewsCount = DeckView[0].views_count
         const DownloadsCount = DeckView[0].downloads_count
         const PosterMeeting = DeckView[0].poster_deck_meeting
-    
-       
-        res.render("previewPoster", {PosterTitle:PosterTitle, Description:Description, Presenter:Presenter, PosterFile:PosterFile, PosterId:PosterId, PresenterEmail:PresenterEmail, PresenterImage:PresenterImage, DislikesCount:DislikesCount, ViewsCount:ViewsCount, likes_count:likes_count, DownloadsCount:DownloadsCount, meeting: PosterMeeting})
+        let affiliation = ""
+        let country = ""
+        if(DeckView[0].affiliation !== null){
+            affiliation = `${DeckView[0].affiliation}, `
+        }
+
+        if(DeckView[0].country !== null){
+            country = DeckView[0].country;
+        }
+
+        
+        let Picture = ""
+        if(req.user.profile_picture === "avatar.jpg"){
+            Picture = "https://res.cloudinary.com/dll8awuig/image/upload/v1705444097/dc69h8mggh01bvlvbowh.jpg"
+        }else if(!Picture){
+            Picture = "https://res.cloudinary.com/dll8awuig/image/upload/v1705444097/dc69h8mggh01bvlvbowh.jpg"
+        }else{
+            Picture = req.user.profile_picture
+        }
+        res.render("previewPoster", {PosterTitle:PosterTitle, Description:Description, Presenter:Presenter, PosterFile:PosterFile, PosterId:PosterId, PresenterEmail:PresenterEmail, PresenterImage:Picture, DislikesCount:DislikesCount, ViewsCount:ViewsCount, likes_count:likes_count, DownloadsCount:DownloadsCount, meeting: PosterMeeting, affiliation:affiliation, country: country})
         }else{
             res.render("loginExternal")
         }

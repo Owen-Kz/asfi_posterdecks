@@ -22897,6 +22897,8 @@ logoHere{
 
 .presenter-info {
   display: flex;
+  /* background:red; */
+  align-items:center;
 }
 .circular-image {
   width: 70px; /* Adjust the width and height to your preference */
@@ -22906,8 +22908,9 @@ logoHere{
   margin-right: 6px;
 }
 .presenter-info p {
-  margin-top: 5px;
-  padding: 0px;
+  /* background:gold; */
+  /* margin-top: 5px; */
+  padding: 10px;
 }
 
 .views {
@@ -23117,4 +23120,44 @@ logoHere{
   padding:0px;
   background:#333;
   height:100%;
+}
+section{
+  /* background:green; */
+  padding:0px;
+}
+.huge-preview{
+  /* background:yellow; */
+  width:100% !important;
+  max-width:100%;
+  height:100% !important;
+  max-height:100% !important;
+}
+.huge-preview #pdfLink{
+  width:100% !important;
+}
+.huge-preview .card-body{
+  height:100% !important;
+  max-height: 100%;
+  /* background:purple; */
+}
+.huge-preview .preview-img{
+  width:100% !important;
+  max-width:100%;
+  /* background:pink; */
+  padding:0px;  
+}
+
+.presenterDetails{
+  display:flex;
+  flex-direction:column;
+  height:max-content;
+  justify-content:flex-start;
+}
+
+.presenterDetails p{
+  margin:0px !important;
+  height:30px !important;
+}
+.presenterDetails p:not(:first-child){
+  font-weight:lighter;
 }

@@ -77,17 +77,19 @@
 <!-- =======================
 Preview Poster START -->
 <section>
-	<div class="container">
+  
+  <div class="container" id="filePreviewContainer" style="transition:300ms ease-in-out;">
 
-	    <div class="card-body" >
+	    <div class="card-body " >
 		   <!-- Step 1 content START -->
 		    <div class="content">
-			    <div class="preview-container">
+			    <div class="preview-container ">
                    <div class="preview-img" style='overflow-y:scroll; display:flex;'>
 					<input type="hidden" id="posterDeckFile" value="<%=PosterFile%>">
 					<input type="hidden" id="presenterImageFile" value="<%=PresenterImage%>">
-					<a class="pdfLink" id="pdfLink" download="<%=PosterTitle%>-<%=Presenter%>-asfischolar.pdf">
-						<div id="pdf-container-1" class="img-upload img-upload-preview"></div>
+
+					<a class="pdfLink" id="pdfLink" >
+						<div id="pdf-container-1" class="img-upload img-upload-preview "></div>
 					</a>
 					
 				   </div>
@@ -104,13 +106,18 @@ Preview Poster START -->
 						<h5>Presented By</h5>
 						<div class="presenter-info">
 					
+							
+							<img alt="Loading...." class="circular-image" id="presenterImage" src="<%= PresenterImage %>">
+
+							<div class="presenterDetails">
 							<p><%=Presenter%></p>
-							<img alt="Loading...." class="circular-image" id="presenterImage" style="display: none;">
+							<p><%= affiliation %> <%= country %></p>
+						   </div>
 						</div>
 						
 					</span>
 					
-					<div>Chat With Presnter:
+					<div>Chat With Presenter:
 						<br>
 						<!-- <i>For Gmail users please copy presenter email and then click on gmail</i> -->
 					</div>
@@ -174,7 +181,8 @@ Preview Poster END -->
 	#posterListFrame{
 		display: flex;
 		width: 100% !important;
-		height: 100vh;
+		height: max-content;
+		padding:50px
 	}
 </style>
 <div class="OtherPosters">

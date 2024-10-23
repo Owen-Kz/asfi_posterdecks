@@ -181,14 +181,14 @@ function getRandomString() {
 }
 
 async function InsertIntoPosterDecks(req, res, newFileName, ImageFile){
-    const {posterSecretId, eventTitle, deckTitle, PresenterPrefix, presenterName, presenterEmail} = req.body
+    const {posterSecretId, eventTitle, deckTitle, PresenterPrefix, presenterName, presenterEmail, presenterAffiliation, presenterCountry} = req.body
     const FullPresenterName = `${PresenterPrefix} ${presenterName}`
     const ValidateSecreeResult = await ValidateSecretKey(posterSecretId)
 
     await updateKeyCount(posterSecretId).then(() =>{
         if(ValidateSecreeResult[0]){ 
             const DeckId = getRandomString()
-            CreateNewDeck(posterSecretId, eventTitle, deckTitle, FullPresenterName, presenterEmail, newFileName, ImageFile, DeckId)
+            CreateNewDeck(posterSecretId, eventTitle, deckTitle, FullPresenterName, presenterEmail, presenterAffiliation, presenterCountry, newFileName, ImageFile, DeckId)
             res.render("success", {status:"Poster Uploaded Successfully", page:`/event/poster/${DeckId}`})
         } else {
             res.render("error", {status:"Poster ID already used or is invalid", page:"/uploadPoster"})
@@ -196,7 +196,7 @@ async function InsertIntoPosterDecks(req, res, newFileName, ImageFile){
     })
 }
 
-async function CreateNewDeck(posterSecretId, eventTitle, deckTitle, presenterName, presenterEmail, newFileName, ImageFile, DeckId) {
+async function CreateNewDeck(posterSecretId, eventTitle, deckTitle, presenterName, presenterEmail, presenterAffiliation, presenterCountry, newFileName, ImageFile, DeckId) {
     const sanitizedPresenterName = presenterName.replace(/'/g, "''").replace(/\\/g, '\\\\');
     const sanitizedDeckTitle = deckTitle.replace(/'/g, "''").replace(/\\/g, '\\\\');
 
@@ -228,7 +228,9 @@ async function CreateNewDeck(posterSecretId, eventTitle, deckTitle, presenterNam
         poster_deck_owner,
         presenter_image,
         poster_deck_meeting,
-        presenter_email
+        presenter_email,
+        affiliation,
+        country
     ) VALUES (
         '${sanitizedDeckTitle}',
         'description_for_${DeckId}',
@@ -238,7 +240,9 @@ async function CreateNewDeck(posterSecretId, eventTitle, deckTitle, presenterNam
         '${sanitizedPresenterName}',
         '${ImageFile}',
         '${eventTitle}',
-        '${presenterEmail}'
+        '${presenterEmail}',
+        '${presenterAffiliation}',
+        '${presenterCountry}'
     );`;
     
     // Execute the insert query
