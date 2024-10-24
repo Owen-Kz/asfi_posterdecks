@@ -34,18 +34,17 @@ async function PosterDeckPreviews(req,res){
         const GetPresenterDetails =  await ProfileDetails(PresenterEmail)
 
         if(!GetPresenterDetails.error){
-        if(GetPresenterDetails.profile_picture === "avatar.jpg"){
+        if(GetPresenterDetails.userDetails.profile_picture === "avatar.jpg"){
             Picture = "https://res.cloudinary.com/dll8awuig/image/upload/v1705444097/dc69h8mggh01bvlvbowh.jpg"
-        }else if(!GetPresenterDetails.profile_picture){
+        }else if(!GetPresenterDetails.userDetails.profile_picture){
             Picture = "https://res.cloudinary.com/dll8awuig/image/upload/v1705444097/dc69h8mggh01bvlvbowh.jpg"
         }else{
-            Picture = GetPresenterDetails.profile_picture
+            Picture = GetPresenterDetails.userDetails.profile_picture
         }
         }else{
             Picture = "https://res.cloudinary.com/dll8awuig/image/upload/v1705444097/dc69h8mggh01bvlvbowh.jpg"
         }
-   
-
+    
         let isOwner = false 
         if(PresenterEmail === req.user.email){
             isOwner = true
