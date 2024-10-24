@@ -4,19 +4,34 @@ const posterDeckTable = require("../controllers/posterDeckTable");
 const CreateDeck = require("../controllers/createPosterDeck");
 const router = express.Router();
 const multer = require('multer');
-router.use(express.json())
 const bodyParser = require("body-parser");
 const path = require("path");
 const PosterDeckPreviews = require("../controllers/previewDeck");
 const { RetrievePosterDecksTableForAdmin, validateIdNumber, LikePoster, DisLikePoster, ViewPoster, DownloadCount, CreateQuestion, CreateOptions, FindQuestion, FindOption, VotePoll, CheckVoted, CreateVoter, SelectMeetings, TotalMeetingsCount, DeleteChannel, SelectPosters, TotalPostersCount, DeletePoster, GetMeetingName } = require("./queries");
 const ScreenCapture = require("../puppetter");
 const setValue = require("../zetValues");
+const Storage = require('megajs');
+const { executeQuery, UploadFiles } = require("./dbQueries");
+const GraphChannels = require("../controllers/graphChannels");
+const waitingRoom = require("../controllers/waitingRoom");
+const loginPage = require("../controllers/loginPage");
+const login = require("../controllers/login");
+const loggedIn = require("../controllers/loggedIn");
+const generatePosterId = require("../controllers/generatePosterID");
+const ChatPresenterPage = require("../controllers/chatPresenter");
+const sessionDashboard = require("../controllers/sessionDashboard");
+
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(express.urlencoded({ extended: true }));
+router.use(express.json())
 
 const fs = require("fs")
 const os = require('os');
+const uploadPosterPage = require("../controllers/pages/uploadPosterPage");
+const deletePoster = require("../controllers/deletePoster");
+const editPosterPage = require("../controllers/pages/editPosterPage");
+const { uploadFields, editDeck } = require("../controllers/editPoster");
 
 // Get the system's hostname
 const hostname = os.hostname();
@@ -54,11 +69,17 @@ router.get("/", (req,res) =>{
 router.get("/posters", (req,res) =>{
   res.redirect("/uploadPoster")
 })
-router.get("/posteradmin", async(req,res) =>{
-
-const PosterAdmin = await RetrievePosterDecksTableForAdmin(req,res)
-res.json({PosterDecks:JSON.stringify(PosterAdmin)})
+router.get("/posteradmin", loggedIn, async(req,res) =>{
+  if(req.user){
+    const Email = req.user.email
+  const PosterAdmin = await RetrievePosterDecksTableForAdmin(req,res, Email)
+  res.json({PosterDecks:JSON.stringify(PosterAdmin)})
+}else{
+  res.json({PosterDecks:"[]"})
+}
 })
+
+
 router.get("/posterlist/:meetingID",(req,res)=>{
   const meetingID = req.params.meetingID
   res.render("posterDeckList", {meetingID:meetingID})
@@ -76,16 +97,6 @@ router.get("/allchannels",async (req, res) => {
 })
 
 
-const Storage = require('megajs');
-const { executeQuery, UploadFiles } = require("./dbQueries");
-const GraphChannels = require("../controllers/graphChannels");
-const waitingRoom = require("../controllers/waitingRoom");
-const loginPage = require("../controllers/loginPage");
-const login = require("../controllers/login");
-const loggedIn = require("../controllers/loggedIn");
-const generatePosterId = require("../controllers/generatePosterID");
-const ChatPresenterPage = require("../controllers/chatPresenter");
-const largeFilePage = require("../controllers/largeFilePage");
 
 const uploadPath = path.join(__dirname, '../public/useruploads/');
 const uploadImage = path.join(__dirname, '../public/useruploads/images/');
@@ -249,16 +260,8 @@ router.get("/viewposter/:posterId/:currentCount", async (req,res)=>{
   res.json({message:"viewed"})
 })
 
-router.get("/sessionDashboard", async(req,res)=>{
-    res.render("sessionDashboard")
-})
-router.get("/uploadPoster", loggedIn, async(req,res)=>{
-  if(req.cookies.posterUser){
-    res.render("uploadPoster", {firstname:req.user.first_name, lastname:req.user.last_name, email:req.user.email, prefix:req.user.prefix})
-  }else{
-    res.render("loginExternal")
-  }
-})
+router.get("/sessionDashboard", loggedIn, sessionDashboard)
+router.get("/uploadPoster", loggedIn, uploadPosterPage)
 
 // POLLS 
 router.get("/polls/:meetingID", (req,res)=>{
@@ -381,11 +384,7 @@ router.get("/admin/posters/list/total", async (req,res)=>{
   res.json({TotalPosters: TotalCount[0].total_posters})
 })
 
-router.get("/admin/poster/delete", async (req,res)=>{
-  const posterId = req.query.posterID
-  const DeletedPoster = await DeletePoster(posterId)
-  res.json({message: "posterDeleted"})
-})
+router.post("/delete/:posterID", loggedIn, deletePoster)
 
 
 // GET Meeting NAme 
@@ -431,9 +430,13 @@ router.get("/create/secret", async (req,res) =>{
 router.post("/create/new/posterid", generatePosterId)
 
 // Chat presenter 
-router.get("/chat/presenter/:email", ChatPresenterPage)
+router.get("/chat/presenter/:spaceID", ChatPresenterPage)
 
-router.get("/file/:fileName", loggedIn, largeFilePage )
+// Edit posters page 
+router.get("/edit/poster/:posterDeckLink", loggedIn, editPosterPage)
+
+// Submit the edit poster form 
+router.post("/editdeck", uploadFields, editDeck)
 
 router.get("*", (req,res)=>{
   res.render("error", {status:"Page Not Found", page:"/"})

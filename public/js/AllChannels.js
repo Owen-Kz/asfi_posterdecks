@@ -5,7 +5,6 @@ fetch("/allchannels", {
     method: "GET"
 }).then(res => res.json())
 .then(data =>{
-    console.log(data)
     const AllChannelsData = JSON.parse(data.ChannelData)
 
     if(AllChannelsData.length > 0){ 

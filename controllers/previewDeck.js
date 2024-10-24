@@ -36,7 +36,12 @@ async function PosterDeckPreviews(req,res){
         }else{
             Picture = req.user.profile_picture
         }
-        res.render("previewPoster", {PosterTitle:PosterTitle, Description:Description, Presenter:Presenter, PosterFile:PosterFile, PosterId:PosterId, PresenterEmail:PresenterEmail, PresenterImage:Picture, DislikesCount:DislikesCount, ViewsCount:ViewsCount, likes_count:likes_count, DownloadsCount:DownloadsCount, meeting: PosterMeeting, affiliation:affiliation, country: country})
+
+        let isOwner = false 
+        if(PresenterEmail === req.user.email){
+            isOwner = true
+        }
+        res.render("previewPoster", {PosterTitle:PosterTitle, Description:Description, Presenter:Presenter, PosterFile:PosterFile, PosterId:PosterId, PresenterEmail:PresenterEmail, PresenterImage:Picture, DislikesCount:DislikesCount, ViewsCount:ViewsCount, likes_count:likes_count, DownloadsCount:DownloadsCount, meeting: PosterMeeting, affiliation:affiliation, country: country, isOwner:isOwner})
         }else{
             res.render("loginExternal")
         }

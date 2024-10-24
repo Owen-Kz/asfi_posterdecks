@@ -23,7 +23,7 @@ const loggedIn = async (req,res, next) =>{
         return res.render("loginExternal")
     }
 }catch(error){
-    return res.json({error:error.message})
+    return res.json({error:error.message, message:"Could not establish connection with server"})
 }
 }
 

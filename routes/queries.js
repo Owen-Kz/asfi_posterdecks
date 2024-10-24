@@ -1,4 +1,5 @@
 const sendEmail = require('../controllers/sendEmail');
+const CreateDeckChatRoom = require('../controllers/createChatRoomForDeck');
 const { executeQuery, UploadFiles } = require('./dbQueries');
 
 async function CreateTableForPosterDecks() {
@@ -201,6 +202,7 @@ async function CreateNewDeck(posterSecretId, eventTitle, deckTitle, presenterNam
     const sanitizedDeckTitle = deckTitle.replace(/'/g, "''").replace(/\\/g, '\\\\');
 
     await sendEmail(presenterEmail, sanitizedPresenterName, eventTitle, sanitizedDeckTitle, DeckId)
+    await CreateDeckChatRoom(sanitizedDeckTitle,`A Poster Presented By ${sanitizedPresenterName}`, DeckId)
     // First, ensure the posterdecks table exists
     const createTableQuery = `CREATE TABLE IF NOT EXISTS posterdecks (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -265,8 +267,8 @@ async function validateIdNumber(req, res, key){
     }
 }
 
-async function RetrievePosterDecksTableForAdmin(req, res){
-    const query = `SELECT * FROM posterdecks`
+async function RetrievePosterDecksTableForAdmin(req, res, presenterEmail){
+    const query = `SELECT * FROM posterdecks WHERE presenter_email = '${presenterEmail}'`
     return executeQuery(query)
 }
 
@@ -356,8 +358,8 @@ async function TotalPostersCount(){
     return executeQuery(query)
 }
 
-async function DeletePoster(poster_id){
-    const query = `DELETE FROM posterdecks WHERE id = '${poster_id}'`
+async function DeletePoster(poster_id, presenterEMail){
+    const query = `DELETE FROM posterdecks WHERE poster_deck_id = '${poster_id}' AND presenter_email = '${presenterEMail}'`
     return executeQuery(query)
 }
 
@@ -365,6 +367,39 @@ async function GetMeetingName(meeting_id){
     const query = `SELECT * FROM meetings WHERE meeting_id = '${meeting_id}'`
     return executeQuery(query)
 }
+
+
+// Edit Poster Deck 
+async function EditPosterDeck(eventTitle, deckTitle, presenterName, presenterEmail, presenterAffiliation, presenterCountry, newFileName, ImageFile, DeckId) {
+    const sanitizedPresenterName = presenterName.replace(/'/g, "''").replace(/\\/g, '\\\\');
+    const sanitizedDeckTitle = deckTitle.replace(/'/g, "''").replace(/\\/g, '\\\\');
+
+
+console.log("EDIT DATA", eventTitle, deckTitle, presenterName, presenterEmail, presenterAffiliation, presenterCountry, newFileName, ImageFile, DeckId)
+    // Then, insert the new deck data
+    const insertQuery = `UPDATE posterdecks SET 
+        poster_deck_title = '${sanitizedDeckTitle}',
+        poster_deck_descritiption = 'description_for_${DeckId}',
+        poster_deck_image = '${newFileName}',
+        poster_deck_link = 'https://posters.asfischolar.com/${DeckId}',
+        poster_deck_owner = '${sanitizedPresenterName}',
+        presenter_image = '${ImageFile}',
+        poster_deck_meeting = '${eventTitle}',
+        presenter_email = '${presenterEmail}',
+        affiliation = '${presenterAffiliation}',
+        country = '${presenterCountry}' WHERE poster_deck_id = '${DeckId}';`;
+    
+    // Execute the insert query
+    return executeQuery(insertQuery);
+}
+
+async function UpdatePosterDecks(req, res, newFileName, ImageFile){
+    const {posterSecretId, eventTitle, deckTitle, PresenterPrefix, presenterName, presenterEmail, presenterAffiliation, presenterCountry} = req.body
+    const FullPresenterName = `${PresenterPrefix} ${presenterName}`
+
+    EditPosterDeck(eventTitle, deckTitle, FullPresenterName, presenterEmail, presenterAffiliation, presenterCountry, newFileName, ImageFile, posterSecretId)
+}
+
 
 module.exports = {
     CreateTableForPosterDecks,
@@ -394,5 +429,6 @@ module.exports = {
     TotalPostersCount,
     DeletePoster,
     GetMeetingName,
-    CreateSerials
+    CreateSerials,
+    UpdatePosterDecks
 };

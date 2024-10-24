@@ -19,13 +19,23 @@ fetch(`/posteradmin`, ()=>{
             <div>
                 <h5>${posterDeckTitle}</h5>
     
-                <p class="p-name" id="posterName">Presenter name <span id="posterEmail">${posterDeckOwner}</span></p>
+                <p class="p-name" id="posterName">Presenter name: <span id="posterEmail">${posterDeckOwner}</span></p>
             </div>
         <div style="display: flex;">
        
             <div class="tester-side">
                 <h4 class="text-2xl flex font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate">
                   <a href="/event/poster/${posterDeckLink}">Preview</a>
+
+                  <form action="/delete/${posterDeckLink}" method="POST">
+                  
+                     <button type="submit">Delete and Re-upload
+                     </button>
+                  
+                  </form>
+
+                    <a href="edit/poster/${posterDeckLink}">Edit</a>
+
                 </h4>
             </div>
         </div>

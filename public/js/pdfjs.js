@@ -14,7 +14,7 @@ function renderPDF(url, containerId) {
         const canvas = document.createElement('canvas');
         container.appendChild(canvas);
         const context = canvas.getContext('2d');
-        const viewport = page.getViewport({ scale:1 });
+        const viewport = page.getViewport({ scale:3});
         const scale = Math.min(canvas.width / viewport.width, canvas.height / viewport.height);
         // Make it visually fill the positioned parent
   canvas.style.width ='100%';

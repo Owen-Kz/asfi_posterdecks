@@ -51,6 +51,7 @@ function deleteCookie(cookieName) {
 }
 
 let ClickCount = 0
+if(LikeButton){
 LikeButton.addEventListener("click", function(){
     if(LikedTrue){
         console.log("Poster Already Liked")
@@ -77,6 +78,9 @@ LikeButton.addEventListener("click", function(){
 }
 }
 })
+}
+
+if(DisLikeButton){
 
 DisLikeButton.addEventListener("click", function(){
     if(DislikeTrue){
@@ -103,6 +107,7 @@ DisLikeButton.addEventListener("click", function(){
 }
 }
 })
+}
 
 
 
@@ -132,6 +137,7 @@ const downloadPoster = document.getElementById("downloadPoster")
 const download_count_container = document.getElementById("download_count_container")
 const CurrentDownloadCount = download_count_container.value
 
+if(downloadPoster){
 if(!Downloaded){
 function DownloadCount(){
 downloadPoster.addEventListener("click", function(){
@@ -149,4 +155,5 @@ downloadPoster.addEventListener("click", function(){
 }
 
 DownloadCount()
+}
 }
