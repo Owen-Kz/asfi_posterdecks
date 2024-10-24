@@ -1,4 +1,5 @@
 const { PreviewDeck } = require("../routes/queries")
+const ProfileDetails = require("./getProfileDetails")
 
 
 async function PosterDeckPreviews(req,res){
@@ -29,12 +30,19 @@ async function PosterDeckPreviews(req,res){
 
         
         let Picture = ""
-        if(req.user.profile_picture === "avatar.jpg"){
+
+        const GetPresenterDetails =  await ProfileDetails(PresenterEmail)
+
+        if(!GetPresenterDetails.error){
+        if(GetPresenterDetails.profile_picture === "avatar.jpg"){
             Picture = "https://res.cloudinary.com/dll8awuig/image/upload/v1705444097/dc69h8mggh01bvlvbowh.jpg"
-        }else if(!req.user.profile_picture){
+        }else if(!GetPresenterDetails.profile_picture){
             Picture = "https://res.cloudinary.com/dll8awuig/image/upload/v1705444097/dc69h8mggh01bvlvbowh.jpg"
         }else{
-            Picture = req.user.profile_picture
+            Picture = GetPresenterDetails.profile_picture
+        }
+        }else{
+            Picture = "https://res.cloudinary.com/dll8awuig/image/upload/v1705444097/dc69h8mggh01bvlvbowh.jpg"
         }
    
 
