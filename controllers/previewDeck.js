@@ -31,11 +31,12 @@ async function PosterDeckPreviews(req,res){
         let Picture = ""
         if(req.user.profile_picture === "avatar.jpg"){
             Picture = "https://res.cloudinary.com/dll8awuig/image/upload/v1705444097/dc69h8mggh01bvlvbowh.jpg"
-        }else if(!Picture){
+        }else if(!req.user.profile_picture){
             Picture = "https://res.cloudinary.com/dll8awuig/image/upload/v1705444097/dc69h8mggh01bvlvbowh.jpg"
         }else{
             Picture = req.user.profile_picture
         }
+   
 
         let isOwner = false 
         if(PresenterEmail === req.user.email){
