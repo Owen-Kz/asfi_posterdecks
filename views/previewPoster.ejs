@@ -26,6 +26,35 @@
     
         <!-- <link rel="stylesheet" href="/css/material-design-iconic-font.css"> -->
         <!-- <link rel="stylesheet" href="/css/weather-icons/css/weather-icons-core.css"> -->
+
+		<style>
+    .star-rating {
+      display: flex;
+      direction: row;
+      font-size: 2em;
+      cursor: pointer;
+      color: lightgray;
+    }
+    .star-rating .star {
+      padding: 0 5px;
+      transition: color 0.2s;
+    }
+    .star-rating .star:hover,
+    .star-rating .star.selected {
+      color: gold;
+    }
+    .average-star-rating .star {
+      color: lightgray;
+      font-size: 2em;
+    }
+    .average-star-rating .star.filled {
+      color: gold;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 1.2em;
+    }
+  </style>
     
         <title><%=PosterTitle%></title>
         <!-- Dark mode -->
@@ -117,7 +146,7 @@ Preview Poster START -->
 						   </div>
 						</div>
 						
-					</span>
+					</span> <br><br>
 					
 					<% if(isOwner === true) { %>
 						<button id="chatPresenter" type="button" style="background-color: #6f42c1; color: whitesmoke;">See Messages</button>
@@ -166,6 +195,33 @@ Preview Poster START -->
 							</span>
 						</a>
 						<% } %>
+
+<% if(isOwner === true) { %>
+							<div class="result">
+    <p style="margin-bottom: -10px;"><strong>Poster Average Rating:</strong> <span id="average-rating">0</span> / 5</p>
+    <div class="average-star-rating" id="average-star-rating">
+      <span class="star">&#9733;</span>
+      <span class="star">&#9733;</span>
+      <span class="star">&#9733;</span>
+      <span class="star">&#9733;</span>
+      <span class="star">&#9733;</span>
+    </div>
+    <p><strong>Total Ratings:</strong> <span id="total-ratings">0</span></p>
+  </div>
+							
+							<% }else{ %>
+ 
+  <% } %>
+   <h4>Rate this Poster:</h4>
+   <p style="margin-bottom: -10px;"><strong>Poster Average Rating:</strong> <span id="user-average-rating">0</span> / 5</p>
+  <div class="star-rating">
+    <span class="star" data-value="1">&#9733;</span>
+    <span class="star" data-value="2">&#9733;</span>
+    <span class="star" data-value="3">&#9733;</span>
+    <span class="star" data-value="4">&#9733;</span>
+    <span class="star" data-value="5">&#9733;</span>
+  </div>
+  
 					   </div>
 
 					   
@@ -219,6 +275,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 </script>
+
 
 <!-- JavaScript -->
 <!-- <script>
@@ -277,6 +334,7 @@ document.addEventListener('DOMContentLoaded', function () {
 <script src="/js/likeDislike.js"></script>
 <script src="/js/pdfjs.js"></script>
 <script src="/js/fetchFiles.js"></script>
+<script src="/js/posterRating.js"></script>
 
 </body>
 
