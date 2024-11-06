@@ -67,8 +67,8 @@ document.querySelectorAll(".star-rating .star").forEach((star) => {
 });
 
 
-POST REQUEST : /saveRating 
-req.body {rating, username, posterID }
+// POST REQUEST : /saveRating 
+// req.body {rating, username, posterID }
 
-GEt REQUEST : /getTotalRatings/?pid=posterID
-REPLACE psoterID With the current PosterId
+// GEt REQUEST : /getTotalRatings/?pid=posterID
+// REPLACE psoterID With the current PosterId
