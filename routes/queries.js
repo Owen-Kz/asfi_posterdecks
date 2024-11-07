@@ -399,7 +399,29 @@ async function UpdatePosterDecks(req, res, newFileName, ImageFile){
 
     EditPosterDeck(eventTitle, deckTitle, FullPresenterName, presenterEmail, presenterAffiliation, presenterCountry, newFileName, ImageFile, posterSecretId)
 }
+async function CheckIfRatingExists(username, posterID){
+    const Query = `SELECT * FROM ratings WHERE posterId = '${posterID}' AND username = '${username}'`
+    return executeQuery(Query)
+}
 
+async function GetTotalRatings(posterID){
+    try{
+    const Query = `SELECT SUM(rating) AS totalRatings FROM ratings WHERE posterId  = '${posterID}'`
+    return executeQuery(Query)
+    }catch(error){
+        return {error:error}
+    }
+}
+async function SaveRating(rating, username, posterId){
+    const RatingExists = await CheckIfRatingExists(username, posterId)
+
+    if(RatingExists.length > 0){
+        return {error:"User aleady rated this poster"}
+    }else{
+    const Query = `INSERT INTO ratings (rating, posterId, username) VALUES ('${rating}', '${posterId}', '${username}')`
+    return executeQuery(Query)
+    }
+}
 
 module.exports = {
     CreateTableForPosterDecks,
@@ -430,5 +452,7 @@ module.exports = {
     DeletePoster,
     GetMeetingName,
     CreateSerials,
-    UpdatePosterDecks
+    UpdatePosterDecks,
+    SaveRating,
+    GetTotalRatings
 };

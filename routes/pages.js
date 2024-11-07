@@ -7,7 +7,7 @@ const multer = require('multer');
 const bodyParser = require("body-parser");
 const path = require("path");
 const PosterDeckPreviews = require("../controllers/previewDeck");
-const { RetrievePosterDecksTableForAdmin, validateIdNumber, LikePoster, DisLikePoster, ViewPoster, DownloadCount, CreateQuestion, CreateOptions, FindQuestion, FindOption, VotePoll, CheckVoted, CreateVoter, SelectMeetings, TotalMeetingsCount, DeleteChannel, SelectPosters, TotalPostersCount, DeletePoster, GetMeetingName } = require("./queries");
+const { RetrievePosterDecksTableForAdmin, validateIdNumber, LikePoster, DisLikePoster, ViewPoster, DownloadCount, CreateQuestion, CreateOptions, FindQuestion, FindOption, VotePoll, CheckVoted, CreateVoter, SelectMeetings, TotalMeetingsCount, DeleteChannel, SelectPosters, TotalPostersCount, DeletePoster, GetMeetingName, GetTotalRatings } = require("./queries");
 const ScreenCapture = require("../puppetter");
 const setValue = require("../zetValues");
 const Storage = require('megajs');
@@ -32,6 +32,7 @@ const uploadPosterPage = require("../controllers/pages/uploadPosterPage");
 const deletePoster = require("../controllers/deletePoster");
 const editPosterPage = require("../controllers/pages/editPosterPage");
 const { uploadFields, editDeck } = require("../controllers/editPoster");
+const saveRatingToDB = require("../controllers/saveRating");
 
 // Get the system's hostname
 const hostname = os.hostname();
@@ -437,6 +438,17 @@ router.get("/edit/poster/:posterDeckLink", loggedIn, editPosterPage)
 
 // Submit the edit poster form 
 router.post("/editdeck", uploadFields, editDeck)
+
+
+// Save Poster Ratings 
+router.post("/saveRating", saveRatingToDB)
+
+// Get Total Ratings  
+router.get("/getTotalRatings", async (req,res) =>{
+  const posterId = req.query.pid
+ return res.json(await GetTotalRatings(posterId))
+})
+
 
 router.get("*", (req,res)=>{
   res.render("error", {status:"Page Not Found", page:"/"})
