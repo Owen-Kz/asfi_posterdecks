@@ -53,7 +53,7 @@ async function PosterDeckPreviews(req,res){
         }else{
             res.render("loginExternal")
         }
-        console.log(DeckView)
+    
         // res.json({PosterDecks:JSON.stringify(DeckView)})
     } catch (error) {
         res.render("error", {status:error.message, page:"/" })
