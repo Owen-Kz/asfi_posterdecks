@@ -53,10 +53,11 @@ async function PosterDeckPreviews(req,res){
         }else{
             res.render("loginExternal")
         }
+    
         // res.json({PosterDecks:JSON.stringify(DeckView)})
     } catch (error) {
-        res.render("error", {status:"404 Not Found", page:"/" })
-        console.error("Error", error.message)
+        res.render("error", {status:error.message, page:"/" })
+        console.error("Error", error)
     }
 }
 
