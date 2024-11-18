@@ -1,7 +1,8 @@
 const { SaveRating } = require("../routes/queries")
 
 const saveRatingToDB = async (req,res) =>{
-    const {rating, username, posterID} = req.body
+    const {rating, posterID} = req.body
+    const username = req.user.username
     try {
     
         const SAVED = await SaveRating(rating, username, posterID)

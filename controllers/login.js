@@ -22,9 +22,11 @@ const login = async (req,res) =>{
         res.cookie("posterUser", responseData.userToken, cookieOptions)
         res.json({status: "success", success: "User Logged in",})
     }else{
+        console.log(responseData)
         return res.json({status:"error", error:responseData.error})
     }
 }catch(error){
+    console.log(error)
     return res.json({status:"error", error:error.message})
 }
 }
