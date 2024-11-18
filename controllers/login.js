@@ -25,7 +25,7 @@ const login = async (req,res) =>{
         return res.json({status:"error", error:responseData.error})
     }
 }catch(error){
-    return res.json({error:error.message})
+    return res.json({status:"error", error:error.message})
 }
 }
 
