@@ -36,7 +36,7 @@ const sendEmail = async (useremail, name, meetingID, posterTitle,posterDeckId) =
 
         } catch (error) {
             console.log("Error sending email:", error);
-            return res.json({ error: error.message });
+            return { error: error.message };
         }
 
 };

@@ -2,7 +2,7 @@ const { PreviewDeck } = require("../routes/queries")
 const ProfileDetails = require("./getProfileDetails")
 
 
-async function PosterDeckPreviews(req,res){
+async function PosterDeckPreviews(req,res){ 
     try {
         if(req.user){
         const DeckView  = await PreviewDeck(req,res)

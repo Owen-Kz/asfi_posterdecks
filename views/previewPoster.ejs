@@ -8,7 +8,8 @@
 	    <meta name="description" content="ASFI, African Science Frontiers Initiative, African Scientists, African Scholars, Scholars, Education">
         <link rel="stylesheet" href="/css/posterDeck.css">
 		<link rel="stylesheet" href="/css/general.css">
-
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.0/css/fontawesome.min.css" integrity="sha512-OYtfQLIh44db+qhIErkWKrmij09a8CNwItEH4yiRIY0gZhRj2sKNIIsRrvEPdqMbgzT1opjSAJXsteTfxuJjOQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.0/css/all.min.css" integrity="sha512-9xKTRVabjVeZmc+GUW8GgSmcREDunMM+Dt/GrzchfN8tkwHizc5RP4Ok/MXFFy5rIjJjzhndFScTceq5e6GvVQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 		
         <!-- Plugins CSS -->
@@ -54,6 +55,36 @@
       margin-top: 20px;
       font-size: 1.2em;
     }
+	#closeChat{
+		background-color: rgb(247, 50, 50); 
+		border: none; 
+		color: white; 
+		z-index: 999; 
+		/* position: absolute;  */
+		margin-left: 8px; 
+		margin-top: 10px; 
+		/* border-radius: 20px;  */
+		height:30px;
+		width:30px;
+		padding: 5px;
+	}
+	#return {
+		background-color: rgb(58, 58, 58); 
+		border: none; 
+		color: white; 
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+		justify-content: center;
+		z-index: 999; 
+		/* position: absolute;  */
+		margin-left: 8px; 
+		margin-top: 10px; 
+		/* border-radius: 20px;  */
+		height:30px;
+		width:30px;
+		padding: 5px;
+	}
   </style>
     
         <title><%=PosterTitle%></title>
@@ -237,10 +268,20 @@ Preview Poster START -->
 <!-- =======================
 Preview Poster END -->
 
-<div class="chatBox small" id="chatBox" style="z-index: 998928;"> <button id="closeChat" type="button" style="background-color: rgb(247, 50, 50); border: none; color: white; z-index: 999; position: absolute; margin-left: 8px; margin-top: 10px; border-radius: 30%; padding: 5px;">
-	X
-</button>
-<iframe src="/chat/presenter/<%=PosterId%>" frameborder="0"></iframe>
+<div class="chatBox small" id="chatBox" style="z-index: 998928;"> 
+	<div class="navButtonsContainer">
+		<button id="closeChat" type="button" >
+			X
+		</button>
+		
+		<button id="return" type="button" onclick="changeSource(`/chat/presenter/<%=PosterId%>`)">
+			<i class="fas fa-chevron-left" title="Return to Previous Page"></i>
+		</button>
+		
+	</div>
+
+
+<iframe src="/chat/presenter/<%=PosterId%>" frameborder="0" id="chatFrame"></iframe>
 </div>
 
 
@@ -324,13 +365,6 @@ document.addEventListener('DOMContentLoaded', function () {
 <!-- Bootstrap JS -->
 <script src="/js/bootstrap.bundle.min.js"></script>
 
-<!-- Vendors -->
-<!-- <script src="/vendor/tiny-slider/tiny-slider.js"></script> -->
-<!-- <script src="/js/choices.min.js"></script> -->
-<!-- <script src="/js/aos.js"></script>
-<script src="/js/glightbox.js"></script>
-<script src="/js/quill.min.js"></script>
-<script src="/js/bs-stepper.min.js"></script> -->
 
 <!-- Template Functions -->
 <script src="/js/functions.js"></script>
@@ -338,7 +372,16 @@ document.addEventListener('DOMContentLoaded', function () {
 <script src="/js/likeDislike.js"></script>
 <script src="/js/pdfjs.js"></script>
 <script src="/js/fetchFiles.js"></script>
-<script src="/js/posterRating.js"></script>
+
+<!-- For Returning to the previous page  -->
+<script>
+	const chatFrame = document.getElementById("chatFrame")
+	function changeSource(url){
+		chatFrame.src = url
+	}
+</script>
+
+<!-- <script src="/js/posterRating.js"></script> -->
 
 </body>
 

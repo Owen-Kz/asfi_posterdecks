@@ -8,7 +8,7 @@ const averageStarRatingElement = document.getElementById("average-star-rating");
 
 // Replace with your actual user and poster details
 const username = "currentUsername"; // Replace with dynamic username
-const posterID = document.getElementById("posterID")
+// const posterID = document.getElementById("posterID")
 
 // Function to update average rating in numbers and stars
 function updateAverageRating() {
@@ -18,8 +18,10 @@ function updateAverageRating() {
 
   // Update numeric average rating
   averageRatingElement.innerText = averageRating.toFixed(1);
+  if(userAverageRating){
   userAverageRating.innerText = averageRating.toFixed(1);
   totalRatingsElement.innerText = totalRatings;
+  }
 
   // Update stars based on average rating
   const fullStars = Math.floor(averageRating);

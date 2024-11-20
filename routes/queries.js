@@ -161,7 +161,7 @@ async function CreateSerials(data_secret){
 }
 
 async function ValidateSecretKey(secret){
-    const query = `SELECT * FROM poster_decks_secret_container WHERE poster_deck_id = '${secret}'`
+    const query = `SELECT * FROM poster_decks_secret_container WHERE poster_deck_id = '${secret}' AND use_count = 0`
     return executeQuery(query)
 }
 
@@ -274,6 +274,7 @@ async function RetrievePosterDecksTableForAdmin(req, res, presenterEmail){
 
 async function PreviewDeck(req, res){
     const posterDeckLink = req.params.posterDeckLink
+  
     const query = `SELECT * FROM posterdecks WHERE poster_deck_id = '${posterDeckLink}'`
     return executeQuery(query)
 }
