@@ -253,7 +253,7 @@ router.get("/downloadpostercount/:posterId/:currentCount",loggedIn, async (req,r
 
 // View Poster 
 // Dislike poster 
-router.get("/viewposter/:posterId/:currentCount", async (req,res)=>{
+router.get("/viewposter/:posterId/:currentCount", loggedIn, async (req,res)=>{
   const posterId = req.params.posterId
   const currentCount = req.params.currentCount
 
