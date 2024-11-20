@@ -228,7 +228,7 @@ router.get("/event/poster/:posterDeckLink", loggedIn, async(req,res)=>{
 
 
 // like a poster 
-router.get("/likeposter/:posterId/:currentCount", async (req,res)=>{
+router.get("/likeposter/:posterId/:currentCount", loggedIn, async (req,res)=>{
   const posterId = req.params.posterId
   const currentCount = req.params.currentCount
   await LikePoster(req,res,posterId, currentCount)
@@ -236,14 +236,14 @@ router.get("/likeposter/:posterId/:currentCount", async (req,res)=>{
 })
 
 // Dislike poster 
-router.get("/dislikeposter/:posterId/:currentCount", async (req,res)=>{
+router.get("/dislikeposter/:posterId/:currentCount",loggedIn, async (req,res)=>{
   const posterId = req.params.posterId
   const currentCount = req.params.currentCount
   await DisLikePoster(req,res,posterId, currentCount)
   res.json({message:"disliked"})
 })
 // DOWNLOAD POSTER COUNT
-router.get("/downloadpostercount/:posterId/:currentCount", async (req,res)=>{
+router.get("/downloadpostercount/:posterId/:currentCount",loggedIn, async (req,res)=>{
   const PosterID = req.params.posterId
   const CurrentCount = req.params.currentCount
   await DownloadCount(req,res, PosterID, CurrentCount)

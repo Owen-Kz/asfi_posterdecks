@@ -1,4 +1,4 @@
-const { PreviewDeck } = require("../routes/queries")
+const { PreviewDeck, TotalLikes, TotalDisLikes, TotalDownloads, TotalViews } = require("../routes/queries")
 const ProfileDetails = require("./getProfileDetails")
 
 
@@ -6,6 +6,14 @@ async function PosterDeckPreviews(req,res){
     try {
         if(req.user){
         const DeckView  = await PreviewDeck(req,res)
+        const TotalLikesCount = await TotalLikes(DeckView[0].poster_deck_id)
+        const likes_count = TotalLikesCount[0].likes_count
+        const TotalDislikesCount = await TotalDisLikes(DeckView[0].poster_deck_id)
+        const DislikesCount = TotalDislikesCount[0].dislike_count
+
+        const TotalDownloadsCount = await TotalDownloads(DeckView[0].poster_deck_id)
+        const TotalViewsCount = await TotalViews(DeckView[0].poster_deck_id)
+
         const PosterTitle = DeckView[0].poster_deck_title
         const Description = DeckView[0].poster_deck_descritiption
         const Presenter = DeckView[0].poster_deck_owner
@@ -13,10 +21,8 @@ async function PosterDeckPreviews(req,res){
         const PosterId = DeckView[0].poster_deck_id
         const PresenterEmail = DeckView[0].presenter_email
         const PresenterImage = DeckView[0].presenter_image
-        const likes_count = DeckView[0].likes_count
-        const DislikesCount = DeckView[0].dislike_count
-        const ViewsCount = DeckView[0].views_count
-        const DownloadsCount = DeckView[0].downloads_count
+        const ViewsCount = TotalViewsCount[0].views_count
+        const DownloadsCount = TotalDownloadsCount[0].downloads_count
         const PosterMeeting = DeckView[0].poster_deck_meeting
         let affiliation = ""
         let country = ""

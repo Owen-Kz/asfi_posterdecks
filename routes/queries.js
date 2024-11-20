@@ -2,6 +2,20 @@ const sendEmail = require('../controllers/sendEmail');
 const CreateDeckChatRoom = require('../controllers/createChatRoomForDeck');
 const { executeQuery, UploadFiles } = require('./dbQueries');
 
+
+async function HasLiked(username, posterID, reaction){
+    const query = `SELECT * FROM poster_reactions WHERE username = '${username}' AND poster_id = '${posterID}' AND reaction = '${reaction}'`
+    return executeQuery(query)
+}
+async function CreateReaction(username, posterID, reaction){
+    const query = `INSERT INTO poster_reactions (username, poster_id, reaction) VALUES ('${username}', '${posterID}', '${reaction}')`
+    return executeQuery(query)
+}
+async function DeleteReaction(username, posterID, reaction){
+    const query = `DELETE FROM poster_reactions WHERE username = '${username}' AND poster_id = '${posterID}' AND reaction = '${reaction}'`
+    return executeQuery(query)
+}
+
 async function CreateTableForPosterDecks() {
     const query = `CREATE TABLE poster_decks_secret_container (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -10,6 +24,16 @@ async function CreateTableForPosterDecks() {
       )`;
     return executeQuery(query);
 }
+async function TotalViews(posterId){
+    const query = `SELECT COUNT(*) AS views_count FROM poster_reactions WHERE poster_id = '${posterId}' AND reaction = 'viewed' `
+    return executeQuery(query)
+}
+
+async function TotalDownloads(posterId){
+    const query = `SELECT COUNT(*) AS views_count FROM poster_reactions WHERE poster_id = '${posterId}' AND reaction = 'downloaded' `
+    return executeQuery(query)
+}
+
 
 async function CreateFileStorageTable(){
     const query = `CREATE TABLE files (
@@ -284,13 +308,13 @@ async function getAllFromTable() {
     return executeQuery(query);
 }
 
-async function TotalDisLikes(req, res, posterId, currentCount){
-    const query = `SELECT dislike_count FROM posterdecks WHERE poster_deck_id = '${posterId}'`
+async function TotalDisLikes(posterId){
+    const query = `SELECT COUNT(*) AS dislike_count FROM poster_reactions WHERE poster_id = '${posterId}' AND reaction = 'disliked'`
     return executeQuery(query)
 }
 
 async function ReduceDisLikes(req, res, posterId, currentCount){
-    const TOtalDisLikes = await TotalDisLikes(req, res, posterId, currentCount)
+    const TOtalDisLikes = await TotalDisLikes(posterId)
     let AddedCount = Number(TOtalDisLikes[0].dislike_count) - 1
     if(AddedCount < 0){
         AddedCount = 0
@@ -300,38 +324,77 @@ async function ReduceDisLikes(req, res, posterId, currentCount){
 }
 
 async function DisLikePoster(req, res, posterId, currentCount){
-    const TOtalDisLikes = await TotalDisLikes(req, res, posterId, currentCount)
+    const HasLikedPoster = await HasLiked(req.user.username, posterId, "disliked")
+
+    if(HasLikedPoster.length > 0){
+
+        return []
+        }else{
+            PreviouslyLiked = await HasLiked(req.user.username, posterId, "liked")
+            if(PreviouslyLiked.length > 0){
+              await DeleteReaction(req.user.username, posterId, "liked")
+            }
+            CreateReaction(req.user.username, posterId, "disliked")
+    const TOtalDisLikes = await TotalDisLikes(posterId)
     const NewCount = Number(TOtalDisLikes[0].dislike_count) + 1
     const query = `UPDATE posterdecks SET dislike_count = '${NewCount}' WHERE poster_deck_id = '${posterId}'`
     return executeQuery(query)
 }
+}
 
-async function TotalLikes(req, res, posterId, currentCount){
-    const query = `SELECT likes_count FROM posterdecks WHERE poster_deck_id = '${posterId}'`
+async function TotalLikes(posterId){
+    const query = `SELECT COUNT(*) AS likes_count FROM poster_reactions WHERE poster_id = '${posterId}' AND reaction = 'liked'`
     return executeQuery(query)
 }
 
 async function LikePoster(req, res, posterId, currentCount){
-    const TOtalLikes = await TotalLikes(req, res, posterId, currentCount)
+    // Chck if the user already liked the poster 
+    const HasLikedPoster = await HasLiked(req.user.username, posterId, "liked")
+
+    if(HasLikedPoster.length > 0){
+        return []
+        }else{
+            PreviouslyDisLiked = await HasLiked(req.user.username, posterId, "disliked")
+            if(PreviouslyDisLiked.length > 0){
+               await DeleteReaction(req.user.username, posterId, "disliked")
+            }
+            CreateReaction(req.user.username, posterId, "liked")
+    const TOtalLikes = await TotalLikes(posterId)
     const NewCount = Number(TOtalLikes[0].likes_count) + 1
     const query = `UPDATE posterdecks SET likes_count = '${NewCount}' WHERE poster_deck_id = '${posterId}'`
     return executeQuery(query)
+        }
 }
 
 async function ViewPoster(req, res, posterId){
-    const query = `SELECT views_count FROM posterdecks WHERE poster_deck_id = '${posterId}'`
-    const totalViews = await executeQuery(query)
+    const HasLikedPoster = await HasLiked(req.user.username, posterId, "viewed")
+
+    if(HasLikedPoster.length > 0){
+
+        return []
+        }else{
+            CreateReaction(req.user.username, posterId, "viewed")
+    const totalViews = await TotalViews(posterId)
     const NewCount = Number(totalViews[0].views_count) + 1
     const updateQuery = `UPDATE posterdecks SET views_count = '${NewCount}' WHERE poster_deck_id = '${posterId}'`
     return executeQuery(updateQuery)
+        }
 }
 
 async function DownloadCount(req, res, posterId){
-    const query = `SELECT downloads_count FROM posterdecks WHERE poster_deck_id = '${posterId}'`
-    const TotalDownloads = await executeQuery(query)
+    const HasLikedPoster = await HasLiked(req.user.username, posterId, "downloaded")
+
+    if(HasLikedPoster.length > 0){
+
+        return []
+        }else{
+            CreateReaction(req.user.username, posterId, "downloaded")
+  
+    const TotalDownloads = await TotalDownloads(posterId)
     const NewCount = Number(TotalDownloads[0].downloads_count) + 1
     const updateQuery = `UPDATE posterdecks SET downloads_count = '${NewCount}' WHERE poster_deck_id = '${posterId}'`
     return executeQuery(updateQuery)
+        }
 }
 
 async function SelectMeetings(){
@@ -455,5 +518,9 @@ module.exports = {
     CreateSerials,
     UpdatePosterDecks,
     SaveRating,
-    GetTotalRatings
+    GetTotalRatings,
+    TotalLikes,
+    TotalDisLikes,
+    TotalViews,
+    TotalDownloads
 };
