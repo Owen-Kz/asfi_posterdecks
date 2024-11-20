@@ -8,9 +8,9 @@
 	    <meta name="description" content="ASFI, African Science Frontiers Initiative, African Scientists, African Scholars, Scholars, Education">
         <link rel="stylesheet" href="/css/posterDeck.css">
 		<link rel="stylesheet" href="/css/general.css">
-		
-        
 
+
+		
         <!-- Plugins CSS -->
 	<!-- <link rel="stylesheet" type="text/css" href="/css/choices.min.css"> -->
 	<!-- <link rel="stylesheet" type="text/css" href="/vendor/aos/aos.css">
@@ -153,10 +153,6 @@ Preview Poster START -->
 						<button id="chatPresenter" type="button" style="background-color: #6f42c1; color: whitesmoke;">See Messages</button>
 
 						<% }else{ %>
-					<div>Chat With Presenter:
-						<br>
-						<!-- <i>For Gmail users please copy presenter email and then click on gmail</i> -->
-					</div>
 					
 
 					<!-- <a href="#" data-target="chatBox" > -->
@@ -213,9 +209,7 @@ Preview Poster START -->
   </div>
 							
 							<% }else{ %>
- 
-  <% } %>
-   <h4>Rate this Poster:</h4>
+								<h4>Rate this Poster:</h4>
    <p style="margin-bottom: -10px;"><strong>Poster Average Rating:</strong> <span id="user-average-rating">0</span> / 5</p>
   <div class="star-rating">
     <span class="star" data-value="1">&#9733;</span>
@@ -224,6 +218,11 @@ Preview Poster START -->
     <span class="star" data-value="4">&#9733;</span>
     <span class="star" data-value="5">&#9733;</span>
   </div>
+								
+  <% } %>
+  
+ 
+   
   
 					   </div>
 
@@ -238,7 +237,9 @@ Preview Poster START -->
 <!-- =======================
 Preview Poster END -->
 
-<div class="chatBox small" id="chatBox" style="z-index: 998928;">
+<div class="chatBox small" id="chatBox" style="z-index: 998928;"> <button id="closeChat" type="button" style="background-color: rgb(247, 50, 50); border: none; color: white; z-index: 999; position: absolute; margin-left: 8px; margin-top: 10px; border-radius: 30%; padding: 5px;">
+	X
+</button>
 <iframe src="/chat/presenter/<%=PosterId%>" frameborder="0"></iframe>
 </div>
 
