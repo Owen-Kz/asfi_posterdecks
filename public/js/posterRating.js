@@ -6,6 +6,10 @@ const averageRatingElement = document.getElementById("average-rating");
 const userAverageRating = document.getElementById("user-average-rating");
 const averageStarRatingElement = document.getElementById("average-star-rating");
 
+// Replace with your actual user and poster details
+const username = "currentUsername"; // Replace with dynamic username
+const posterID = document.getElementById("posterID")
+
 // Function to update average rating in numbers and stars
 function updateAverageRating() {
   const totalRatings = ratings.length;
@@ -13,13 +17,15 @@ function updateAverageRating() {
   const averageRating = totalRatings ? sumOfRatings / totalRatings : 0;
 
   // Update numeric average rating
-    averageRatingElement.innerText = averageRating.toFixed(1);
-    userAverageRating.innerText = averageRating.toFixed(1);
+  averageRatingElement.innerText = averageRating.toFixed(1);
+  userAverageRating.innerText = averageRating.toFixed(1);
   totalRatingsElement.innerText = totalRatings;
 
   // Update stars based on average rating
   const fullStars = Math.floor(averageRating);
   const hasHalfStar = averageRating % 1 >= 0.5;
+
+
 
   // Reset all stars
   averageStarRatingElement
@@ -39,13 +45,47 @@ function updateAverageRating() {
   }
 }
 
+// Fetch ratings from backend
+async function fetchRatings() {
+  try {
+    const response = await fetch(`/getTotalRatings/?pid=${posterID}`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch ratings");
+    }
+    const data = await response.json(); // Assuming the API returns an array of ratings
+    ratings = data.ratings || [];
+    updateAverageRating();
+  } catch (error) {
+    console.error("Error fetching ratings:", error);
+  }
+}
+
+// Save rating to backend
+async function saveRating(rating) {
+  try {
+    const response = await fetch("/saveRating", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ rating, username, posterID }),
+    });
+    if (!response.ok) {
+      throw new Error("Failed to save rating");
+    }
+    alert("Rating saved successfully");
+  } catch (error) {
+    alert("Error saving rating:", error);
+  }
+}
+
 // Star rating functionality
 document.querySelectorAll(".star-rating .star").forEach((star) => {
-  star.addEventListener("click", function () {
+  star.addEventListener("click", async function () {
     if (!hasRated) {
-      // Check if user has already rated
       const rating = parseInt(this.getAttribute("data-value"));
       ratings.push(rating); // Add the new rating to the list
+      await saveRating(rating); // Save rating to backend
       updateAverageRating(); // Recalculate average rating
       hasRated = true; // Set flag to true, preventing further ratings
 
@@ -61,14 +101,10 @@ document.querySelectorAll(".star-rating .star").forEach((star) => {
           [i].classList.add("selected");
       }
     } else {
-      alert("You have already rated this item."); // Optional: Alert user if they try to rate again
+      alert("You have already rated this item.");
     }
   });
 });
 
-
-// POST REQUEST : /saveRating 
-// req.body {rating, username, posterID }
-
-// GEt REQUEST : /getTotalRatings/?pid=posterID
-// REPLACE psoterID With the current PosterId
+// Initialize by fetching existing ratings
+fetchRatings();

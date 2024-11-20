@@ -50,6 +50,15 @@ if(chatPresenter){
   })
 }
 
+const closeChat = document.getElementById("closeChat")
+const closeBox = document.getElementById("chatBox")
+if(closeChat){
+  closeChat.addEventListener("click", function(e){
+    e.preventDefault()
+    closeBox.classList.toggle("small")
+  })
+}
+
 const ZoomItem = document.getElementById("pdfLink")
 const filePreviewContainer = document.getElementById("filePreviewContainer")
 if(ZoomItem){
