@@ -23183,11 +23183,22 @@ section{
 
 .presenterDetails p{
   margin:0px !important;
-  height:30px !important;
+  height:30px;
 }
 .presenterDetails p:not(:first-child){
   font-weight:lighter;
 }
+
+.presenterDetails .presenter{
+  margin:0px !important;
+  padding-top: 20px;
+  height: max-content;
+}
+
+.presenterDetails .presenterAffi{
+  margin-left: 10px;
+}
+
 #posterDeckMain li{
   border-bottom:1px solid rgb(65, 65, 65);;
 }
