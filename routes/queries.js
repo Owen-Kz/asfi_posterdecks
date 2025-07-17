@@ -476,11 +476,22 @@ async function GetTotalRatings(posterID){
         return {error:error}
     }
 }
+async function GetAllRatings(posterID){
+    try{
+    const Query = `SELECT rating FROM ratings WHERE posterId  = '${posterID}'`
+    return executeQuery(Query)
+    
+    }catch(error){
+        console.log(error)
+        return {error:error}
+    }
+}
 async function SaveRating(rating, username, posterId){
     const RatingExists = await CheckIfRatingExists(username, posterId)
 
     if(RatingExists.length > 0){
-        return {error:"User aleady rated this poster"}
+        console.log("Rating Exists")
+        return {error:"User aleady rated this poster", currentRating:RatingExists[0].rating}
     }else{
     const Query = `INSERT INTO ratings (rating, posterId, username) VALUES ('${rating}', '${posterId}', '${username}')`
     return executeQuery(Query)
@@ -522,5 +533,7 @@ module.exports = {
     TotalLikes,
     TotalDisLikes,
     TotalViews,
-    TotalDownloads
+    TotalDownloads,
+    GetAllRatings,
+    CheckIfRatingExists
 };

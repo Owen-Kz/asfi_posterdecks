@@ -1,26 +1,65 @@
 // Variables to store rating information
-let ratings = [];
-let hasRated = false; // Flag to track if user has already rated
+let ratings = [];  
+let hasRated = false; // Flag to track if use  has already rated
 const totalRatingsElement = document.getElementById("total-ratings");
 const averageRatingElement = document.getElementById("average-rating");
 const userAverageRating = document.getElementById("user-average-rating");
 const averageStarRatingElement = document.getElementById("average-star-rating");
-
-// Replace with your actual user and poster details
-const username = "currentUsername"; // Replace with dynamic username
+const main_poster_id = document.getElementById("posterID")
 // const posterID = document.getElementById("posterID")
 
 // Function to update average rating in numbers and stars
-function updateAverageRating() {
-  const totalRatings = ratings.length;
-  const sumOfRatings = ratings.reduce((a, b) => a + b, 0);
+async function AllRatings(){
+  return fetch(`/getAllRatings?pid=${main_poster_id.value}` )
+  .then(res =>res.json())
+  .then( data =>{
+
+    // ratings = data || [];
+    return data
+  })
+}
+async function CreateAllFunctions(){
+ ratings = await AllRatings()
+
+}
+
+
+await CreateAllFunctions()
+
+updateAverageRating();
+
+// Fetch ratings from backend
+async function fetchTotalRatings() {
+  try {
+    const response = await fetch(`/getTotalRatings?pid=${main_poster_id.value}`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch ratings");
+    }
+    const data = await response.json(); // Assuming the API returns an array of ratings
+    const TotalRatingsMain = data[0].totalRatings
+   
+    return TotalRatingsMain
+  } catch (error) {
+    console.error("Error fetching ratings:", error);
+  }
+}
+
+
+async function updateAverageRating() {
+  const totalRatings = ratings.length; 
+  const sumOfRatings = await fetchTotalRatings()
+  console.log("SUMRATINGS", sumOfRatings)
+  console.log("TOTALRATIGNS", totalRatings)
   const averageRating = totalRatings ? sumOfRatings / totalRatings : 0;
 
   // Update numeric average rating
-  averageRatingElement.innerText = averageRating.toFixed(1);
+  if(averageRatingElement){
+    averageRatingElement.innerText = averageRating.toFixed(1);
+    totalRatingsElement.innerText = totalRatings;
+  }
+ 
   if(userAverageRating){
   userAverageRating.innerText = averageRating.toFixed(1);
-  totalRatingsElement.innerText = totalRatings;
   }
 
   // Update stars based on average rating
@@ -47,20 +86,8 @@ function updateAverageRating() {
   }
 }
 
-// Fetch ratings from backend
-async function fetchRatings() {
-  try {
-    const response = await fetch(`/getTotalRatings/?pid=${posterID}`);
-    if (!response.ok) {
-      throw new Error("Failed to fetch ratings");
-    }
-    const data = await response.json(); // Assuming the API returns an array of ratings
-    ratings = data.ratings || [];
-    updateAverageRating();
-  } catch (error) {
-    console.error("Error fetching ratings:", error);
-  }
-}
+
+
 
 // Save rating to backend
 async function saveRating(rating) {
@@ -70,17 +97,43 @@ async function saveRating(rating) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ rating, username, posterID }),
-    });
-    if (!response.ok) {
-      throw new Error("Failed to save rating");
-    }
+      body: JSON.stringify({ rating,  posterID:main_poster_id.value }),
+    }).then(res => res.json())
+    .then(data =>{
+      console.log(data.error)
+   
+     if(data.error && data.error === "User aleady rated this poster"){
+      
+      alert("Previously Rated")
+    }else if(data.error && data.error !== "User aleady rated this poster"){
+      alert(data.error);
+
+    }else{
     alert("Rating saved successfully");
+    }
+  });
   } catch (error) {
+    console.log(error)
     alert("Error saving rating:", error);
   }
 }
 
+const StarsContainer = document.getElementById("stars_container")
+fetch(`/checkRatingExists?pid=${main_poster_id.value}`, {
+  
+}).then (res =>res.json())
+.then(data =>{
+  if(data.currentRating > 0){
+    
+    for (let i = 0; i < data.currentRating; i++) {
+      document
+        .querySelectorAll(".star-rating .star")
+        [i].classList.add("selected");
+    }
+  }else{
+    console.log(data)
+  }
+})
 // Star rating functionality
 document.querySelectorAll(".star-rating .star").forEach((star) => {
   star.addEventListener("click", async function () {
@@ -88,7 +141,7 @@ document.querySelectorAll(".star-rating .star").forEach((star) => {
       const rating = parseInt(this.getAttribute("data-value"));
       ratings.push(rating); // Add the new rating to the list
       await saveRating(rating); // Save rating to backend
-      updateAverageRating(); // Recalculate average rating
+     updateAverageRating(); // Recalculate average rating
       hasRated = true; // Set flag to true, preventing further ratings
 
       // Reset star colors
@@ -108,5 +161,4 @@ document.querySelectorAll(".star-rating .star").forEach((star) => {
   });
 });
 
-// Initialize by fetching existing ratings
-fetchRatings();
+

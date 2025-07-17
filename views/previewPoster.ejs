@@ -173,8 +173,8 @@ Preview Poster START -->
 							<img alt="Loading...." class="circular-image" id="presenterImage" src="<%= PresenterImage %>">
 
 							<div class="presenterDetails">
-							<p><%=Presenter%></p>
-							<p><%= affiliation %> <%= country %></p>
+							<p class="presenter"><%=Presenter%></p>
+							<span class="presenterAffi"><%= affiliation %> <%= country %></span>
 						   </div>
 						</div>
 						
@@ -238,17 +238,26 @@ Preview Poster START -->
     </div>
     <p><strong>Total Ratings:</strong> <span id="total-ratings">0</span></p>
   </div>
+
+  
 							
 							<% }else{ %>
 								<h4>Rate this Poster:</h4>
-   <p style="margin-bottom: -10px;"><strong>Poster Average Rating:</strong> <span id="user-average-rating">0</span> / 5</p>
-  <div class="star-rating">
-    <span class="star" data-value="1">&#9733;</span>
-    <span class="star" data-value="2">&#9733;</span>
-    <span class="star" data-value="3">&#9733;</span>
-    <span class="star" data-value="4">&#9733;</span>
-    <span class="star" data-value="5">&#9733;</span>
-  </div>
+								<p style="margin-bottom: -10px;"><strong>Poster Average Rating:</strong> <span id="user-average-rating">0</span> / 5</p>
+							   <div class="star-rating">
+								 <span class="star" data-value="1">&#9733;</span>
+								 <span class="star" data-value="2">&#9733;</span>
+								 <span class="star" data-value="3">&#9733;</span>
+								 <span class="star" data-value="4">&#9733;</span>
+								 <span class="star" data-value="5">&#9733;</span>
+							   </div>	
+							   <!-- <div class="average-star-rating" id="user-star-rating" style="display: none;">
+								<span class="star" data-value="1">&#9733;</span>
+								<span class="star" data-value="2">&#9733;</span>
+								<span class="star" data-value="3">&#9733;</span>
+								<span class="star" data-value="4">&#9733;</span>
+								<span class="star" data-value="5">&#9733;</span>
+							  </div>							 -->
 								
   <% } %>
   
@@ -381,7 +390,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 </script>
 
-<!-- <script src="/js/posterRating.js"></script> -->
+<script src="/js/posterRating.js" type="module"></script>
 
 </body>
 

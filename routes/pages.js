@@ -7,7 +7,7 @@ const multer = require('multer');
 const bodyParser = require("body-parser");
 const path = require("path");
 const PosterDeckPreviews = require("../controllers/previewDeck");
-const { RetrievePosterDecksTableForAdmin, validateIdNumber, LikePoster, DisLikePoster, ViewPoster, DownloadCount, CreateQuestion, CreateOptions, FindQuestion, FindOption, VotePoll, CheckVoted, CreateVoter, SelectMeetings, TotalMeetingsCount, DeleteChannel, SelectPosters, TotalPostersCount, DeletePoster, GetMeetingName, GetTotalRatings } = require("./queries");
+const { RetrievePosterDecksTableForAdmin, validateIdNumber, LikePoster, DisLikePoster, ViewPoster, DownloadCount, CreateQuestion, CreateOptions, FindQuestion, FindOption, VotePoll, CheckVoted, CreateVoter, SelectMeetings, TotalMeetingsCount, DeleteChannel, SelectPosters, TotalPostersCount, DeletePoster, GetMeetingName, GetTotalRatings, GetAllRatings, CheckIfRatingExists } = require("./queries");
 const ScreenCapture = require("../puppetter");
 const setValue = require("../zetValues");
 const Storage = require('megajs');
@@ -449,7 +449,7 @@ router.post("/editdeck", uploadFields, editDeck)
 
 
 // Save Poster Ratings 
-router.post("/saveRating", saveRatingToDB)
+router.post("/saveRating", loggedIn, saveRatingToDB)
 
 // Get Total Ratings  
 router.get("/getTotalRatings", async (req,res) =>{
@@ -457,6 +457,28 @@ router.get("/getTotalRatings", async (req,res) =>{
  return res.json(await GetTotalRatings(posterId))
 })
 
+// All Ratings  
+router.get("/getAllRatings", async (req,res) =>{
+  const posterId = req.query.pid
+ return res.json(await GetAllRatings(posterId))
+})
+
+router.get("/checkRatingExists", loggedIn, async(req,res) =>{
+  try{
+  const user = req.user.username
+  const posterId = req.query.pid 
+  const Rated = await CheckIfRatingExists(user, posterId)
+
+  if(Rated[0].id){
+    return res.json({error:"user_rated", currentRating:Rated[0].rating})
+  }else{
+    return res.json({currentRating:0})
+  }
+}catch(error){
+  console.log(error)
+  return res.json({error, currentRating:0})
+}
+})
 
 router.get("*", (req,res)=>{
   res.render("error", {status:"Page Not Found", page:"/"})
