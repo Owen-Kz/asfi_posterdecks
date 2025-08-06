@@ -1,249 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="author" content="Weperch Technologies Ltd">
-	    <meta name="description" content="ASFI, African Science Frontiers Initiative, African Scientists, African Scholars, Scholars, Education">
-        <link rel="stylesheet" href="/css/posterDeck.css">
-		<link rel="stylesheet" href="/css/general.css">
-		
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Weperch Technologies Ltd">
+    <meta name="description" content="ASFI, African Science Frontiers Initiative, African Scientists, African Scholars, Scholars, Education">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            600: '#7e22ce',
+                            700: '#6b21a8',
+                        },
+                        gray: {
+                            50: '#f9fafb',
+                            100: '#f3f4f6',
+                            200: '#e5e7eb',
+                            700: '#374151',
+                            800: '#1f2937',
+                            900: '#111827',
+                        }
+                    },
+                    fontFamily: {
+                        poppins: ['Poppins', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/files/images/ASFIScholar_Logo.png">
+    
+    <title>Session Dashboard | ASFI Scholar</title>
+    
+    <style>
+        .presentation-item {
+            transition: all 0.2s ease;
+        }
         
-
-        <!-- Plugins CSS -->
-	<link rel="stylesheet" type="text/css" href="/css/choices.min.css">
-	<link rel="stylesheet" type="text/css" href="/vendor/aos/aos.css">
-	<link rel="stylesheet" type="text/css" href="/vendor/glightbox/css/glightbox.css">
-	<link rel="stylesheet" type="text/css" href="/css/bs-stepper.min.css">
-       
+        .presentation-item:hover {
+            background-color: #f9fafb;
+        }
         
-        <!-- Favicon -->
-        <link rel="shortcut icon" href="/files/images/ASFIScholar_Logo.png">
-    
-        <link rel="stylesheet" href="/css/css/fontawesome.css">
-        <link rel="stylesheet" href="/css/css/fontawesome-all.css">
-    
-        <link rel="stylesheet" href="/css/material-design-iconic-font.css">
-        <link rel="stylesheet" href="/css/weather-icons/css/weather-icons-core.css">
-    
-        <title>Session Dashboard</title>
-        <!-- Dark mode -->
-        <!-- <script src="/js/colorTheme.js"></script> -->
-
-
+        .action-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-1px);
+        }
+    </style>
 </head>
 
-<body>
-
+<body class="font-poppins bg-gray-50">
 <!-- Header START -->
-<header class="navbar-light navbar-sticky">
-	<!-- Logo Nav START -->
-	<nav class="navbar navbar-expand-xl">
-		<div class="container containerReg">
-            <!-- Logo START -->
-			<a class="navbar-brand" href="">
-				<img class="light-mode-item navbar-brand-item" src="/files/images/ASFIScholar_Logo.png" alt="logo">
-				<img class="dark-mode-item navbar-brand-item" src="/files/images/ASFIScholar_Logo.png" alt="logo">
-			</a>
-			<!-- Logo END -->
-			<!-- SignUp or Login -->
-			<a href="/uploadPoster"><span class="btn btn-primary">Upload Poster</span></a>
-		</div>
-	</nav>
-	<!-- Logo Nav END -->
-</header>
-<br><br>
+<%- include('./partials/header.ejs')%>
 <!-- Header END -->
 
-
-<!-- **************** MAIN CONTENT START **************** -->
-<main>
-
-<!-- <header class="bg-white shadow">
-	    <div class="p-header">
-		  <div class="tester-side">
-			<h4 class="text-2xl flex font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate">
-			  Tester 
-			  <a href="">Preview</a>
-			</h4>
-		  </div>
-		  <div class="flex">
-			<span class=" rounded-md">
-			  <button type="button" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white action-btn" data-bs-toggle="modal" data-bs-target="#editAction">
-				Edit
-			  </button>
-			</span>
-			
-		  </div>
-		</div>
-</header> -->
-
-<section>
-	<div class="overflow-hidden rounded-lg presenter-container">
-		<div class="prep-top">
-			<div class="present-header">
-				<h4>Presentations</h4>
-			</div>
-			<div>
-				<!-- <span class="inline-flex rounded-md">
-					<button type="button" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 active:bg-gray-50 active:text-gray-800 action-btn" data-bs-toggle="modal" data-bs-target="#addAction">
-					  <svg class="-ml-1 mr-2 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-						<path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path>
-					  </svg>
-					  <span>
-						Add Posters
-					  </span>
-					</button>
-				</span> -->
-			</div>
-
-		</div>
-		<ul id="posterDeckMain">
-		
-		</ul>
-		<div class="prep-bottom">
-			<div class="presenter-count">
-				<!-- <p>1/2 Posters</p> -->
-			</div>
-
-		</div>
-	</div>
-
-	
-</section>
-
-</main>
-<!-- **************** MAIN CONTENT END **************** -->
-
-<!--Edit Modal Start-->
-<div class="modal fade" id="editAction" tabindex="-1" aria-labelledby="appDetaillabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-lg">
-		<div class="modal-content">
-			
-			<!-- Modal header -->
-			<div class="modal-header bg-dark">
-				<h5 class="modal-title text-white" id="appDetaillabel">Edit Session</h5>
-				<button type="button" class="btn btn-sm btn-light mb-0" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
-			</div>
-
-			<!-- Modal body -->
-			<div class="modal-body" id="edit_section">
-	<div class="container">
-
-		<div class="card-body">
-		<!-- Step 1 content START -->
-		<div class="content">
-			<!-- Title -->
-
-			<!-- Basic information START -->
-			<div class="row g-4">
-				<form action="">
-				<!-- Event title -->
-				<div class="col-12">
-					<label class="form-label">Event*</label>
-					<div class="dropdown">
-						<select class="form-control" name="eventTitle" id="eventTitleEdit" required>
-							<option value="">Select Event you want to add the deck to</option>
-							
-						</select>
-						
-					</div>
-				</div>
-
-				<!-- Poster Title  -->
-				<div class="col-12">
-					<label class="form-label">Poster Title*</label>
-					<div class="dropdown">
-						<input class="form-control" type="text" name="deckTitle" id="deckTitleEdit" value="" required>
-						
-					</div>
-				</div>
-
-				<!-- Short description -->
-				<!-- <div class="col-12"> -->
-					<!-- <label class="form-label">Abstract</label> -->
-					<textarea class="form-control" name="shortDescription" id="shortDescriptionEdit" rows="10" placeholder="Enter A description for your presentation" required hidden></textarea>
-				<!-- </div> -->
-
-				
+<!-- Main Content START -->
+<main class="py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-2xl font-bold text-gray-900 mb-6">Presentations</h1>
+        
+        <!-- Presentations List -->
+        <div class="bg-white shadow rounded-lg overflow-hidden">
+            <!-- ADM Section -->
+            <!-- <div class="border-b border-gray-200 px-6 py-4 bg-gray-50">
+                <h2 class="text-lg font-semibold text-gray-800">ADM</h2>
+            </div> -->
+            
+            <ul id="posterDeckMain" class="divide-y divide-gray-200">
+       
           
-			</div>
-			<!-- Basic information START -->
-		</div>
-		<!-- Step 1 content END -->
-	</div>
-	<!-- Modal footer -->
-	<div class="modal-footer">
-		<button type="submit" id="submitModalEdit" class="btn btn-warning-soft my-0">Submit</button>
-	</div>
+            </ul>
+        </div>
+    </div>
+</main>
+<!-- Main Content END -->
 
-		
-		</div>
-	</div>
-			</div>
+<%- include('./partials/footer.ejs') %>
 
-			
-		</div>
-	</form>
-	</div>
-</div> 
-<!--Edit Modal End-->
-
-
-<!--Add Modal Start-->
-<div class="modal fade" id="addAction" tabindex="-1" aria-labelledby="appDetaillabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-lg">
-		<div class="modal-content">
-			
-			<!-- Modal header -->
-			<div class="modal-header bg-dark">
-				<h5 class="modal-title text-white" id="appDetaillabel">Upload Poster</h5>
-				<button type="button" class="btn btn-sm btn-light mb-0" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
-			</div>
-
-			<!-- Modal body -->
-			<div class="modal-body" id="edit_section">
-	          <div class="container">
-
-				<%- include ("AdminUploadPoster.ejs") %>
-
-				
-	</div>
-</div> 
-<!--Add Modal End-->
-
-
-
-<!-- Back to top -->
-<div class="back-top"><i class="bi bi-arrow-up-short position-absolute top-50 start-50 translate-middle"></i></div>
-
-<!-- =======================
-Footer START -->
-<footer class="bg-dark p-3">
-	<div class="container">
-		<div class="row align-items-center">
-            <!-- Widget -->
-            <div><script src="/js/footer.js"></script></div>
-			<!-- Widget -->
-		</div>
-	</div>
-</footer>
-<!-- =======================
-Footer END -->
+<!-- JavaScript Libraries -->
 <script src="/js/jquery-3.4.1.min.js"></script>
-<!-- <script src="/js/mainjs.js"></script> -->
-
-<!-- Back to top -->
-<div class="back-top"><i class="fas fa-arrow-up position-absolute top-50 start-50 translate-middle"></i></div>
-
-<!-- Bootstrap JS -->
 <script src="/js/bootstrap.bundle.min.js"></script>
-
-
 <script src="/js/AllChannels.js"></script>
 <script src="/js/createposter.js"></script>
 <script src="/js/SessionDashboard.js"></script>
 </body>
-
 </html>

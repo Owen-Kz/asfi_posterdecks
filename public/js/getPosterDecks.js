@@ -56,10 +56,7 @@ fetch(`/getposterdecks/${cookieValue}`, ()=>{
         posterDeckContainers.push(posterDeckLink)
         })
         
-        // posterDeckMain.innerHTML += `
-        // <div class="posterAction">
-        // <a href="/uploadPoster" target=_blank><button>Upload Your Posters</button></a>
-        // </div>`
+      
         pdfRenderer(posterDeckFiles,posterDeckContainers);
     }else{
         posterDeckMain.innerHTML = `<div class='empty'> 

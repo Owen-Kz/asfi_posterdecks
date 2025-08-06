@@ -67,6 +67,8 @@ ZoomItem.addEventListener("click", function(e){
   filePreviewContainer.classList.toggle("huge-preview")
 })
 }
+
+
 // // READ FILE LIST FUNCTION 
 // function readPDFList(pdfFileList, containersArray){
 //     pdfFileList.forEach(posterFile =>{

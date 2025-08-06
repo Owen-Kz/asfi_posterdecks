@@ -1,397 +1,569 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="author" content="Weperch Technologies Ltd">
-	    <meta name="description" content="ASFI, African Science Frontiers Initiative, African Scientists, African Scholars, Scholars, Education">
-        <link rel="stylesheet" href="/css/posterDeck.css">
-		<link rel="stylesheet" href="/css/general.css">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.0/css/fontawesome.min.css" integrity="sha512-OYtfQLIh44db+qhIErkWKrmij09a8CNwItEH4yiRIY0gZhRj2sKNIIsRrvEPdqMbgzT1opjSAJXsteTfxuJjOQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.0/css/all.min.css" integrity="sha512-9xKTRVabjVeZmc+GUW8GgSmcREDunMM+Dt/GrzchfN8tkwHizc5RP4Ok/MXFFy5rIjJjzhndFScTceq5e6GvVQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Weperch Technologies Ltd">
+    <meta name="description" content="ASFI, African Science Frontiers Initiative, African Scientists, African Scholars, Scholars, Education">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            600: '#7e22ce',
+                            700: '#6b21a8',
+                        },
+                        secondary: {
+                            600: '#2563eb',
+                        },
+                        pink: {
+                            500: '#ec4899',
+                        },
+                        red: {
+                            500: '#ef4444',
+                        },
+                        yellow: {
+                            400: '#facc15',
+                        }
+                    },
+                    fontFamily: {
+                        inter: [ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"],
+                        roboto: [ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"],
+                        poppins: [ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/files/images/ASFIScholar_Logo.png" type="image/x-icon">
 
-		
-        <!-- Plugins CSS -->
-	<!-- <link rel="stylesheet" type="text/css" href="/css/choices.min.css"> -->
-	<!-- <link rel="stylesheet" type="text/css" href="/vendor/aos/aos.css">
-	<link rel="stylesheet" type="text/css" href="/vendor/glightbox/css/glightbox.css">
-	<link rel="stylesheet" type="text/css" href="/css/bs-stepper.min.css">
-        -->
+    <title><%=PosterTitle%> | ASFI Scholar</title>
+    
+    <style>
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
         
-        <!-- Favicon -->
-        <link rel="shortcut icon" href="/files/images/ASFIScholar_Logo.png">
-    
-        <!-- <link rel="stylesheet" href="/css/css/fontawesome.css">
-        <link rel="stylesheet" href="/css/css/fontawesome-all.css"> -->
-    
-        <!-- <link rel="stylesheet" href="/css/material-design-iconic-font.css"> -->
-        <!-- <link rel="stylesheet" href="/css/weather-icons/css/weather-icons-core.css"> -->
-
-		<style>
-    .star-rating {
-      display: flex;
-      direction: row;
-      font-size: 2em;
-      cursor: pointer;
-      color: lightgray;
-    }
-    .star-rating .star {
-      padding: 0 5px;
-      transition: color 0.2s;
-    }
-    .star-rating .star:hover,
-    .star-rating .star.selected {
-      color: gold;
-    }
-    .average-star-rating .star {
-      color: lightgray;
-      font-size: 2em;
-    }
-    .average-star-rating .star.filled {
-      color: gold;
-    }
-    .result {
-      margin-top: 20px;
-      font-size: 1.2em;
-    }
-	#closeChat{
-		background-color: rgb(247, 50, 50); 
-		border: none; 
-		color: white; 
-		z-index: 999; 
-		/* position: absolute;  */
-		margin-left: 8px; 
-		margin-top: 10px; 
-		/* border-radius: 20px;  */
-		height:30px;
-		width:30px;
-		padding: 5px;
-	}
-	#return {
-		background-color: rgb(58, 58, 58); 
-		border: none; 
-		color: white; 
-		display: flex;
-		align-items: center;
-		flex-direction: column;
-		justify-content: center;
-		z-index: 999; 
-		/* position: absolute;  */
-		margin-left: 8px; 
-		margin-top: 10px; 
-		/* border-radius: 20px;  */
-		height:30px;
-		width:30px;
-		padding: 5px;
-	}
-  </style>
-    
-        <title><%=PosterTitle%></title>
-        <!-- Dark mode -->
-        <!-- <script src="/js/colorTheme.js"></script> -->
-
+        .circular-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e5e7eb;
+        }
+        
+        .reaction-btn {
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 20px;
+            margin-right: 8px;
+            cursor: pointer;
+        }
+        
+        .reaction-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .reaction-count {
+            margin-left: 6px;
+            font-weight: 500;
+        }
+        
+        .star-rating .star {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .star-rating .star:hover {
+            transform: scale(1.2);
+        }
+        
+        .chatBox {
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .back-top {
+            transition: all 0.3s ease;
+        }
+        
+        .back-top:hover {
+            transform: translateY(-3px);
+        }
+        
+        #pdf-container-1 {
+            width: 100%;
+            height: 100%;
+            min-height: 500px;
+            overflow: auto;
+            cursor: zoom-in;
+            transition: all 0.3s ease;
+        }
+        
+        #pdf-container-1.zoomed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 9998;
+            cursor: zoom-out;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #pdf-container-1.zoomed .pdf-page {
+            max-width: 90%;
+            max-height: 90%;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .pdf-page {
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        #pdf-container-1:not(.zoomed) .pdf-page:hover {
+            transform: scale(1.02);
+        }
+        
+        .pdf-page:last-child {
+            margin-bottom: 0;
+        }
+        
+        #pdf-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        
+        .close-zoom {
+            /* position: absolute; */
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 9999;
+            display: none;
+        }
+        
+        #pdf-container-1.zoomed ~ .close-zoom {
+            display: block;
+        }
+    </style>
 </head>
 
-<body>
+<body class="font-poppins bg-gray-50">
 
-	<div class="loader-overlay" id="loader-overlay">
-		<div class="wrapper">
-			<div class="circle"></div>
-			<div class="circle"></div>
-			<div class="circle"></div>
-			<div class="shadow"></div>
-			<div class="shadow"></div>
-			<div class="shadow"></div>
-			<span>Loading</span>
-		</div>
-	</div>
-	
+<div class="loader-overlay" id="loader-overlay">
+    <div class="flex flex-col items-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600 mb-4"></div>
+        <span class="text-primary-600">Loading</span>
+    </div>
+</div>
 
-<input type="hidden" id="posterID" value=<%=PosterId%> readonly >
-    <!-- NAVIGATION BAR  -->
-    <!-- <sidebar class="left-navigation-bar bg-shadow ">
-       
-             <script src="/js/navbar.js"></script>
-     </sidebar> -->
-     <!-- END NAVIGATION BAR  -->
+<input type="hidden" id="posterID" value="<%=PosterId%>" readonly>
 
 <!-- Header START -->
-<header class="navbar-light navbar-sticky">
-	<!-- Logo Nav START -->
-	<nav class="navbar navbar-expand-xl">
-		<div class="container containerReg">
-            <!-- Logo START -->
-			<a class="navbar-brand" href="">
-				<img class="light-mode-item navbar-brand-item" src="/files/images/ASFIScholar_Logo.png" alt="logo">
-				<img class="dark-mode-item navbar-brand-item" src="/files/images/ASFIScholar_Logo.png" alt="logo">
-			</a>
-			<a href="/sessionDashboard"><span class="btn btn-primary">My Dashboard</span></a>
-
-		</div>
-	</nav>
-	<!-- Logo Nav END -->
-</header>
+<%- include('./partials/header.ejs')%>
 <!-- Header END -->
 
-<!-- **************** MAIN CONTENT START **************** -->
-<main>
-<!-- =======================
-Preview Poster START -->
-<section>
-	
-  
-  <div class="container" id="filePreviewContainer" style="transition:300ms ease-in-out;">
-
-	    <div class="card-body " >
-		   <!-- Step 1 content START -->
-		    <div class="content">
-			    <div class="preview-container ">
-                   <div class="preview-img" style='overflow-y:scroll; display:flex;'>
-					<input type="hidden" id="posterDeckFile" value="<%=PosterFile%>">
-					<input type="hidden" id="presenterImageFile" value="<%=PresenterImage%>">
-
-					<a class="pdfLink" id="pdfLink" >
-						<div id="pdf-container-1" class="img-upload img-upload-preview "></div>
-					</a>
-					
-				   </div>
-
-				   <div class="preview-content">
-					<div class="title-top">
-						<span class="views"><svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 576 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/></svg><button id="view_count_container" value="<%=ViewsCount%>" type="button"><%=ViewsCount%></button></span>
-						<h4><%=PosterTitle%></h4> 
-					</div>
-					 <br>
-					<!-- <p>Authors... Lorem ipsum dolor sit, amet consectetur adipisicing elit. Neque nemo eos illum delectus, excepturi consequatur dignissimos tempore perferendis, amet beatae aliquid doloremque ad inventore eveniet facilis aspernatur repellendus est minus?</p> -->
-
-					<span>
-						<h5>Presented By</h5>
-						<div class="presenter-info">
-					
-							
-							<img alt="Loading...." class="circular-image" id="presenterImage" src="<%= PresenterImage %>">
-
-							<div class="presenterDetails">
-							<p class="presenter"><%=Presenter%></p>
-							<span class="presenterAffi"><%= affiliation %> <%= country %></span>
-						   </div>
-						</div>
-						
-					</span> <br><br>
-					
-					<% if(isOwner === true) { %>
-						<button id="chatPresenter" type="button" style="background-color: #6f42c1; color: whitesmoke;">See Messages</button>
-
-						<% }else{ %>
-					
-
-					<!-- <a href="#" data-target="chatBox" > -->
-						<button id="chatPresenter" type="button" style="background-color: #6f42c1; color: whitesmoke;">Chat With Presenter</button>
-					<!-- </a> -->
-					 <% } %>
-					<% if(isOwner === true) { %>
-						<button id="like_count_container" value="<%=likes_count%>" type="disable"><%=likes_count%></button>
-						Like(s)
-						<% }else{ %>
-					   <div class="likes" >
-                         <span class="like" id="LikeButton"><svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M466.27 286.69C475.04 271.84 480 256 480 236.85c0-44.015-37.218-85.58-85.82-85.58H357.7c4.92-12.81 8.85-28.13 8.85-46.54C366.55 31.936 328.86 0 271.28 0c-61.607 0-58.093 94.933-71.76 108.6-22.747 22.747-49.615 66.447-68.76 83.4H32c-17.673 0-32 14.327-32 32v240c0 17.673 14.327 32 32 32h64c14.893 0 27.408-10.174 30.978-23.95 44.509 1.001 75.06 39.94 177.802 39.94 7.22 0 15.22.01 22.22.01 77.117 0 111.986-39.423 112.94-95.33 13.319-18.425 20.299-43.122 17.34-66.99 9.854-18.452 13.664-40.343 8.99-62.99zm-61.75 53.83c12.56 21.13 1.26 49.41-13.94 57.57 7.7 48.78-17.608 65.9-53.12 65.9h-37.82c-71.639 0-118.029-37.82-171.64-37.82V240h10.92c28.36 0 67.98-70.89 94.54-97.46 28.36-28.36 18.91-75.63 37.82-94.54 47.27 0 47.27 32.98 47.27 56.73 0 39.17-28.36 56.72-28.36 94.54h103.99c21.11 0 37.73 18.91 37.82 37.82.09 18.9-12.82 37.81-22.27 37.81 13.489 14.555 16.371 45.236-5.21 65.62zM88 432c0 13.255-10.745 24-24 24s-24-10.745-24-24 10.745-24 24-24 24 10.745 24 24z"/></svg>
-						<button id="like_count_container" value="<%=likes_count%>" type="button"><%=likes_count%></button></span> 
-						<% } %>
-
-						<% if(isOwner === true) { %>
-							<button id="dislike_count_container" value="<%=DislikesCount%>" type="disable"><%=DislikesCount%></button>
-							Dislike(s)
-							
-							<% }else{ %>
-						 <span class="dislike" id="DisLikeButton"><svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M323.8 477.2c-38.2 10.9-78.1-11.2-89-49.4l-5.7-20c-3.7-13-10.4-25-19.5-35l-51.3-56.4c-8.9-9.8-8.2-25 1.6-33.9s25-8.2 33.9 1.6l51.3 56.4c14.1 15.5 24.4 34 30.1 54.1l5.7 20c3.6 12.7 16.9 20.1 29.7 16.5s20.1-16.9 16.5-29.7l-5.7-20c-5.7-19.9-14.7-38.7-26.6-55.5c-5.2-7.3-5.8-16.9-1.7-24.9s12.3-13 21.3-13L448 288c8.8 0 16-7.2 16-16c0-6.8-4.3-12.7-10.4-15c-7.4-2.8-13-9-14.9-16.7s.1-15.8 5.3-21.7c2.5-2.8 4-6.5 4-10.6c0-7.8-5.6-14.3-13-15.7c-8.2-1.6-15.1-7.3-18-15.2s-1.6-16.7 3.6-23.3c2.1-2.7 3.4-6.1 3.4-9.9c0-6.7-4.2-12.6-10.2-14.9c-11.5-4.5-17.7-16.9-14.4-28.8c.4-1.3 .6-2.8 .6-4.3c0-8.8-7.2-16-16-16H286.5c-12.6 0-25 3.7-35.5 10.7l-61.7 41.1c-11 7.4-25.9 4.4-33.3-6.7s-4.4-25.9 6.7-33.3l61.7-41.1c18.4-12.3 40-18.8 62.1-18.8H384c34.7 0 62.9 27.6 64 62c14.6 11.7 24 29.7 24 50c0 4.5-.5 8.8-1.3 13c15.4 11.7 25.3 30.2 25.3 51c0 6.5-1 12.8-2.8 18.7C504.8 238.3 512 254.3 512 272c0 35.3-28.6 64-64 64l-92.3 0c4.7 10.4 8.7 21.2 11.8 32.2l5.7 20c10.9 38.2-11.2 78.1-49.4 89zM32 384c-17.7 0-32-14.3-32-32V128c0-17.7 14.3-32 32-32H96c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H32z"/></svg>
-							
-							
-								<button id="dislike_count_container" value="<%=DislikesCount%>" type="button"><%=DislikesCount%></button>
-							</span>
-						<%	} %>
-
-						
-						
-						<% if(isOwner === true) { %>
-							<button id="download_count_container" value="<%=DownloadsCount%>" type="button"><%=DownloadsCount%></button>
-							Downloads(s)
-							
-							<% }else{ %>
-						<a class="pdfLink" download="<%=PosterTitle%>-<%=Presenter%>-asfischolar.pdf" id="downloadPoster">
-								<span class="download" id="DownloadButton"><i class="fa fa-download" aria-hidden="true"></i>
-								Download
-								<button id="download_count_container" value="<%=DownloadsCount%>" type="button"><%=DownloadsCount%></button>
-							</span>
-						</a>
-						<% } %>
-
-<% if(isOwner === true) { %>
-							<div class="result">
-    <p style="margin-bottom: -10px;"><strong>Poster Average Rating:</strong> <span id="average-rating">0</span> / 5</p>
-    <div class="average-star-rating" id="average-star-rating">
-      <span class="star">&#9733;</span>
-      <span class="star">&#9733;</span>
-      <span class="star">&#9733;</span>
-      <span class="star">&#9733;</span>
-      <span class="star">&#9733;</span>
+<!-- Main Content START -->
+<main class="py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto">
+        <!-- Poster Preview Section -->
+        <section class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="md:flex">
+                <!-- PDF Preview -->
+                <div class="md:w-2/3 p-6 relative" style="min-height: 80vh;">
+                    <input type="hidden" id="posterDeckFile" value="<%=PosterFile%>">
+                    <input type="hidden" id="presenterImageFile" value="<%=PresenterImage%>">
+                    
+                    <div id="pdf-container-1" class="w-full h-full">
+                        <div id="pdf-loading" class="text-center">
+                            <i class="fas fa-file-pdf text-6xl text-red-500 mb-2"></i>
+                            <p class="text-gray-600">Loading PDF preview...</p>
+                        </div>
+                    </div>
+                    <div class="close-zoom" id="closeZoom">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+                
+                <!-- Poster Info -->
+                <div class="md:w-1/3 p-6 border-l border-gray-200">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-regular text-gray-900"><%=PosterTitle%></h2>
+                        <span class="flex items-center text-gray-500">
+                            <i class="fas fa-eye mr-1"></i>
+                            <span id="view_count_container"><%=ViewsCount%></span>
+                        </span>
+                    </div>
+                    
+                    <!-- Presenter Info -->
+                    <div class="mb-6">
+                        <h5 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Presented By</h5>
+                        <div class="flex items-center">
+                            <img alt="Presenter" class="circular-image" id="presenterImage" src="<%= PresenterImage %>">
+                            <div class="ml-4">
+                                <p class="font-medium text-gray-900"><%=Presenter%></p>
+                                <p class="text-sm text-gray-500"><%= affiliation %> <%= country %></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="mb-6">
+                        <% if(isOwner === true) { %>
+                            <button id="chatPresenter" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-md transition-all">
+                                <i class="fas fa-comments mr-2"></i> See Messages
+                            </button>
+                        <% } else { %>
+                            <button id="chatPresenter" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-md transition-all">
+                                <i class="fas fa-comments mr-2"></i> Chat With Presenter
+                            </button>
+                        <% } %>
+                    </div>
+                    
+                    <!-- Reactions -->
+                    <div class="mb-6">
+                        <div class="flex flex-wrap mb-4">
+                            <% if(isOwner === true) { %>
+                                <div class="reaction-btn bg-gray-100 text-gray-800" title="You cannot like your own poster">
+                                    <i class="fas fa-heart text-red-500"></i>
+                                    <span class="reaction-count" id="like_count_container"><%=likes_count%></span>
+                                </div>
+                                <div class="reaction-btn bg-gray-100 text-gray-800" title="You cannot dislike your own poster">
+                                    <i class="fas fa-thumbs-down text-blue-500"></i>
+                                    <span class="reaction-count" id="dislike_count_container"><%=DislikesCount%></span>
+                                </div>
+                                <div class="reaction-btn bg-gray-100 text-gray-800" title="You cannot download your own poster">
+                                    <i class="fas fa-download text-green-500"></i>
+                                    <span class="reaction-count" id="download_count_container"><%=DownloadsCount%></span>
+                                </div>
+                            <% } else { %>
+                                <button id="LikeButton" class="reaction-btn bg-gray-100 hover:bg-pink-100 text-gray-800">
+                                    <i class="fas fa-heart text-gray-400 hover:text-red-500"></i>
+                                    <span class="reaction-count" id="like_count_container"><%=likes_count%></span>
+                                </button>
+                                <button id="DisLikeButton" class="reaction-btn bg-gray-100 hover:bg-blue-100 text-gray-800">
+                                    <i class="fas fa-thumbs-down text-gray-400 hover:text-blue-500"></i>
+                                    <span class="reaction-count" id="dislike_count_container"><%=DislikesCount%></span>
+                                </button>
+                                <a id="downloadPoster" href="<%=PosterFile%>" download="<%=PosterTitle%>-<%=Presenter%>-asfischolar.pdf" class="reaction-btn bg-gray-100 hover:bg-green-100 text-gray-800">
+                                    <i class="fas fa-download text-gray-400 hover:text-green-500"></i>
+                                    <span class="reaction-count" id="download_count_container"><%=DownloadsCount%></span>
+                                </a>
+                            <% } %>
+                        </div>
+                    </div>
+                    
+                    <!-- Rating Section -->
+                    <% if(isOwner === true) { %>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-medium text-gray-900 mb-2">Poster Ratings</h4>
+                            <div class="flex items-center mb-1">
+                                <span class="text-2xl font-bold text-primary-600 mr-2" id="average-rating">0</span>
+                                <span class="text-gray-500">/ 5</span>
+                            </div>
+                            <div class="flex mb-2" id="average-star-rating">
+                                <% for(let i=1; i<=5; i++) { %>
+                                    <span class="star text-gray-300 text-xl">&#9733;</span>
+                                <% } %>
+                            </div>
+                            <p class="text-sm text-gray-600"><span id="total-ratings">0</span> total ratings</p>
+                        </div>
+                    <% } else { %>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-medium text-gray-900 mb-2">Rate this Poster</h4>
+                            <p class="text-sm text-gray-600 mb-2">Average: <span id="user-average-rating">0</span>/5</p>
+                            <div class="star-rating flex" id="user-star-rating">
+                                <% for(let i=1; i<=5; i++) { %>
+                                    <span class="star text-gray-300 text-2xl hover:text-yellow-400 mr-1" data-value="<%=i%>">&#9733;</span>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Related Posters -->
+        <section class="mt-12">
+            <h4 class="text-xl font-bold text-gray-900 mb-6 text-center">More Related Posters</h4>
+            <div class="bg-white rounded-xl overflow-hidden">
+                <iframe src="/posterlist/<%=meeting%>" frameborder="0" id="posterListFrame" class="w-full h-[500px]"></iframe>
+            </div>
+        </section>
     </div>
-    <p><strong>Total Ratings:</strong> <span id="total-ratings">0</span></p>
-  </div>
-
-  
-							
-							<% }else{ %>
-								<h4>Rate this Poster:</h4>
-								<p style="margin-bottom: -10px;"><strong>Poster Average Rating:</strong> <span id="user-average-rating">0</span> / 5</p>
-							   <div class="star-rating">
-								 <span class="star" data-value="1">&#9733;</span>
-								 <span class="star" data-value="2">&#9733;</span>
-								 <span class="star" data-value="3">&#9733;</span>
-								 <span class="star" data-value="4">&#9733;</span>
-								 <span class="star" data-value="5">&#9733;</span>
-							   </div>	
-							   <!-- <div class="average-star-rating" id="user-star-rating" style="display: none;">
-								<span class="star" data-value="1">&#9733;</span>
-								<span class="star" data-value="2">&#9733;</span>
-								<span class="star" data-value="3">&#9733;</span>
-								<span class="star" data-value="4">&#9733;</span>
-								<span class="star" data-value="5">&#9733;</span>
-							  </div>							 -->
-								
-  <% } %>
-  
- 
-   
-  
-					   </div>
-
-					   
-
-				   </div>
-				</div>
-	        </div>
-	    </div>
-	</div>
-</section>
-<!-- =======================
-Preview Poster END -->
-
-<div class="chatBox small" id="chatBox" style="z-index: 998928;"> 
-	<div class="navButtonsContainer">
-		<button id="closeChat" type="button" >
-			X
-		</button>
-		
-		<button id="return" type="button" onclick="changeSource(`/chat/presenter/<%=PosterId%>`)">
-			<i class="fas fa-chevron-left" title="Return to Previous Page"></i>
-		</button>
-		
-	</div>
-
-
-<iframe src="/chat/presenter/<%=PosterId%>" frameborder="0" id="chatFrame"></iframe>
-</div>
-
-
-
 </main>
-<!-- **************** MAIN CONTENT END **************** -->
-<style>
-	.OtherPosters{
-		align-items: center;
-		display:flex;
-		flex-direction: column;
-	}
+<!-- Main Content END -->
 
-	#posterListFrame{
-		display: flex;
-		width: 100% !important;
-		height: 80vh;
-		padding:50px;
-	}
-</style>
-<div class="OtherPosters">
-	<h4>More Related Posters</h4>
-	<iframe src="/posterlist/<%=meeting%>" frameborder="0" id="posterListFrame"></iframe>
+<!-- Chat Box -->
+<div class="chatBox fixed bottom-4 right-4 w-80 h-96 bg-white rounded-t-lg shadow-xl hidden" id="chatBox" style="z-index: 998928;">
+    <div class="bg-purple-700 text-white p-3 flex justify-between items-center rounded-t-lg">
+        <h3 class="font-medium">Chat with Presenter</h3>
+        <div class="flex">
+            <button id="return" class="text-white hover:text-gray-200 mr-2" onclick="changeSource(`/chat/presenter/<%=PosterId%>`)">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button id="closeChat" class="text-white hover:text-gray-200">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    <iframe src="/chat/presenter/<%=PosterId%>" frameborder="0" id="chatFrame" class="w-full h-full" style="display: flex; box-sizing: border-box; padding: 0px; margin:0px"></iframe>
 </div>
-<!-- Back to top -->
-<div class="back-top"><i class="bi bi-arrow-up-short position-absolute top-50 start-50 translate-middle"></i></div>
+
+
+<%- include('./partials/footer.ejs') %>
+<!-- Back to top button -->
+<div class="fixed bottom-8 right-8 back-top bg-purple-600 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg hover:bg-purple-700 cursor-pointer">
+    <i class="fas fa-arrow-up"></i>
+</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  var loaderOverlay = document.getElementById('loader-overlay');
-
-  // Ensure the loader fades out gradually after the entire page has loaded
-  window.addEventListener('load', function () {
-    loaderOverlay.style.opacity = 0;
-    loaderOverlay.style.visibility = 'hidden';
-  });
+    var loaderOverlay = document.getElementById('loader-overlay');
+    
+    // Hide loader when page is ready
+    setTimeout(function() {
+        loaderOverlay.style.opacity = 0;
+        loaderOverlay.style.visibility = 'hidden';
+    }, 500);
+    
+    // Toggle chat box
+    document.getElementById('chatPresenter').addEventListener('click', function() {
+        document.getElementById('chatBox').classList.toggle('hidden');
+    });
+    
+    // Close chat box
+    document.getElementById('closeChat').addEventListener('click', function() {
+        document.getElementById('chatBox').classList.add('hidden');
+    });
+    
+    // Initialize PDF viewer
+    initializePDFViewer();
+    
+    // Initialize reaction buttons
+    initializeReactions();
+    
+    // Initialize star ratings
+    initializeRatings();
+    
+    // Close zoomed view
+    document.getElementById('closeZoom').addEventListener('click', function() {
+        document.getElementById('pdf-container-1').classList.remove('zoomed');
+    });
 });
+
+const chatFrame = document.getElementById("chatFrame");
+function changeSource(url) {
+    chatFrame.src = url;
+}
+
+function initializePDFViewer() {
+    const pdfContainer = document.getElementById('pdf-container-1');
+    const pdfLoading = document.getElementById('pdf-loading');
+    const pdfFile = document.getElementById('posterDeckFile').value;
+    
+    if (pdfFile) {
+        // This would be replaced with your actual PDF.js implementation
+        // For now we'll simulate loading
+        setTimeout(() => {
+            pdfLoading.style.display = 'none';
+            
+            // Create mock pages (replace with actual PDF.js rendering)
+            for (let i = 0; i < 3; i++) { // Assuming 3 pages for example
+                const page = document.createElement('div');
+                page.className = 'pdf-page bg-white p-4';
+                page.innerHTML = `
+                    <div class="border border-gray-200 p-2">
+                        <div class="bg-gray-100 w-full h-96 flex items-center justify-center">
+                            <p class="text-gray-500">Page ${i+1} of PDF preview</p>
+                        </div>
+                    </div>
+                `;
+                // pdfContainer.appendChild(page);
+            }
+            
+            // Add click-to-zoom functionality
+            pdfContainer.addEventListener('click', function() {
+                this.classList.toggle('zoomed');
+                
+                if (this.classList.contains('zoomed')) {
+                    // Scroll to top when zoomed
+                    this.scrollTo(0, 0);
+                    
+                    // Disable body scrolling
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    // Enable body scrolling
+                    document.body.style.overflow = '';
+                }
+            });
+        }, 1500);
+    }
+}
+
+function initializeReactions() {
+    // Like button functionality
+    document.getElementById('LikeButton')?.addEventListener('click', function() {
+        const icon = this.querySelector('i');
+        const countElement = this.querySelector('.reaction-count');
+        
+        if (icon.classList.contains('text-red-500')) {
+            // Already liked, unlike it
+            icon.classList.remove('text-red-500', 'fas');
+            icon.classList.add('text-gray-400', 'far');
+            countElement.textContent = parseInt(countElement.textContent) - 1;
+        } else {
+            // Like it
+            icon.classList.remove('text-gray-400', 'far');
+            icon.classList.add('text-red-500', 'fas');
+            countElement.textContent = parseInt(countElement.textContent) + 1;
+            
+            // Add animation
+            this.classList.add('animate-ping');
+            setTimeout(() => {
+                this.classList.remove('animate-ping');
+            }, 500);
+        }
+    });
+    
+    // Dislike button functionality
+    document.getElementById('DisLikeButton')?.addEventListener('click', function() {
+        const icon = this.querySelector('i');
+        const countElement = this.querySelector('.reaction-count');
+        
+        if (icon.classList.contains('text-blue-500')) {
+            // Already disliked, undislike it
+            icon.classList.remove('text-blue-500', 'fas');
+            icon.classList.add('text-gray-400', 'far');
+            countElement.textContent = parseInt(countElement.textContent) - 1;
+        } else {
+            // Dislike it
+            icon.classList.remove('text-gray-400', 'far');
+            icon.classList.add('text-blue-500', 'fas');
+            countElement.textContent = parseInt(countElement.textContent) + 1;
+        }
+    });
+    
+    // Download button functionality
+    document.getElementById('downloadPoster')?.addEventListener('click', function() {
+        const countElement = this.querySelector('.reaction-count');
+        countElement.textContent = parseInt(countElement.textContent) + 1;
+    });
+}
+
+function initializeRatings() {
+    const userStarRating = document.getElementById('user-star-rating');
+    
+    if (userStarRating) {
+        const stars = userStarRating.querySelectorAll('.star');
+        
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                const value = parseInt(this.getAttribute('data-value'));
+                
+                // Update UI
+                stars.forEach((s, i) => {
+                    if (i < value) {
+                        s.classList.add('text-yellow-400', 'fas');
+                        s.classList.remove('text-gray-300', 'far');
+                    } else {
+                        s.classList.remove('text-yellow-400', 'fas');
+                        s.classList.add('text-gray-300', 'far');
+                    }
+                });
+                
+                document.getElementById('user-average-rating').textContent = value;
+            });
+            
+            star.addEventListener('mouseover', function() {
+                const value = parseInt(this.getAttribute('data-value'));
+                stars.forEach((s, i) => {
+                    if (i < value) {
+                        s.classList.add('text-yellow-400');
+                    }
+                });
+            });
+            
+            star.addEventListener('mouseout', function() {
+                stars.forEach(s => {
+                    if (!s.classList.contains('fas')) {
+                        s.classList.remove('text-yellow-400');
+                    }
+                });
+            });
+        });
+    }
+    
+    // For owners, show the average rating (demo data)
+    const averageRating = 4.2;
+    document.getElementById('average-rating').textContent = averageRating.toFixed(1);
+    document.getElementById('total-ratings').textContent = '15';
+    
+    const averageStars = document.getElementById('average-star-rating');
+    if (averageStars) {
+        const stars = averageStars.querySelectorAll('.star');
+        const filledStars = Math.floor(averageRating);
+        const partialStar = averageRating % 1;
+        
+        stars.forEach((star, i) => {
+            if (i < filledStars) {
+                star.classList.add('text-yellow-400', 'fas');
+                star.classList.remove('text-gray-300', 'far');
+            } else if (i === filledStars && partialStar > 0) {
+                star.classList.add('text-yellow-400', 'fas');
+                star.classList.remove('text-gray-300', 'far');
+                star.style.width = `${partialStar * 100}%`;
+                star.style.overflow = 'hidden';
+                star.style.display = 'inline-block';
+            }
+        });
+    }
+}
+
 </script>
 
-
-<!-- JavaScript -->
-<!-- <script>
-	document.addEventListener('DOMContentLoaded', function () {
-	  var copyEmailLink = document.getElementById('copyEmailLink');
-	  
-	  copyEmailLink.addEventListener('click', function (event) {
-		event.preventDefault();
-	
-		// Extract the email address from the href attribute
-		var presenterEmail = copyEmailLink.getAttribute('href');
-	
-		// Create a temporary input element
-		var tempInput = document.createElement('input');
-		tempInput.value = presenterEmail;
-	
-		// Append the input element to the document
-		document.body.appendChild(tempInput);
-	
-		// Select the input text
-		tempInput.select();
-	
-		// Copy the selected text to the clipboard
-		document.execCommand('copy');
-	
-		// Remove the temporary input element
-		document.body.removeChild(tempInput);
-	
-		// Change the link text to indicate that the email has been copied
-		copyEmailLink.textContent = 'Copied';
-	  });
-	});
-	</script> -->
-
-
+<!-- JavaScript Libraries -->
 <script src="/js/jquery-3.4.1.min.js"></script>
-<!-- <script src="/js/mainjs.js"></script> -->
-
-<!-- Back to top -->
-<div class="back-top"><i class="fas fa-arrow-up position-absolute top-50 start-50 translate-middle"></i></div>
-
-<!-- Bootstrap JS -->
 <script src="/js/bootstrap.bundle.min.js"></script>
-
-
-<!-- Template Functions -->
 <script src="/js/functions.js"></script>
 <script src="/pdfjs/pdf.js"></script>
 <script src="/js/likeDislike.js"></script>
 <script src="/js/pdfjs.js"></script>
 <script src="/js/fetchFiles.js"></script>
-
-<!-- For Returning to the previous page  -->
-<script>
-	const chatFrame = document.getElementById("chatFrame")
-	function changeSource(url){
-		chatFrame.src = url
-	}
-</script>
-
 <script src="/js/posterRating.js" type="module"></script>
-
 </body>
-
 </html>

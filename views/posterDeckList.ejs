@@ -4,169 +4,140 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Poster Decks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#faf5ff',
+                            100: '#f3e8ff',
+                            200: '#e9d5ff',
+                            300: '#d8b4fe',
+                            400: '#c084fc',
+                            500: '#a855f7',
+                            600: '#9333ea',
+                            700: '#7e22ce',
+                            800: '#6b21a8',
+                            900: '#581c87',
+                        }
+                    },
+                    boxShadow: {
+                        'card': '0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)',
+                        'card-hover': '0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05)'
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-         body, html{
-      background:transparent;
-      }
+        body, html {
+            background: transparent;
+        }
+        body::-webkit-scrollbar {
+            display: none;
+            width: 0px;
+            opacity: 0;
+        }
+        .deck-container::-webkit-scrollbar {
+            width: 8px;
+            background: transparent;
+        }
+        .deck-container::-webkit-scrollbar-thumb {
+            background-color: rgb(168, 85, 247); /* purple-500 */
+        }
     </style>
 </head>
-<body >
-    
-    <style>
-   
-      *, body{
-        padding: 0px;
-        margin: 0px;
-  box-sizing: border-box;
-      }
-body::-webkit-scrollbar{
-  display: none;
-  width:0px;
-  opacity:0;
- 
-}
-.deck-main {
-    height: 100vh;
-    min-width: 200;
-    max-width: 300;
-    /* background-color: rgb(227, 227, 230); */
-}
-.deck-container {
-    display: flex;
-    /* flex-direction: column; */
-    flex-wrap: wrap;
-    width: 95%;
-    height: 100vh;
-    margin: auto;
-    align-items: flex-start;
-    justify-content: center;
-    
-    overflow-y: scroll;
-    /* flex: 1; */
-    background-color: transparent;
-}
+<body class="bg-gray-50">
+    <main class="min-h-screen py-8">
+        <section class="deck-container mx-auto px-4 w-full max-w-7xl">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="posterDeckListContainer">
+                <input type="text" value="<%=meetingID%>" id="meetingID" readonly hidden>
+                
+                <!-- This will be populated by JavaScript -->
+            </div>
+        </section>
+    </main>
 
-.deck-container::-webkit-scrollbar{
-  width:8px;
-  background:transparent;
-}
-.deck-container::-webkit-scrollbar-thumb{
-  background-color: rgb(255, 203, 33);
-}
-a{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width:fit-content !important;
-  min-width:300px !important;
-  max-width:500px !important;
-  margin:10px !important;
-  height: 150px;
-  
-}
-.posterContainer {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: 150px;
+    <script src="/pdfjs/pdf.js"></script>
+    <script src="/js/pdfjslist.js"></script>
+    <!-- <script src="/js/getPosterDecks.js"></script> -->
+    <script src="/js/fetchFiles.js"></script>
 
-  /* min-width: 200px;
-  max-width: 300px; */
-  /* margin-top: 15px; */
-  /* margin-left: auto;
-  margin-right: auto; */
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0px 11px 23px 0px rgba(43, 43, 43, 0.29);
-}
- 
-.posterImg {
-  background-color: blueviolet;
-  width: 40%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+    <script>
+        function getCookie(name) {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    return cookie.substring(name.length + 1);
+                }
+            }
+            return '';
+        }
 
-.posterImage {
-  flex: 1;
-  height: 100%;
-  /* width:100%; */
-  size: cover;
-}
+        const meetingID = document.getElementById("meetingID");
+        const cookieValue = meetingID.value;
+        const posterDeckMain = document.getElementById("posterDeckListContainer");
+        const posterDeckContainers = [];
+        const posterDeckFiles = [];
 
-.posterInfo {
-  background-color: rgb(233, 231, 231);
-  padding: 20px;
-  width: 60%;
-  text-overflow: ellipsis;
-}
+        if(cookieValue) {
+            fetch(`/getposterdecks/${cookieValue}`, {
+                method: "GET"
+            }).then(res => res.json())
+            .then(data => {
+                const allPosterDecks = JSON.parse(data.PosterDecks);
 
-.posterTitle {
-  font-size: 12px;
-  font-weight: bold;
-  margin-bottom: 5px;
-  line-height: 1;
-}
-.posterDescription{
-  display: flex;
-  text-wrap:wrap;
-  height:50px;
-  overflow: hidden;
-}
- a {
-			text-decoration: none;
-			color: rgba(14, 14, 14, 0.978);
-	}
-  .small{
-    padding:3px, 0px, 5px, 5px;
-    margin-top: 8px;
-    font-size: 12px;
-    border-top: 3px solid rgb(134, 0, 151);
-  }
-.empty{
-  width: 100%;
-  display:flex;
-  color:rgb(250, 58, 90);
-  margin: auto;
-  flex-direction: column;
-  height:30%;
-  align-items: center;
-  justify-content: flex-start;
-}
-.posterAction{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 50px;
-  padding: 5px;
-  margin-top:40px;
-}
-.posterAction button{
-  border-radius: 25px;
-  outline: none;
-  border: none;
-  display: flex;
-  background-color: rgb(250, 58, 90);
-  padding: 10px;
-  color: white;
-}
-     </style>
-     
-    
-    <main class="deck-main">
-		<section class="deck-container" id="posterDeckListContainer">
-		<input type="text" value="<%=meetingID%>" id="meetingID" readonly hidden>
-			
-		</section>
-</main>
+                if(allPosterDecks.length > 0) {
+                    allPosterDecks.forEach(posterDeck => {
+                        const posterDeckTitle = posterDeck.poster_deck_title;
+                        const posterDeckLink = posterDeck.poster_deck_id;
+                        const posterDeckOwner = posterDeck.poster_deck_owner;
+                        const posterDeckImage = posterDeck.poster_deck_image;
+                        const posterMainFile = `${posterDeckImage}`;
+                        
+                        posterDeckMain.innerHTML += `
+                        <a href="/event/poster/${posterDeckLink}" target="_blank" class="block h-full">
+                            <div class="h-full bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 flex flex-col min-h-[240px]">
+                                <div class="posterImg flex-grow bg-primary-100 flex items-center justify-center overflow-hidden min-h-[120px]">
+                                    <div id="${posterDeckLink}" class="w-full h-full flex items-center justify-center"></div>
+                                </div>
+                                <div class="posterInfo p-4 flex flex-col flex-shrink-0">
+                                    <h3 class="posterTitle text-sm font-bold text-gray-800 line-clamp-2 mb-1">${posterDeckTitle}</h3>
 
-<script src="/pdfjs/pdf.js"></script>
-<script src="/js/pdfjslist.js"></script>
-<script src="/js/getPosterDecks.js"></script>
-
-<script src="/js/fetchFiles.js"></script>
+                                    <div class="text-xs text-primary-700 font-medium mt-auto pt-2 border-t border-primary-200">${posterDeckOwner}</div>
+                                </div>
+                            </div>
+                        </a>`;
+                        
+                        posterDeckFiles.push(posterMainFile);
+                        posterDeckContainers.push(posterDeckLink);
+                    });
+                    
+                    pdfRenderer(posterDeckFiles, posterDeckContainers);
+                } else {
+                    posterDeckMain.innerHTML = `
+                    <div class="empty col-span-full flex flex-col items-center justify-center py-12 text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-primary-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <h3 class="text-lg font-medium text-gray-700">No posters available</h3>
+                        <p class="text-gray-500 mt-1">Check back later or upload your own poster</p>
+                    </div>`;
+                }
+            });
+        } else {
+            posterDeckMain.innerHTML = `
+            <div class="empty col-span-full flex flex-col items-center justify-center py-12 text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <h3 class="text-lg font-medium text-gray-700">Unauthorized Access</h3>
+                <p class="text-gray-500 mt-1">Please log in to view this content</p>
+            </div>`;
+        }
+    </script>
 </body>
 </html>

@@ -15,31 +15,27 @@ fetch(`/posteradmin`, ()=>{
             // let posterMainFile
             const posterMainFile = `/uploads/posters/${posterDeckImage}`
             
-            posterDeckMain.innerHTML += `	<li style="display: flex; justify-content: space-between;">
-            <div>
-                <h5>${posterDeckTitle}</h5>
-    
-                <p class="p-name" id="posterName">Presenter name: <span id="posterEmail">${posterDeckOwner}</span></p>
-            </div>
-        <div style="display: flex;">
-       
-            <div class="tester-side">
-                <h4 class="text-2xl flex font-bold leading-7 text-gray-900 sm:text-3xl sm:leading-9 sm:truncate">
-                  <a href="/event/poster/${posterDeckLink}">Preview</a>
-
-                  <form action="/delete/${posterDeckLink}" method="POST">
-                  
-                     <button type="submit">Delete and Re-upload
-                     </button>
-                  
-                  </form>
-
-                    <a href="edit/poster/${posterDeckLink}">Edit</a>
-
-                </h4>
-            </div>
-        </div>
-    </li>`;
+      posterDeckMain.innerHTML += `     <li class="presentation-item px-6 py-5">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                        <div class="mb-3 sm:mb-0">
+                            <h3 class="text-lg font-medium text-gray-900">${posterDeckTitle}</h3>
+                            <p class="text-sm text-gray-500 mt-1">Presenter: <span id="posterEmail">${posterDeckOwner}</span></p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="action-btn px-3 py-1.5 text-xs font-medium rounded border border-gray-300 text-gray-700 bg-white hover:bg-gray-50" onclick="window.location.href='/event/poster/${posterDeckLink}'">
+                                PREVIEW
+                            </button>
+                            <form action="/delete/${posterDeckLink}" method="POST">
+                            <button type="submit" class="action-btn px-3 py-1.5 text-xs font-medium rounded border border-gray-300 text-gray-700 bg-white hover:bg-gray-50">
+                                DELETE AND RE-UNLOAD
+                            </button>
+                            </form>
+                            <button class="action-btn px-3 py-1.5 text-xs font-medium rounded border border-gray-300 text-gray-700 bg-white hover:bg-gray-50" onclick="window.location.href='/edit/${posterDeckLink}'">
+                                EDIT
+                            </button>
+                        </div>
+                    </div>
+                </li>`
     
         })
     

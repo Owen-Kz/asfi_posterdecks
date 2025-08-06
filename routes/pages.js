@@ -478,7 +478,7 @@ router.get("/checkRatingExists", loggedIn, async(req,res) =>{
   const posterId = req.query.pid 
   const Rated = await CheckIfRatingExists(user, posterId)
 
-  if(Rated[0].id){
+  if(Rated[0] && Rated[0].rating){
     return res.json({error:"user_rated", currentRating:Rated[0].rating})
   }else{
     return res.json({currentRating:0})

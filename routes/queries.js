@@ -298,7 +298,6 @@ async function RetrievePosterDecksTableForAdmin(req, res, presenterEmail){
 
 async function PreviewDeck(req, res){
     const posterDeckLink = req.params.posterDeckLink
-  
     const query = `SELECT * FROM posterdecks WHERE poster_deck_id = '${posterDeckLink}'`
     return executeQuery(query)
 }
@@ -390,8 +389,8 @@ async function DownloadCount(req, res, posterId){
         }else{
             CreateReaction(req.user.username, posterId, "downloaded")
   
-    const TotalDownloads = await TotalDownloads(posterId)
-    const NewCount = Number(TotalDownloads[0].downloads_count) + 1
+    const TotalDownloadsCounter = await TotalDownloads(posterId)
+    const NewCount = Number(TotalDownloadsCounter[0].downloads_count) + 1
     const updateQuery = `UPDATE posterdecks SET downloads_count = '${NewCount}' WHERE poster_deck_id = '${posterId}'`
     return executeQuery(updateQuery)
         }
@@ -439,7 +438,7 @@ async function EditPosterDeck(eventTitle, deckTitle, presenterName, presenterEma
     const sanitizedDeckTitle = deckTitle.replace(/'/g, "''").replace(/\\/g, '\\\\');
 
 
-console.log("EDIT DATA", eventTitle, deckTitle, presenterName, presenterEmail, presenterAffiliation, presenterCountry, newFileName, ImageFile, DeckId)
+// console.log("EDIT DATA", eventTitle, deckTitle, presenterName, presenterEmail, presenterAffiliation, presenterCountry, newFileName, ImageFile, DeckId)
     // Then, insert the new deck data
     const insertQuery = `UPDATE posterdecks SET 
         poster_deck_title = '${sanitizedDeckTitle}',
