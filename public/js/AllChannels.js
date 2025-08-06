@@ -9,7 +9,7 @@ fetch("/allchannels", {
 
     if(AllChannelsData.length > 0){ 
         AllChannelsData.forEach(channel => { 
-            const ChannelName = channel.channel_secret
+            const ChannelName = channel.channel
             const ChannelTitle = channel.title 
             const ChannelMain = channel.channel_name
             const host_passphrase = channel.host_passphrase

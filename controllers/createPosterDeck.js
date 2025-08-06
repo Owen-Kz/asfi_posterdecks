@@ -1,9 +1,9 @@
 const { InsertIntoPosterDecks } = require("../routes/queries");
 
-async function CreateDeck(req,res, newFileName, ImageFile){
+async function CreateDeck(req,res, newFileName, ImageFile, previewImageUrl) {
     try {
     
-        const TableData  = await InsertIntoPosterDecks(req,res,newFileName,ImageFile)
+        const TableData  = await InsertIntoPosterDecks(req,res,newFileName,ImageFile, previewImageUrl)
         
         // res.render("success", {status:"Poster Uploaded Successfully", page:"/sessionDashboard"})
        

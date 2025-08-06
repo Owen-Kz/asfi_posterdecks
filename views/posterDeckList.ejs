@@ -1,143 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Poster Decks</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            50: '#faf5ff',
-                            100: '#f3e8ff',
-                            200: '#e9d5ff',
-                            300: '#d8b4fe',
-                            400: '#c084fc',
-                            500: '#a855f7',
-                            600: '#9333ea',
-                            700: '#7e22ce',
-                            800: '#6b21a8',
-                            900: '#581c87',
-                        }
-                    },
-                    boxShadow: {
-                        'card': '0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)',
-                        'card-hover': '0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05)'
-                    }
-                }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Poster Decks</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#faf5ff',
+              100: '#f3e8ff',
+              200: '#e9d5ff',
+              300: '#d8b4fe',
+              400: '#c084fc',
+              500: '#a855f7',
+              600: '#9333ea',
+              700: '#7e22ce',
+              800: '#6b21a8',
+              900: '#581c87',
             }
+          },
+          boxShadow: {
+            'card': '0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)',
+            'card-hover': '0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05)'
+          }
         }
-    </script>
-    <style>
-        body, html {
-            background: transparent;
-        }
-        body::-webkit-scrollbar {
-            display: none;
-            width: 0px;
-            opacity: 0;
-        }
-        .deck-container::-webkit-scrollbar {
-            width: 8px;
-            background: transparent;
-        }
-        .deck-container::-webkit-scrollbar-thumb {
-            background-color: rgb(168, 85, 247); /* purple-500 */
-        }
-    </style>
+      }
+    }
+  </script>
+  <style>
+    body, html { background: transparent; }
+    body::-webkit-scrollbar { display: none; }
+    .deck-container::-webkit-scrollbar { width: 8px; background: transparent; }
+    .deck-container::-webkit-scrollbar-thumb { background-color: rgb(168, 85, 247); }
+  </style>
 </head>
 <body class="bg-gray-50">
-    <main class="min-h-screen py-8">
-        <section class="deck-container mx-auto px-4 w-full max-w-7xl">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="posterDeckListContainer">
-                <input type="text" value="<%=meetingID%>" id="meetingID" readonly hidden>
-                
-                <!-- This will be populated by JavaScript -->
+  <main class="min-h-screen py-8">
+    <section class="deck-container mx-auto px-4 w-full max-w-7xl">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="posterDeckListContainer">
+        <input type="text" value="<%=meetingID%>" id="meetingID" readonly hidden>
+        <!-- Populated by JS -->
+      </div>
+      <div id="paginationControls" class="flex justify-center mt-8 hidden">
+        <button id="loadMoreBtn" class="bg-primary-500 hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-md">
+          Load More
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <script src="/pdfjs/pdf.js?v=<%= Date.now() %>"></script>
+  <script src="/js/pdfjslist.js?v=<%= Date.now() %>"></script>
+  <script src="/js/fetchFiles.js?v=<%= Date.now() %>"></script>
+
+  <script>
+    const meetingID = document.getElementById("meetingID").value;
+    const posterDeckMain = document.getElementById("posterDeckListContainer");
+    const loadMoreBtn = document.getElementById("loadMoreBtn");
+    const paginationControls = document.getElementById("paginationControls");
+
+    let currentPage = 1;
+    const limitPerPage = 6;
+    let totalPages = 1;
+
+    const posterDeckContainers = [];
+    const posterDeckFiles = [];
+
+    function appendPosters(posters) {
+      posters.forEach(posterDeck => {
+        const { poster_deck_title, poster_deck_id, poster_deck_owner, poster_deck_image } = posterDeck;
+        const posterMainFile = `${poster_deck_image}`;
+        
+        posterDeckMain.innerHTML += `
+          <a href="/event/poster/${poster_deck_id}" target="_blank" class="block h-full">
+            <div class="h-full bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 flex flex-col min-h-[240px]">
+              <div class="posterImg flex-grow bg-primary-100 flex items-center justify-center overflow-hidden min-h-[120px]">
+                <div id="${poster_deck_id}" class="w-full h-full flex items-center justify-center"></div>
+              </div>
+              <div class="posterInfo p-4 flex flex-col flex-shrink-0">
+                <h3 class="posterTitle text-sm font-bold text-gray-800 line-clamp-2 mb-1">${poster_deck_title}</h3>
+                <div class="text-xs text-primary-700 font-medium mt-auto pt-2 border-t border-primary-200">${poster_deck_owner}</div>
+              </div>
             </div>
-        </section>
-    </main>
+          </a>`;
 
-    <script src="/pdfjs/pdf.js?v=<%= Date.now() %>"></script>
-    <script src="/js/pdfjslist.js?v=<%= Date.now() %>"></script>
-    <!-- <script src="/js/getPosterDecks.js?v=<%= Date.now() %>"></script> -->
-    <script src="/js/fetchFiles.js?v=<%= Date.now() %>"></script>
+        posterDeckFiles.push(posterMainFile);
+        posterDeckContainers.push(poster_deck_id);
+      });
 
-    <script>
-        function getCookie(name) {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.startsWith(name + '=')) {
-                    return cookie.substring(name.length + 1);
-                }
+      pdfRenderer(posterDeckFiles, posterDeckContainers);
+    }
+
+    async function fetchPosterDecks(page = 1) {
+      try {
+        const res = await fetch(`/getposterdecks/${meetingID}?page=${page}&limit=${limitPerPage}`);
+        const data = await res.json();
+
+        if (data.success) {
+          const posters = JSON.parse(data.PosterDecks);
+          totalPages = data.totalPages;
+
+          if (posters.length > 0) {
+            appendPosters(posters);
+            paginationControls.classList.remove('hidden');
+
+            if (currentPage >= totalPages) {
+              loadMoreBtn.classList.add('hidden');
+            } else {
+              loadMoreBtn.classList.remove('hidden');
             }
-            return '';
-        }
-
-        const meetingID = document.getElementById("meetingID");
-        const cookieValue = meetingID.value;
-        const posterDeckMain = document.getElementById("posterDeckListContainer");
-        const posterDeckContainers = [];
-        const posterDeckFiles = [];
-
-        if(cookieValue) {
-            fetch(`/getposterdecks/${cookieValue}`, {
-                method: "GET"
-            }).then(res => res.json())
-            .then(data => {
-                const allPosterDecks = JSON.parse(data.PosterDecks);
-
-                if(allPosterDecks.length > 0) {
-                    allPosterDecks.forEach(posterDeck => {
-                        const posterDeckTitle = posterDeck.poster_deck_title;
-                        const posterDeckLink = posterDeck.poster_deck_id;
-                        const posterDeckOwner = posterDeck.poster_deck_owner;
-                        const posterDeckImage = posterDeck.poster_deck_image;
-                        const posterMainFile = `${posterDeckImage}`;
-                        
-                        posterDeckMain.innerHTML += `
-                        <a href="/event/poster/${posterDeckLink}" target="_blank" class="block h-full">
-                            <div class="h-full bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 flex flex-col min-h-[240px]">
-                                <div class="posterImg flex-grow bg-primary-100 flex items-center justify-center overflow-hidden min-h-[120px]">
-                                    <div id="${posterDeckLink}" class="w-full h-full flex items-center justify-center"></div>
-                                </div>
-                                <div class="posterInfo p-4 flex flex-col flex-shrink-0">
-                                    <h3 class="posterTitle text-sm font-bold text-gray-800 line-clamp-2 mb-1">${posterDeckTitle}</h3>
-
-                                    <div class="text-xs text-primary-700 font-medium mt-auto pt-2 border-t border-primary-200">${posterDeckOwner}</div>
-                                </div>
-                            </div>
-                        </a>`;
-                        
-                        posterDeckFiles.push(posterMainFile);
-                        posterDeckContainers.push(posterDeckLink);
-                    });
-                    
-                    pdfRenderer(posterDeckFiles, posterDeckContainers);
-                } else {
-                    posterDeckMain.innerHTML = `
-                    <div class="empty col-span-full flex flex-col items-center justify-center py-12 text-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-primary-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <h3 class="text-lg font-medium text-gray-700">No posters available</h3>
-                        <p class="text-gray-500 mt-1">Check back later or upload your own poster</p>
-                    </div>`;
-                }
-            });
-        } else {
+          } else if (page === 1) {
             posterDeckMain.innerHTML = `
-            <div class="empty col-span-full flex flex-col items-center justify-center py-12 text-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              <div class="empty col-span-full flex flex-col items-center justify-center py-12 text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-primary-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <h3 class="text-lg font-medium text-gray-700">Unauthorized Access</h3>
-                <p class="text-gray-500 mt-1">Please log in to view this content</p>
-            </div>`;
+                <h3 class="text-lg font-medium text-gray-700">No posters available</h3>
+                <p class="text-gray-500 mt-1">Check back later or upload your own poster</p>
+              </div>`;
+            paginationControls.classList.add('hidden');
+          }
         }
-    </script>
+      } catch (error) {
+        console.error('Error fetching poster decks:', error);
+      }
+    }
+
+    if (meetingID) {
+      fetchPosterDecks(currentPage);
+
+      loadMoreBtn.addEventListener('click', () => {
+        if (currentPage < totalPages) {
+          currentPage++;
+          fetchPosterDecks(currentPage);
+        }
+      });
+    } else {
+      posterDeckMain.innerHTML = `
+        <div class="empty col-span-full flex flex-col items-center justify-center py-12 text-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <h3 class="text-lg font-medium text-gray-700">Unauthorized Access</h3>
+          <p class="text-gray-500 mt-1">Please log in to view this content</p>
+        </div>`;
+      paginationControls.classList.add('hidden');
+    }
+  </script>
 </body>
 </html>

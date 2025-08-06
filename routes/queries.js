@@ -205,7 +205,7 @@ function getRandomString() {
     return bufferID;
 }
 
-async function InsertIntoPosterDecks(req, res, newFileName, ImageFile){
+async function InsertIntoPosterDecks(req, res, newFileName, ImageFile, previewImageUrl) {
     const {posterSecretId, eventTitle, deckTitle, PresenterPrefix, presenterName, presenterEmail, presenterAffiliation, presenterCountry} = req.body
     const FullPresenterName = `${PresenterPrefix} ${presenterName}`
     const ValidateSecreeResult = await ValidateSecretKey(posterSecretId)
@@ -213,7 +213,7 @@ async function InsertIntoPosterDecks(req, res, newFileName, ImageFile){
     await updateKeyCount(posterSecretId).then(() =>{
         if(ValidateSecreeResult[0]){ 
             const DeckId = getRandomString()
-            CreateNewDeck(posterSecretId, eventTitle, deckTitle, FullPresenterName, presenterEmail, presenterAffiliation, presenterCountry, newFileName, ImageFile, DeckId)
+            CreateNewDeck(posterSecretId, eventTitle, deckTitle, FullPresenterName, presenterEmail, presenterAffiliation, presenterCountry, newFileName, ImageFile, DeckId, previewImageUrl)
             res.render("success", {status:"Poster Uploaded Successfully", page:`/event/poster/${DeckId}`})
         } else {
             res.render("error", {status:"Poster ID already used or is invalid", page:"/uploadPoster"})
@@ -221,7 +221,7 @@ async function InsertIntoPosterDecks(req, res, newFileName, ImageFile){
     })
 }
 
-async function CreateNewDeck(posterSecretId, eventTitle, deckTitle, presenterName, presenterEmail, presenterAffiliation, presenterCountry, newFileName, ImageFile, DeckId) {
+async function CreateNewDeck(posterSecretId, eventTitle, deckTitle, presenterName, presenterEmail, presenterAffiliation, presenterCountry, newFileName, ImageFile, DeckId, previewImageUrl) {
     const sanitizedPresenterName = presenterName.replace(/'/g, "''").replace(/\\/g, '\\\\');
     const sanitizedDeckTitle = deckTitle.replace(/'/g, "''").replace(/\\/g, '\\\\');
 
@@ -256,6 +256,7 @@ async function CreateNewDeck(posterSecretId, eventTitle, deckTitle, presenterNam
         poster_deck_meeting,
         presenter_email,
         affiliation,
+        poster_preview_image,
         country
     ) VALUES (
         '${sanitizedDeckTitle}',
@@ -268,6 +269,7 @@ async function CreateNewDeck(posterSecretId, eventTitle, deckTitle, presenterNam
         '${eventTitle}',
         '${presenterEmail}',
         '${presenterAffiliation}',
+        '${previewImageUrl}',
         '${presenterCountry}'
     );`;
     
@@ -276,10 +278,45 @@ async function CreateNewDeck(posterSecretId, eventTitle, deckTitle, presenterNam
 }
 
 
-async function RetrievePosterDecksTable(req, res, meetingId){
-    const meetingIdMain = req.params.meetingId
-    const query = `SELECT * FROM posterdecks WHERE poster_deck_meeting = '${meetingIdMain}'`
-    return executeQuery(query)
+async function RetrievePosterDecksTable(req, res, meetingId) {
+    const meetingIdMain = req.params.meetingId;
+    const page = parseInt(req.query.page) || 1; // Default to page 1 if not specified
+    const limit = parseInt(req.query.limit) || 6; // Default to 6 items per page (matches frontend)
+    const offset = (page - 1) * limit;
+
+    try {
+        // First query to get the total count
+        const countQuery = `SELECT COUNT(*) as total FROM posterdecks WHERE poster_deck_meeting = '${meetingIdMain}'`;
+        const countResult = await executeQuery(countQuery);
+        const total = countResult[0].total;
+        const totalPages = Math.ceil(total / limit);
+
+        // Second query to get paginated results
+        const dataQuery = `
+            SELECT * FROM posterdecks 
+            WHERE poster_deck_meeting = '${meetingIdMain}'
+            LIMIT ${limit} OFFSET ${offset}
+        `;
+        const results = await executeQuery(dataQuery);
+
+        // Format the response to match what frontend expects
+        const response = {
+            success: true,
+            currentPage: page,
+            totalPages: totalPages,
+            totalItems: total,
+            itemsPerPage: limit,
+            PosterDecks: JSON.stringify(results) // Maintaining existing format
+        };
+
+        res.json(response);
+    } catch (error) {
+        console.error('Error retrieving poster decks:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error retrieving poster decks'
+        });
+    }
 }
 
 async function validateIdNumber(req, res, key){
