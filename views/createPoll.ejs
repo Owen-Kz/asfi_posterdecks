@@ -126,7 +126,7 @@
         <!-- NAVIGATION BAR  -->
         <!-- <sidebar class="left-navigation-bar bg-shadow ">
            
-                 <script src="/js/navbar.js"></script>
+                 <script src="/js/navbar.js?v=<%= Date.now() %>"></script>
          </sidebar> -->
          <!-- END NAVIGATION BAR  -->
     
@@ -172,8 +172,8 @@
 
         <button type="button" id="submitForm">Submit Poll</button>
     </form>
-   <script src="/js/AllChannels.js"></script>
-   <script src="/js/polls/createPoll.js"></script>
+   <script src="/js/AllChannels.js?v=<%= Date.now() %>"></script>
+   <script src="/js/polls/createPoll.js?v=<%= Date.now() %>"></script>
    <script>
     let number = 2
     function addOption() {
