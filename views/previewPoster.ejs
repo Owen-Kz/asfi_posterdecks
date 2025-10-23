@@ -47,7 +47,7 @@
     <!-- Favicon -->
     <link rel="shortcut icon" href="/files/images/ASFIScholar_Logo.png" type="image/x-icon">
 
-    <title><%=PosterTitle%> | ASFI Scholar</title>
+    <title><%=PosterTitle%> | ASFIScholar</title>
     
     <style>
         .loader-overlay {
@@ -204,21 +204,104 @@
         <section class="bg-white rounded-xl shadow-md overflow-hidden">
             <div class="md:flex">
                 <!-- PDF Preview -->
-                <div class="md:w-2/3 p-6 relative" style="min-height: 80vh;">
-                    <input type="hidden" id="posterDeckFile" value="<%=PosterFile%>">
-                    <input type="hidden" id="presenterImageFile" value="<%=PresenterImage%>">
-                    
-                    <div id="pdf-container-1" class="w-full h-full">
-                        <div id="pdf-loading" class="text-center">
-                            <i class="fas fa-file-pdf text-6xl text-red-500 mb-2"></i>
-                            <p class="text-gray-600">Loading PDF preview...</p>
-                        </div>
-                    </div>
-                    <div class="close-zoom" id="closeZoom">
-                        <i class="fas fa-times"></i>
-                    </div>
-                </div>
-                
+    
+<!-- PDF Preview Section -->
+<div class="md:w-2/3 p-6 relative" style="min-height: 80vh;">
+    <input type="hidden" id="posterDeckFile" value="<%=PosterFile%>">
+    <input type="hidden" id="isLink" value="<%= is_link || 0 %>">
+    <input type="hidden" id="presenterImageFile" value="<%=PresenterImage%>">
+    
+    <!-- PDF Viewer Container -->
+    <div id="pdf-viewer-container" class="w-full h-full border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 flex items-center justify-center">
+        <div id="pdf-loading" class="text-center p-8">
+            <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600 mx-auto mb-4"></div>
+            <p class="text-gray-600 font-medium">Loading PDF viewer...</p>
+        </div>
+        
+        <!-- Cloudinary PDF Viewer (hidden by default) -->
+        <div id="cloudinary-viewer" class="hidden w-full h-full relative">
+            <iframe id="cloudinary-iframe" src="" class="w-full h-full rounded-lg shadow-lg" frameborder="0"></iframe>
+            <div class="absolute top-4 right-4 flex gap-2">
+                <button id="cloudinary-zoom" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-md flex items-center">
+                    <i class="fas fa-expand mr-2"></i> Zoom
+                </button>
+                <a id="cloudinary-download" href="" target="_blank" 
+                   class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-md flex items-center">
+                    <i class="fas fa-download mr-2"></i> Download
+                </a>
+                <a id="cloudinary-open" href="" target="_blank"
+                   class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-md flex items-center">
+                    <i class="fas fa-external-link-alt mr-2"></i> Open
+                </a>
+            </div>
+        </div>
+        
+        <!-- Local PDF Viewer (hidden by default) -->
+   <!-- Local PDF Viewer (hidden by default) -->
+<div id="local-pdf-viewer" class="hidden w-full h-full relative">
+    <div id="pdf-container" class="w-full h-full overflow-y-auto bg-white rounded-lg shadow-lg p-0"></div>
+    <div class="absolute top-4 right-4 flex gap-2">
+        <button id="local-zoom" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-md flex items-center">
+            <i class="fas fa-expand mr-2"></i> Zoom
+        </button>
+        <!-- Add these missing buttons -->
+        <button id="zoom-in" class="bg-gray-700 hover:bg-gray-800 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+            <i class="fas fa-search-plus"></i>
+        </button>
+        <button id="zoom-out" class="bg-gray-700 hover:bg-gray-800 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+            <i class="fas fa-search-minus"></i>
+        </button>
+        <a id="local-download" href="" download
+           class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center">
+            <i class="fas fa-download mr-2"></i> Download
+        </a>
+    </div>
+</div>
+        
+        <!-- Error State -->
+        <div id="pdf-error" class="hidden text-center p-8">
+            <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4"></i>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Failed to Load PDF</h3>
+            <p class="text-gray-600 mb-4" id="error-message"></p>
+            <button id="retry-load" class="bg-primary-500 hover:bg-primary-600 text-white px-6 py-2 rounded-md font-medium transition-colors">
+                Try Again
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Zoom Modal -->
+<div id="zoom-modal" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden transition-opacity duration-300">
+    <div class="absolute top-4 right-4 flex gap-2 z-60">
+        <button id="modal-zoom-in" class="bg-white hover:bg-gray-100 text-gray-800 px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-lg flex items-center">
+            <i class="fas fa-search-plus mr-2"></i> Zoom In
+        </button>
+        <button id="modal-zoom-out" class="bg-white hover:bg-gray-100 text-gray-800 px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-lg flex items-center">
+            <i class="fas fa-search-minus mr-2"></i> Zoom Out
+        </button>
+        <button id="modal-close" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-lg flex items-center">
+            <i class="fas fa-times mr-2"></i> Close
+        </button>
+    </div>
+    
+    <div class="absolute top-4 left-4 text-white z-60">
+        <span id="page-info" class="bg-black bg-opacity-50 px-3 py-2 rounded-md text-sm"></span>
+    </div>
+    
+    <div class="w-full h-full flex items-center justify-center p-8">
+        <div id="modal-pdf-container" class="max-w-full max-h-full overflow-auto bg-white rounded-lg shadow-2xl">
+            <!-- PDF pages will be rendered here -->
+        </div>
+    </div>
+    
+    <!-- Navigation Arrows -->
+    <button id="prev-page" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-100 text-gray-800 w-12 h-12 rounded-full shadow-lg flex items-center justify-center z-60 transition-all duration-200 opacity-80 hover:opacity-100">
+        <i class="fas fa-chevron-left text-xl"></i>
+    </button>
+    <button id="next-page" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-100 text-gray-800 w-12 h-12 rounded-full shadow-lg flex items-center justify-center z-60 transition-all duration-200 opacity-80 hover:opacity-100">
+        <i class="fas fa-chevron-right text-xl"></i>
+    </button>
+</div>
                 <!-- Poster Info -->
                 <div class="md:w-1/3 p-6 border-l border-gray-200">
                     <div class="flex justify-between items-center mb-4">
@@ -266,10 +349,10 @@
                                     <i class="fas fa-thumbs-down text-blue-500"></i>
                                     <span class="reaction-count" id="dislike_count_container"><%=DislikesCount%></span>
                                 </div>
-                                <div class="reaction-btn bg-gray-100 text-gray-800" title="You cannot download your own poster">
-                                    <i class="fas fa-download text-green-500"></i>
-                                    <span class="reaction-count" id="download_count_container"><%=DownloadsCount%></span>
-                                </div>
+                                 <div class="reaction-btn bg-gray-100 text-gray-800" title="You cannot download your own poster">
+        <i class="fas fa-download text-green-500"></i>
+        <span class="reaction-count" id="download_count_container"><%=DownloadsCount%></span>
+    </div>
                             <% } else { %>
                                 <button id="LikeButton" class="reaction-btn bg-gray-100 hover:bg-pink-100 text-gray-800">
                                     <i class="fas fa-heart text-gray-400 hover:text-red-500"></i>
@@ -279,10 +362,13 @@
                                     <i class="fas fa-thumbs-down text-gray-400 hover:text-blue-500"></i>
                                     <span class="reaction-count" id="dislike_count_container"><%=DislikesCount%></span>
                                 </button>
-                                <a id="downloadPoster" href="<%=PosterFile%>" download="<%=PosterTitle%>-<%=Presenter%>-asfischolar.pdf" class="reaction-btn bg-gray-100 hover:bg-green-100 text-gray-800">
-                                    <i class="fas fa-download text-gray-400 hover:text-green-500"></i>
-                                    <span class="reaction-count" id="download_count_container"><%=DownloadsCount%></span>
-                                </a>
+                               <a id="downloadPoster" 
+       href="<%= is_link ? PosterFile : '/files/uploaded/posterpdf/' + PosterFile %>" 
+       download="<%=PosterTitle%>-<%=Presenter%>-asfischolar.pdf" 
+       class="reaction-btn bg-gray-100 hover:bg-green-100 text-gray-800">
+        <i class="fas fa-download text-gray-400 hover:text-green-500"></i>
+        <span class="reaction-count" id="download_count_container"><%=DownloadsCount%></span>
+    </a>
                             <% } %>
                         </div>
                     </div>
@@ -350,9 +436,8 @@
 <div class="fixed bottom-8 right-8 back-top bg-purple-600 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg hover:bg-purple-700 cursor-pointer">
     <i class="fas fa-arrow-up"></i>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
+<Script>
+    document.addEventListener('DOMContentLoaded', function () {
     var loaderOverlay = document.getElementById('loader-overlay');
     
     // Hide loader when page is ready
@@ -379,11 +464,6 @@ document.addEventListener('DOMContentLoaded', function () {
     
     // Initialize star ratings
     initializeRatings();
-    
-    // Close zoomed view
-    document.getElementById('closeZoom').addEventListener('click', function() {
-        document.getElementById('pdf-container-1').classList.remove('zoomed');
-    });
 });
 
 const chatFrame = document.getElementById("chatFrame");
@@ -391,49 +471,397 @@ function changeSource(url) {
     chatFrame.src = url;
 }
 
+let currentPDF = null;
+let currentPage = 1;
+let totalPages = 1;
+let modalScale = 1.0;
+
 function initializePDFViewer() {
-    const pdfContainer = document.getElementById('pdf-container-1');
-    const pdfLoading = document.getElementById('pdf-loading');
     const pdfFile = document.getElementById('posterDeckFile').value;
+    const isLink = document.getElementById('isLink').value === '1' || document.getElementById('isLink').value === 'true';
+    const loadingElement = document.getElementById('pdf-loading');
+    const cloudinaryViewer = document.getElementById('cloudinary-viewer');
+    const localViewer = document.getElementById('local-pdf-viewer');
+    const errorElement = document.getElementById('pdf-error');
     
-    if (pdfFile) {
-        // This would be replaced with your actual PDF.js implementation
-        // For now we'll simulate loading
-        setTimeout(() => {
-            pdfLoading.style.display = 'none';
-            
-            // Create mock pages (replace with actual PDF.js rendering)
-            for (let i = 0; i < 3; i++) { // Assuming 3 pages for example
-                const page = document.createElement('div');
-                page.className = 'pdf-page bg-white p-4';
-                page.innerHTML = `
-                    <div class="border border-gray-200 p-2">
-                        <div class="bg-gray-100 w-full h-96 flex items-center justify-center">
-                            <p class="text-gray-500">Page ${i+1} of PDF preview</p>
-                        </div>
-                    </div>
-                `;
-                // pdfContainer.appendChild(page);
+    console.log('Initializing PDF viewer:', { pdfFile, isLink });
+
+    // Hide loading after a brief moment
+    setTimeout(() => {
+        loadingElement.classList.add('hidden');
+        
+        if (isLink) {
+            // Handle Cloudinary PDF
+            initializeCloudinaryViewer(pdfFile, cloudinaryViewer);
+        } else {
+            // Handle Local PDF
+            initializeLocalPDFViewer(pdfFile, localViewer);
+        }
+    }, 1000);
+}
+
+function initializeCloudinaryViewer(pdfUrl, container) {
+    console.log('Initializing Cloudinary viewer:', pdfUrl);
+    
+    const iframe = document.getElementById('cloudinary-iframe');
+    const downloadBtn = document.getElementById('cloudinary-download');
+    const openBtn = document.getElementById('cloudinary-open');
+    const zoomBtn = document.getElementById('cloudinary-zoom');
+    
+    // Set URLs
+    iframe.src = pdfUrl;
+    downloadBtn.href = pdfUrl;
+    openBtn.href = pdfUrl;
+    
+    // Show the container
+    container.classList.remove('hidden');
+    
+    // Zoom functionality for Cloudinary
+    if (zoomBtn) {
+        zoomBtn.addEventListener('click', () => {
+            openCloudinaryZoomModal(pdfUrl);
+        });
+    }
+    
+    // Handle iframe load events
+    iframe.onload = function() {
+        console.log('Cloudinary PDF loaded successfully');
+    };
+    
+    iframe.onerror = function() {
+        showError('Failed to load Cloudinary PDF. The file may be unavailable.');
+    };
+}
+
+function initializeLocalPDFViewer(pdfUrl, container) {
+    console.log('Initializing local PDF viewer:', pdfUrl);
+    
+    const pdfContainer = document.getElementById('pdf-container');
+    const downloadBtn = document.getElementById('local-download');
+    const zoomBtn = document.getElementById('local-zoom');
+    
+    // Set download URL
+    downloadBtn.href = pdfUrl;
+    downloadBtn.target = '_blank';
+    
+    // Load PDF using PDF.js
+    fetch(pdfUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            if (blob.size === 0) {
+                throw new Error('PDF file is empty');
             }
             
-            // Add click-to-zoom functionality
-            pdfContainer.addEventListener('click', function() {
-                this.classList.toggle('zoomed');
-                
-                if (this.classList.contains('zoomed')) {
-                    // Scroll to top when zoomed
-                    this.scrollTo(0, 0);
-                    
-                    // Disable body scrolling
-                    document.body.style.overflow = 'hidden';
-                } else {
-                    // Enable body scrolling
-                    document.body.style.overflow = '';
-                }
-            });
-        }, 1500);
+            const fileURL = URL.createObjectURL(blob);
+            return pdfjsLib.getDocument(fileURL).promise;
+        })
+        .then(pdf => {
+            currentPDF = pdf;
+            totalPages = pdf.numPages;
+            console.log('PDF loaded successfully. Pages:', totalPages);
+            
+            // Clear container
+            pdfContainer.innerHTML = '';
+            
+            // Render first page only in container view
+            return renderPageForContainer(pdf, 1, pdfContainer);
+        })
+        .then(() => {
+            // Show the container
+            container.classList.remove('hidden');
+            console.log('PDF page rendered successfully in container');
+            
+            // Setup zoom functionality - ONLY attach the click event to open modal
+            if (zoomBtn) {
+                zoomBtn.addEventListener('click', () => {
+                    openLocalZoomModal();
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error loading local PDF:', error);
+            showError(`Failed to load PDF: ${error.message}`);
+        });
+}
+
+function renderPageForContainer(pdf, pageNumber, container) {
+    return pdf.getPage(pageNumber).then(page => {
+        // Calculate scale to fit container width (max 800px wide)
+        const containerWidth = 800; // Max width for container view
+        const viewport = page.getViewport({ scale: 1.0 });
+        const scale = Math.min(containerWidth / viewport.width, 1.0);
+        const scaledViewport = page.getViewport({ scale: scale });
+        
+        const pageDiv = document.createElement('div');
+        pageDiv.className = 'pdf-page mb-4 bg-white rounded-lg shadow-sm overflow-hidden';
+        pageDiv.style.maxWidth = '100%';
+        
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        
+        canvas.width = scaledViewport.width;
+        canvas.height = scaledViewport.height;
+        canvas.className = 'mx-auto';
+        canvas.style.maxWidth = '100%';
+        canvas.style.height = 'auto';
+        
+        pageDiv.appendChild(canvas);
+        container.appendChild(pageDiv);
+        
+        const renderContext = {
+            canvasContext: context,
+            viewport: scaledViewport
+        };
+        
+        return page.render(renderContext).promise;
+    });
+}
+
+function openCloudinaryZoomModal(pdfUrl) {
+    const modal = document.getElementById('zoom-modal');
+    const iframe = document.createElement('iframe');
+    
+    // Clear modal container
+    const modalContainer = document.getElementById('modal-pdf-container');
+    modalContainer.innerHTML = '';
+    
+    // Create full-size iframe for Cloudinary
+    iframe.src = pdfUrl;
+    iframe.className = 'w-full h-full min-h-[80vh]';
+    iframe.style.border = 'none';
+    
+    modalContainer.appendChild(iframe);
+    
+    // Hide navigation for Cloudinary (since it's one embedded PDF)
+    document.getElementById('prev-page').classList.add('hidden');
+    document.getElementById('next-page').classList.add('hidden');
+    document.getElementById('page-info').classList.add('hidden');
+    document.getElementById('modal-zoom-in').classList.add('hidden');
+    document.getElementById('modal-zoom-out').classList.add('hidden');
+    
+    // Setup modal close event
+    setupModalCloseEvents();
+    
+    // Show modal
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function openLocalZoomModal() {
+    const modal = document.getElementById('zoom-modal');
+    const modalContainer = document.getElementById('modal-pdf-container');
+    
+    // Clear modal container
+    modalContainer.innerHTML = '';
+    
+    // Show navigation for local PDF
+    document.getElementById('prev-page').classList.remove('hidden');
+    document.getElementById('next-page').classList.remove('hidden');
+    document.getElementById('page-info').classList.remove('hidden');
+    document.getElementById('modal-zoom-in').classList.remove('hidden');
+    document.getElementById('modal-zoom-out').classList.remove('hidden');
+    
+    // Reset modal state
+    currentPage = 1;
+    modalScale = 1.0;
+    
+    // Render first page in modal
+    renderPageForModal(currentPage).then(() => {
+        updatePageInfo();
+    });
+    
+    // Setup modal event listeners
+    setupModalEvents();
+    
+    // Show modal
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function renderPageForModal(pageNumber) {
+    return currentPDF.getPage(pageNumber).then(page => {
+        const modalContainer = document.getElementById('modal-pdf-container');
+        
+        // Clear previous content
+        modalContainer.innerHTML = '';
+        
+        const viewport = page.getViewport({ scale: modalScale });
+        
+        const pageDiv = document.createElement('div');
+        pageDiv.className = 'pdf-page bg-white p-0';
+        
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        canvas.className = 'mx-auto shadow-lg';
+        
+        pageDiv.appendChild(canvas);
+        modalContainer.appendChild(pageDiv);
+        
+        const renderContext = {
+            canvasContext: context,
+            viewport: viewport
+        };
+        
+        return page.render(renderContext).promise;
+    });
+}
+
+function setupModalEvents() {
+    const closeBtn = document.getElementById('modal-close');
+    const prevBtn = document.getElementById('prev-page');
+    const nextBtn = document.getElementById('next-page');
+    const zoomInBtn = document.getElementById('modal-zoom-in');
+    const zoomOutBtn = document.getElementById('modal-zoom-out');
+    
+    // Close modal
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeModal);
+    }
+    
+    // Page navigation
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderPageForModal(currentPage).then(updatePageInfo);
+            }
+        });
+    }
+    
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderPageForModal(currentPage).then(updatePageInfo);
+            }
+        });
+    }
+    
+    // Zoom controls
+    if (zoomInBtn) {
+        zoomInBtn.addEventListener('click', () => {
+            modalScale = Math.min(modalScale + 0.25, 3.0);
+            renderPageForModal(currentPage).then(updatePageInfo);
+        });
+    }
+    
+    if (zoomOutBtn) {
+        zoomOutBtn.addEventListener('click', () => {
+            modalScale = Math.max(modalScale - 0.25, 0.5);
+            renderPageForModal(currentPage).then(updatePageInfo);
+        });
+    }
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', handleKeyboardNavigation);
+}
+
+function setupModalCloseEvents() {
+    const modal = document.getElementById('zoom-modal');
+    const closeBtn = document.getElementById('modal-close');
+    
+    // Close modal
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeModal);
+    }
+    
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+    }
+    
+    // Keyboard close
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeModal();
+        }
+    });
+}
+
+function handleKeyboardNavigation(e) {
+    const modal = document.getElementById('zoom-modal');
+    if (modal && modal.classList.contains('hidden')) return;
+    
+    switch(e.key) {
+        case 'Escape':
+            closeModal();
+            break;
+        case 'ArrowLeft':
+            if (currentPage > 1) {
+                currentPage--;
+                renderPageForModal(currentPage).then(updatePageInfo);
+            }
+            break;
+        case 'ArrowRight':
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderPageForModal(currentPage).then(updatePageInfo);
+            }
+            break;
+        case '+':
+        case '=':
+            modalScale = Math.min(modalScale + 0.25, 3.0);
+            renderPageForModal(currentPage).then(updatePageInfo);
+            break;
+        case '-':
+            modalScale = Math.max(modalScale - 0.25, 0.5);
+            renderPageForModal(currentPage).then(updatePageInfo);
+            break;
     }
 }
+
+function updatePageInfo() {
+    const pageInfo = document.getElementById('page-info');
+    if (pageInfo) {
+        pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+    }
+}
+
+function closeModal() {
+    const modal = document.getElementById('zoom-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+    document.body.style.overflow = '';
+    
+    // Clean up event listeners
+    document.removeEventListener('keydown', handleKeyboardNavigation);
+}
+
+function showError(message) {
+    const loadingElement = document.getElementById('pdf-loading');
+    const errorElement = document.getElementById('pdf-error');
+    const errorMessage = document.getElementById('error-message');
+    const retryBtn = document.getElementById('retry-load');
+    
+    loadingElement.classList.add('hidden');
+    if (errorMessage) {
+        errorMessage.textContent = message;
+    }
+    errorElement.classList.remove('hidden');
+    
+    if (retryBtn) {
+        retryBtn.addEventListener('click', function() {
+            errorElement.classList.add('hidden');
+            loadingElement.classList.remove('hidden');
+            initializePDFViewer();
+        });
+    }
+}
+
+// Remove all duplicate function definitions below this point
+// Keep only the initializeReactions and initializeRatings functions that follow
 
 function initializeReactions() {
     // Like button functionality
@@ -553,8 +981,7 @@ function initializeRatings() {
         });
     }
 }
-
-</script>
+</Script>
 
 <!-- JavaScript Libraries -->
 <script src="/js/jquery-3.4.1.min.js?v=<%= Date.now() %>"></script>

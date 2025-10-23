@@ -20,6 +20,7 @@ const loggedIn = require("../controllers/loggedIn");
 const generatePosterId = require("../controllers/generatePosterID");
 const ChatPresenterPage = require("../controllers/chatPresenter");
 const sessionDashboard = require("../controllers/sessionDashboard");
+const streamifier = require('streamifier')
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
@@ -133,24 +134,99 @@ const uploadPath = path.join(__dirname, '../public/useruploads/');
 const uploadImage = path.join(__dirname, '../public/useruploads/images/');
 
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    if (file.fieldname === 'PosterPDF') {
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     if (file.fieldname === 'PosterPDF') {
 
-      cb(null, uploadPath); // Destination folder for PDFs
-    } else if (file.fieldname === 'PresenterPic') {
-      cb(null, uploadImage); // Destination folder for images
-    }
-  },
-  filename: function (req, file, cb) {
-    const fileExtension = path.extname(file.originalname);
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + (file.fieldname === 'PosterPDF' ? '.pdf' : fileExtension));
-  },
-});
+//       cb(null, uploadPath); // Destination folder for PDFs
+//     } else if (file.fieldname === 'PresenterPic') {
+//       cb(null, uploadImage); // Destination folder for images
+//     }
+//   },
+//   filename: function (req, file, cb) {
+//     const fileExtension = path.extname(file.originalname);
+//     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+//     cb(null, file.fieldname + '-' + uniqueSuffix + (file.fieldname === 'PosterPDF' ? '.pdf' : fileExtension));
+//   },
+// });
 
 
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
+const cleanTitle = (title) => title.replace(/[^a-zA-Z0-9]/g, "");
+
+// 🔹 Enhanced Cloudinary Upload Helper with better error handling
+const uploadToCloudinaryWithRetry = (buffer, options = {}, retries = 3) => {
+  return new Promise((resolve, reject) => {
+    const attemptUpload = (attemptsLeft) => {
+      console.log(`Cloudinary upload attempt ${4 - attemptsLeft}/3...`);
+      
+      const uploadStream = cloudinary.uploader.upload_stream(
+        { ...options, timeout: 30000 },
+        (error, result) => {
+          if (error) {
+            console.error(`❌ Cloudinary upload error (${attemptsLeft} retries left):`, error.message);
+            
+            if (attemptsLeft > 0) {
+              // Wait 1 second before retrying
+              setTimeout(() => attemptUpload(attemptsLeft - 1), 1000);
+            } else {
+              reject(new Error(`Cloudinary upload failed after 3 attempts: ${error.message}`));
+            }
+          } else {
+            console.log("✅ Cloudinary upload successful");
+            resolve(result);
+          }
+        }
+      );
+
+      // Handle stream errors
+      uploadStream.on('error', (streamError) => {
+        console.error('Stream error:', streamError);
+        if (attemptsLeft > 0) {
+          setTimeout(() => attemptUpload(attemptsLeft - 1), 1000);
+        } else {
+          reject(new Error(`Stream error after 3 attempts: ${streamError.message}`));
+        }
+      });
+
+      // Pipe the buffer to Cloudinary
+      streamifier.createReadStream(buffer).pipe(uploadStream);
+    };
+
+    attemptUpload(retries);
+  });
+};
+
+// 🔹 Alternative: Direct upload without streams (more reliable)
+const directUploadToCloudinary = async (buffer, options = {}, retries = 3) => {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      console.log(`Direct Cloudinary upload attempt ${attempt}/${retries}...`);
+      
+      // Convert buffer to base64 for direct upload
+      const base64Data = buffer.toString('base64');
+      const dataUri = `data:application/pdf;base64,${base64Data}`;
+      
+      const result = await cloudinary.uploader.upload(dataUri, {
+        ...options,
+        timeout: 30000
+      });
+      
+      console.log("✅ Direct Cloudinary upload successful");
+      return result;
+    } catch (error) {
+      console.error(`❌ Direct upload attempt ${attempt} failed:`, error.message);
+      
+      if (attempt === retries) {
+        throw new Error(`Cloudinary upload failed after ${retries} attempts: ${error.message}`);
+      }
+      
+      // Wait before retry (exponential backoff)
+      await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+    }
+  }
+};
 
 router.post("/createdeck", upload.fields([
   { name: 'PosterPDF', maxCount: 1 },
@@ -159,111 +235,171 @@ router.post("/createdeck", upload.fields([
   try {
     const pdfFile = req.files.PosterPDF?.[0];
     if (!pdfFile) {
-      return res.status(400).json({ error: 'PDF file is missing.' });
+      return res.status(400).render("error", { 
+        status: "PDF file is missing.", 
+        page: "/uploadPoster" 
+      });
     }
 
-    // 1️⃣ Save PDF buffer to database
-    const buffer = fs.readFileSync(pdfFile.path);
-    const query = `INSERT INTO files (filename, filedata) VALUES (?, ?)`;
-    const values = [pdfFile.filename, buffer];
-    await UploadFiles(query, values);
+    console.log("Starting file upload process...");
 
-    console.log("PDF file saved to Postgres");
+    let pdfUrl, presenterUrl = null, previewUrl = null;
 
-    // Helper function: upload with retry
-    const uploadToCloudinary = (imageBuffer, retries = 2) => {
-      return new Promise((resolve, reject) => {
-        const attempt = (remaining) => {
-          console.log(`Uploading to Cloudinary... attempts left: ${remaining}`);
-          const stream = cloudinary.v2.uploader.upload_stream(
-            { folder: "pdf_previews", resource_type: "image", timeout: 60000 },
-            (err, result) => {
-              if (err) {
-                console.error("Cloudinary upload error:", err.message);
-                if (remaining > 0) {
-                  console.log("Retrying upload...");
-                  attempt(remaining - 1);
-                } else {
-                  reject(err);
-                }
-              } else {
-                resolve(result.secure_url);
-              }
-            }
-          );
-          stream.end(imageBuffer);
-        };
-        attempt(retries);
-      });
-    };
-
-    // 2️⃣ Generate preview image from first PDF page
-    let previewUrl = null;
+    // 🧠 Upload PDF to Cloudinary
     try {
-      const pdfData = new Uint8Array(buffer);
-      const pdfDoc = await pdfjsLib.getDocument({
-        data: pdfData,
-        disableFontFace: true
-      }).promise;
-      const firstPage = await pdfDoc.getPage(1);
+      console.log("Uploading PDF to Cloudinary...");
+      const pdfResult = await directUploadToCloudinary(pdfFile.buffer, {
+        folder: "poster_pdfs",
+        public_id: cleanTitle(pdfFile.originalname.split(".")[0]),
+        resource_type: "raw",
+      });
+      pdfUrl = pdfResult.secure_url;
+      console.log("✅ PDF uploaded to Cloudinary:", pdfUrl);
+    } catch (pdfError) {
+      console.error("PDF upload failed, trying stream method...");
+      const pdfResult = await uploadToCloudinaryWithRetry(pdfFile.buffer, {
+        folder: "poster_pdfs",
+        public_id: cleanTitle(pdfFile.originalname.split(".")[0]),
+        resource_type: "raw",
+      });
+      pdfUrl = pdfResult.secure_url;
+      console.log("✅ PDF uploaded via stream method:", pdfUrl);
+    }
 
-      const viewport = firstPage.getViewport({ scale: 1.0 }); // Slightly smaller scale
+    // 🧠 Upload Presenter Picture (if provided)
+    const presenterFile = req.files.PresenterPic?.[0];
+    if (presenterFile) {
+      try {
+        const presenterResult = await directUploadToCloudinary(presenterFile.buffer, {
+          folder: "presenter_pics",
+          resource_type: "image",
+        });
+        presenterUrl = presenterResult.secure_url;
+        console.log("✅ Presenter image uploaded:", presenterUrl);
+      } catch (error) {
+        console.warn("Presenter image upload failed, continuing without it:", error.message);
+      }
+    }
+
+    // 🧠 Generate PDF Preview
+    try {
+      console.log("Generating PDF preview...");
+      const pdfData = new Uint8Array(pdfFile.buffer);
+      const pdfDoc = await pdfjsLib.getDocument({ 
+        data: pdfData,
+        disableFontFace: true 
+      }).promise;
+      
+      const firstPage = await pdfDoc.getPage(1);
+      const viewport = firstPage.getViewport({ scale: 0.5 });
       const canvas = createCanvas(viewport.width, viewport.height);
       const ctx = canvas.getContext("2d");
 
-      await firstPage.render({ canvasContext: ctx, viewport }).promise;
+      await firstPage.render({ 
+        canvasContext: ctx, 
+        viewport: viewport 
+      }).promise;
 
-      const imageBuffer = canvas.toBuffer("image/jpeg", { quality: 0.7 }); // Compressed JPG
+      const imageBuffer = canvas.toBuffer("image/jpeg", { quality: 0.6 });
+      const previewResult = await directUploadToCloudinary(imageBuffer, {
+        folder: "pdf_previews",
+        resource_type: "image",
+      });
+      previewUrl = previewResult.secure_url;
+      console.log("✅ Preview uploaded:", previewUrl);
 
-      // 3️⃣ Upload preview image to Cloudinary with retry
-      previewUrl = await uploadToCloudinary(imageBuffer, 2); // 2 retries
-
-      console.log("Preview uploaded to Cloudinary:", previewUrl);
-
-    } catch (err) {
-      console.error("Failed to generate PDF preview:", err);
-      // Continue without preview
+    } catch (previewError) {
+      console.warn("⚠️ Preview generation failed, continuing without preview:", previewError.message);
     }
 
-    // 4️⃣ Create Deck record
-    await CreateDeck(req, res, pdfFile.filename, "avatar.jpg", previewUrl);
+    // 🧠 Save to database
+    console.log("Saving to database...");
+    const query = `INSERT INTO files (filename, file_link, is_link) VALUES (?, ?, true)`;
+    const values = [pdfFile.originalname, pdfUrl];
+    await UploadFiles(query, values);
+    console.log("✅ Database save complete");
 
-    // 5️⃣ Delete temp PDF file
-    fs.unlink(pdfFile.path, (unlinkErr) => {
-      if (unlinkErr) console.error("Error deleting temp PDF:", unlinkErr);
-      else console.log("Temp PDF deleted");
-    });
+    // 🧠 Create Deck - Get result without sending response
+    console.log("Creating deck...");
+    const deckResult = await CreateDeck(req, pdfUrl, presenterUrl, previewUrl);
+
+    // 🧠 Unified Response Handling
+    if (deckResult.success) {
+      console.log("🎉 Deck creation completed successfully");
+      res.render("success", {
+        status: deckResult.message,
+        page: deckResult.page
+      });
+    } else {
+      console.error("❌ Deck creation failed:", deckResult.error);
+      res.render("error", {
+        status: deckResult.error,
+        page: deckResult.page
+      });
+    }
 
   } catch (err) {
-    console.error("Error in /createdeck:", err);
-    res.status(500).json({ error: "Failed to create deck" });
+    console.error("❌ Fatal error in /createdeck:", err);
+    res.render("error", {
+      status: "Failed to create deck: " + err.message,
+      page: "/uploadPoster"
+    });
   }
 });
-
-
 
 router.get("/fetchFiles", (req, res) => {
   res.render("tempFilePreview")
 })
 
 router.get("/files/uploaded/posterpdf/:filename", async (req, res) => {
-  const fileName = req.params.filename;
+    const fileName = req.params.filename;
 
-  const query = 'SELECT * FROM files WHERE filename = ?';
-  const values = [fileName];
+    // Basic validation
+    if (!fileName || fileName.includes('..') || fileName.includes('/')) {
+        return res.status(400).send('Invalid filename');
+    }
 
-  try {
-    const result = await UploadFiles(query, values);
-    const fileData = result[0].filedata;
+    const query = 'SELECT * FROM files WHERE filename = ?';
+    const values = [fileName];
 
-    // Set appropriate headers for the response
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
-    res.end(fileData); // Send the file data as the response
-  } catch (error) {
-    console.error('Error retrieving file:', error);
-    res.status(500).send('Error retrieving file');
-  }
+    try {
+        const result = await UploadFiles(query, values);
+        
+        if (!result || result.length === 0 || !result[0]) {
+            return res.status(404).send('File not found');
+        }
+        
+        const fileData = result[0].filedata;
+        const fileLink = result[0].file_link; // New column for Cloudinary URLs
+        const isLink = result[0].is_link;
+
+        console.log('File retrieval - is_link:', isLink, 'file_link:', fileLink);
+
+        // If it's a Cloudinary link, use the file_link column
+        if (isLink === 1 || isLink === true) {
+            if (fileLink && fileLink.startsWith('http')) {
+                console.log('Redirecting to Cloudinary:', fileLink);
+                return res.redirect(fileLink);
+            } else {
+                console.log('Invalid Cloudinary URL in file_link:', fileLink);
+                return res.status(500).send('Invalid Cloudinary URL');
+            }
+        }
+
+        // Handle local file (BLOB data in filedata column)
+        if (Buffer.isBuffer(fileData)) {
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', `inline; filename="${fileName}"`);
+            res.setHeader('Cache-Control', 'public, max-age=3600');
+            return res.end(fileData);
+        } else {
+            return res.status(500).send('Invalid file data format');
+        }
+        
+    } catch (error) {
+        console.error('Error retrieving file:', error);
+        res.status(500).send('Error retrieving file');
+    }
 });
 
 router.get("/files/uploaded/presenterImage/:filename", async (req, res) => {

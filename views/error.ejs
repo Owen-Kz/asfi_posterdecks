@@ -4,15 +4,49 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/error.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <title><%= status %></title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
 </head>
-<body>
-    <div id="main">
-    	<div class="fof">
-           <%= status %> | <a href="/uploadPoster">Try Again</a>  
-    	</div>
-</div>
-   
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-md w-full">
+        <!-- Error Icon -->
+        <div class="flex justify-center mb-6">
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-semibold text-gray-900 mb-2">Something went wrong</h1>
+            <p class="text-gray-600 text-lg"><%= status %></p>
+        </div>
+
+        <!-- Action Button -->
+        <div class="text-center">
+            <a href="<%= page || '/uploadPoster' %>" 
+               class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200">
+                Try Again
+                <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+            </a>
+        </div>
+
+        <!-- Additional Help -->
+        <div class="text-center mt-6">
+            <p class="text-sm text-gray-500">
+                If the problem persists, please contact support.
+            </p>
+        </div>
+    </div>
 </body>
 </html>

@@ -1,17 +1,16 @@
 const { InsertIntoPosterDecks } = require("../routes/queries");
-
-async function CreateDeck(req,res, newFileName, ImageFile, previewImageUrl) {
+async function CreateDeck(req, newFileName, ImageFile, previewImageUrl) {
     try {
-    
-        const TableData  = await InsertIntoPosterDecks(req,res,newFileName,ImageFile, previewImageUrl)
-        
-        // res.render("success", {status:"Poster Uploaded Successfully", page:"/sessionDashboard"})
-       
-        // const DummyDeck = await InsertDummyPosterDecks(req,res)
+        const result = await InsertIntoPosterDecks(req, newFileName, ImageFile, previewImageUrl);
+        return result;
     } catch (error) {
-        res.render("success", {status:"Internal Server Error", page:"/sessionDashboard"})
-        console.error("Error", error.message)
+        console.error("Error in CreateDeck:", error.message);
+        return { 
+            success: false, 
+            error: "Internal Server Error",
+            page: "/sessionDashboard"
+        };
     }
 }
 
-module.exports = CreateDeck
+module.exports = CreateDeck;

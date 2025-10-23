@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Poster Decks</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script>
     tailwind.config = {
       theme: {
@@ -36,6 +37,29 @@
     body::-webkit-scrollbar { display: none; }
     .deck-container::-webkit-scrollbar { width: 8px; background: transparent; }
     .deck-container::-webkit-scrollbar-thumb { background-color: rgb(168, 85, 247); }
+    
+    .poster-card {
+      transition: all 0.3s ease;
+    }
+    
+    .poster-card:hover {
+      transform: translateY(-4px);
+    }
+    
+    .poster-image {
+      transition: transform 0.3s ease;
+    }
+    
+    .poster-card:hover .poster-image {
+      transform: scale(1.05);
+    }
+    
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
   </style>
 </head>
 <body class="bg-gray-50">
@@ -46,16 +70,13 @@
         <!-- Populated by JS -->
       </div>
       <div id="paginationControls" class="flex justify-center mt-8 hidden">
-        <button id="loadMoreBtn" class="bg-primary-500 hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-md">
-          Load More
+        <button id="loadMoreBtn" class="bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 flex items-center">
+          <i class="fas fa-plus mr-2"></i>
+          Load More Posters
         </button>
       </div>
     </section>
   </main>
-
-  <script src="/pdfjs/pdf.js?v=<%= Date.now() %>"></script>
-  <script src="/js/pdfjslist.js?v=<%= Date.now() %>"></script>
-  <script src="/js/fetchFiles.js?v=<%= Date.now() %>"></script>
 
   <script>
     const meetingID = document.getElementById("meetingID").value;
@@ -64,35 +85,65 @@
     const paginationControls = document.getElementById("paginationControls");
 
     let currentPage = 1;
-    const limitPerPage = 6;
+    const limitPerPage = 8; // Increased for better grid layout
     let totalPages = 1;
 
-    const posterDeckContainers = [];
-    const posterDeckFiles = [];
-
     function appendPosters(posters) {
-      posters.forEach(posterDeck => {
-        const { poster_deck_title, poster_deck_id, poster_deck_owner, poster_deck_image } = posterDeck;
-        const posterMainFile = `${poster_deck_image}`;
-        
-        posterDeckMain.innerHTML += `
-          <a href="/event/poster/${poster_deck_id}" target="_blank" class="block h-full">
-            <div class="h-full bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 flex flex-col min-h-[240px]">
-              <div class="posterImg flex-grow bg-primary-100 flex items-center justify-center overflow-hidden min-h-[120px]">
-                <div id="${poster_deck_id}" class="w-full h-full flex items-center justify-center"></div>
-              </div>
-              <div class="posterInfo p-4 flex flex-col flex-shrink-0">
-                <h3 class="posterTitle text-sm font-bold text-gray-800 line-clamp-2 mb-1">${poster_deck_title}</h3>
-                <div class="text-xs text-primary-700 font-medium mt-auto pt-2 border-t border-primary-200">${poster_deck_owner}</div>
-              </div>
-            </div>
-          </a>`;
-
-        posterDeckFiles.push(posterMainFile);
-        posterDeckContainers.push(poster_deck_id);
-      });
-
-      pdfRenderer(posterDeckFiles, posterDeckContainers);
+        posters.forEach(posterDeck => {
+            const { 
+                poster_deck_title, 
+                poster_deck_id, 
+                poster_deck_owner, 
+                poster_preview_image
+            } = posterDeck;
+            
+            const hasPreview = poster_preview_image && poster_preview_image !== 'null';
+            const previewImage = hasPreview ? poster_preview_image : '/images/default-poster-preview.jpg';
+            
+            posterDeckMain.innerHTML += `
+              <a href="/event/poster/${poster_deck_id}" class="block h-full poster-card" target="_blank" rel="noopener noreferrer">
+                <div class="h-full bg-white rounded-xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 border border-gray-100 flex flex-col">
+                  <!-- Image Container -->
+                  <div class="poster-img-container flex-grow bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center overflow-hidden relative h-48">
+                    <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-10 transition-all duration-300 z-10"></div>
+                    ${hasPreview ? `
+                      <img src="${previewImage}" 
+                           alt="${poster_deck_title}" 
+                           class="poster-image w-full h-full object-cover"
+                           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                    ` : ''}
+                    <!-- Fallback when no image or image fails to load -->
+                    <div class="${hasPreview ? 'hidden' : 'flex'} w-full h-full items-center justify-center flex-col text-primary-400">
+                      <i class="fas fa-file-pdf text-4xl mb-2"></i>
+                      <span class="text-sm font-medium">PDF Poster</span>
+                    </div>
+                    
+                    <!-- Hover Overlay -->
+                    <div class="absolute inset-0 bg-primary-500 bg-opacity-0 hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+                      <div class="bg-white rounded-full p-3 shadow-lg transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                        <i class="fas fa-eye text-primary-600 text-lg"></i>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Info Container -->
+                  <div class="poster-info p-4 flex flex-col flex-shrink-0 bg-white">
+                    <h3 class="poster-title text-base font-bold text-gray-800 line-clamp-2 mb-2 leading-tight">
+                      ${poster_deck_title}
+                    </h3>
+                    <div class="flex items-center justify-between mt-auto pt-3 border-t border-gray-100">
+                      <div class="flex items-center text-sm text-gray-600">
+                        <i class="fas fa-user-circle mr-2 text-primary-500"></i>
+                        <span class="font-medium truncate max-w-[120px]">${poster_deck_owner}</span>
+                      </div>
+                      <div class="text-primary-500 hover:text-primary-600 transition-colors">
+                        <i class="fas fa-external-link-alt text-sm"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </a>`;
+        });
     }
 
     async function fetchPosterDecks(page = 1) {
@@ -115,18 +166,32 @@
             }
           } else if (page === 1) {
             posterDeckMain.innerHTML = `
-              <div class="empty col-span-full flex flex-col items-center justify-center py-12 text-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-primary-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <h3 class="text-lg font-medium text-gray-700">No posters available</h3>
-                <p class="text-gray-500 mt-1">Check back later or upload your own poster</p>
+              <div class="empty col-span-full flex flex-col items-center justify-center py-16 text-center">
+                <div class="bg-gradient-to-br from-primary-100 to-primary-200 rounded-full p-6 mb-4">
+                  <i class="fas fa-images text-4xl text-primary-600"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">No Posters Yet</h3>
+                <p class="text-gray-600 max-w-md">Be the first to share your research! Upload your poster to get started.</p>
+                <a href="/uploadPoster" class="mt-4 bg-primary-500 hover:bg-primary-600 text-white font-medium py-2 px-6 rounded-lg transition-colors">
+                  Upload Poster
+                </a>
               </div>`;
             paginationControls.classList.add('hidden');
           }
         }
       } catch (error) {
         console.error('Error fetching poster decks:', error);
+        posterDeckMain.innerHTML = `
+          <div class="empty col-span-full flex flex-col items-center justify-center py-16 text-center">
+            <div class="bg-red-100 rounded-full p-6 mb-4">
+              <i class="fas fa-exclamation-triangle text-4xl text-red-600"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Connection Error</h3>
+            <p class="text-gray-600">Unable to load posters. Please try again later.</p>
+            <button onclick="fetchPosterDecks(1)" class="mt-4 bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-6 rounded-lg transition-colors">
+              Retry
+            </button>
+          </div>`;
       }
     }
 
@@ -136,17 +201,26 @@
       loadMoreBtn.addEventListener('click', () => {
         if (currentPage < totalPages) {
           currentPage++;
-          fetchPosterDecks(currentPage);
+          loadMoreBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Loading...';
+          loadMoreBtn.disabled = true;
+          
+          fetchPosterDecks(currentPage).finally(() => {
+            loadMoreBtn.innerHTML = '<i class="fas fa-plus mr-2"></i> Load More Posters';
+            loadMoreBtn.disabled = false;
+          });
         }
       });
     } else {
       posterDeckMain.innerHTML = `
-        <div class="empty col-span-full flex flex-col items-center justify-center py-12 text-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-          </svg>
-          <h3 class="text-lg font-medium text-gray-700">Unauthorized Access</h3>
-          <p class="text-gray-500 mt-1">Please log in to view this content</p>
+        <div class="empty col-span-full flex flex-col items-center justify-center py-16 text-center">
+          <div class="bg-yellow-100 rounded-full p-6 mb-4">
+            <i class="fas fa-lock text-4xl text-yellow-600"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 mb-2">Authentication Required</h3>
+          <p class="text-gray-600 mb-4">Please log in to view poster decks</p>
+          <a href="/login" class="bg-primary-500 hover:bg-primary-600 text-white font-medium py-2 px-6 rounded-lg transition-colors">
+            Sign In
+          </a>
         </div>`;
       paginationControls.classList.add('hidden');
     }

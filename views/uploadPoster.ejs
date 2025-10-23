@@ -30,6 +30,11 @@
                     fontFamily: {
                         poppins: ['Poppins', 'sans-serif'],
                     },
+                    boxShadow: {
+                        'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        'medium': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                        'large': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+                    }
                 }
             }
         }
@@ -44,7 +49,7 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <title>Posters | ASFI Scholar</title>
+    <title>Upload Poster | ASFIScholar</title>
     
     <style>
         .loader-overlay {
@@ -53,7 +58,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             z-index: 9999;
             display: flex;
             justify-content: center;
@@ -61,60 +66,100 @@
             transition: opacity 0.5s, visibility 0.5s;
         }
         
-        .wrapper {
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .custom-select {
             position: relative;
-            width: 200px;
-            height: 60px;
+        }
+        
+        .select-search-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            background: white;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .select-search-input:focus {
+            outline: none;
+            border-color: #a855f7;
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+        }
+        
+        .select-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        
+        .select-option {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid #f3f4f6;
+            transition: all 0.2s ease;
+        }
+        
+        .select-option:hover {
+            background: #faf5ff;
+            color: #7e22ce;
+        }
+        
+        .select-option:last-child {
+            border-bottom: none;
+        }
+        
+        .select-option.selected {
+            background: #a855f7;
+            color: white;
+        }
+        
+        .file-upload-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 12px;
+            padding: 2rem;
             text-align: center;
+            transition: all 0.3s ease;
+            background: #fafafa;
         }
         
-        .circle {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background-color: #a855f7;
-            left: 15%;
-            transform-origin: 50%;
-            animation: circle .5s alternate infinite ease;
+        .file-upload-area:hover {
+            border-color: #a855f7;
+            background: #faf5ff;
         }
         
-        @keyframes circle {
-            0% {
-                top: 60px;
-                height: 5px;
-                border-radius: 50px 50px 25px 25px;
-                transform: scaleX(1.7);
-            }
-            40% {
-                height: 20px;
-                border-radius: 50%;
-                transform: scaleX(1);
-            }
-            100% {
-                top: 0%;
-            }
+        .file-upload-area.dragover {
+            border-color: #7e22ce;
+            background: #f3e8ff;
         }
         
-        .circle:nth-child(2) {
-            left: 45%;
-            animation-delay: .2s;
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
         }
         
-        .circle:nth-child(3) {
-            left: auto;
-            right: 15%;
-            animation-delay: .3s;
+        .form-section {
+            border-bottom: 1px solid #f3f4f6;
+            padding: 2rem;
         }
         
-        .wrapper span {
-            position: absolute;
-            top: 75px;
-            font-family: 'Poppins';
-            font-size: 20px;
-            letter-spacing: 12px;
-            color: #a855f7;
-            left: 15%;
+        .form-section:last-child {
+            border-bottom: none;
         }
         
         .password-toggle {
@@ -124,77 +169,269 @@
             transform: translateY(-50%);
             cursor: pointer;
             color: #6b7280;
+            transition: color 0.2s ease;
         }
         
         .password-toggle:hover {
             color: #4b5563;
         }
+        
+        .input-group {
+            position: relative;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #a855f7;
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+        }
+        
+        .form-input:read-only {
+            background: #f9fafb;
+            color: #6b7280;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .required::after {
+            content: "*";
+            color: #ef4444;
+            margin-left: 4px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(168, 85, 247, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #374151;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+            cursor: pointer;
+        }
+        
+        .btn-secondary:hover {
+            border-color: #a855f7;
+            color: #a855f7;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(168, 85, 247, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            z-index: 100;
+        }
+        
+        .back-to-top:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(168, 85, 247, 0.4);
+        }
+        
+        .success-message {
+            background: #d1fae5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .error-message {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
     </style>
+
+    <style>
+    .btn-primary:disabled {
+        opacity: 0.75;
+        cursor: not-allowed;
+        transform: none !important;
+        box-shadow: none !important;
+    }
+    
+    .btn-primary:disabled:hover {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+    
+    .hidden {
+        display: none !important;
+    }
+    
+    .fa-spinner {
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+</style>
+
 </head>
 
-<body class="font-poppins bg-gray-50">
+<body class="font-poppins bg-gradient-to-br from-primary-50 to-purple-100 min-h-screen">
 
     <div class="loader-overlay" id="loader-overlay">
-        <div class="wrapper">
-            <div class="circle"></div>
-            <div class="circle"></div>
-            <div class="circle"></div>
-            <span>Loading</span>
+        <div class="flex flex-col items-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600 mb-4"></div>
+            <span class="text-primary-600 font-medium">Loading...</span>
         </div>
     </div>
 
-<!-- Header START -->
-<%- include('./partials/header.ejs')%>
-<!-- Header END -->
+    <!-- Header START -->
+    <%- include('./partials/header.ejs')%>
+    <!-- Header END -->
 
     <!-- Main Content START -->
-    <main class="py-12">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                <div class="p-8">
-                    <div class="text-center mb-8">
-                        <h4 class="text-2xl font-bold text-gray-900">Upload Poster</h4>
-                        <p class="text-gray-500 mt-2">Please fill in all required fields to submit your poster</p>
+    <main class="py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto">
+            <!-- Header Section -->
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">Upload Your Poster</h1>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Share your research with the ASFIScholar community. Fill in the details below to submit your poster.</p>
+            </div>
+
+            <!-- Form Card -->
+            <div class="form-card">
+                <!-- Progress Indicator -->
+                <div class="bg-gradient-to-r from-primary-500 to-purple-600 px-8 py-6">
+                    <div class="flex items-center justify-between text-white">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-file-upload text-sm"></i>
+                            </div>
+                            <span class="font-medium">Poster Upload Form</span>
+                        </div>
+                        <span class="text-sm bg-white bg-opacity-20 px-3 py-1 rounded-full">Step 1 of 1</span>
                     </div>
+                </div>
 
-                    <hr class="my-6 border-gray-200">
-
-                    <form id="createPosterDeckForm" enctype="multipart/form-data" action="/createdeck" method="post">
+                <form id="createPosterDeckForm" enctype="multipart/form-data" action="/createdeck" method="post" class="divide-y divide-gray-100">
+                    <!-- Meeting Selection Section -->
+                    <div class="form-section">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                            <i class="fas fa-calendar-alt text-primary-600 mr-3"></i>
+                            Meeting Information
+                        </h3>
+                        
                         <div class="space-y-6">
-                            <!-- Meeting Selection -->
+                            <!-- Searchable Meeting Selector -->
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Meeting*</label>
-                                <select class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 py-3 px-4 border" name="eventTitle" id="eventTitle" required>
-                                    <option value="">Select Meeting you want to add the deck to</option>
-                                </select>
+                                <label class="form-label required">Select Meeting</label>
+                                <div class="custom-select">
+                                    <input type="text" 
+                                           class="select-search-input" 
+                                           placeholder="Search for a meeting..."
+                                           id="meetingSearch">
+                                    <div class="select-dropdown" id="meetingDropdown">
+                                        <!-- Options will be populated by JavaScript -->
+                                    </div>
+                                    <input type="hidden" name="eventTitle" id="eventTitle" required>
+                                </div>
+                                <p class="text-sm text-gray-500 mt-2">Start typing to search for your meeting</p>
                             </div>
 
                             <!-- Poster ID -->
-                            <div class="relative">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Poster ID Number*</label>
-                                <div class="relative">
-                                    <input class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 py-3 px-4 border" type="password" name="posterSecretId" id="posterSecretId" value="" required>
-                                    <span id="togglePassword" class="password-toggle" onclick="togglePasswordField()">
-                                        <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 576 512">
-                                            <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/>
-                                        </svg>
+                            <div>
+                                <label class="form-label required">Poster ID Number</label>
+                                <div class="input-group">
+                                    <input type="password" 
+                                           class="form-input pr-12" 
+                                           name="posterSecretId" 
+                                           id="posterSecretId" 
+                                           placeholder="Enter your poster ID"
+                                           required>
+                                    <span id="togglePassword" class="password-toggle">
+                                        <i class="fas fa-eye"></i>
                                     </span>
                                 </div>
-                                <div id="KeyMessage" class="hidden"></div>
+                                <div id="KeyMessage" class="mt-2"></div>
                             </div>
+                        </div>
+                    </div>
 
-                            <!-- Poster Title -->
+                    <!-- Poster Details Section -->
+                    <div class="form-section">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                            <i class="fas fa-info-circle text-primary-600 mr-3"></i>
+                            Poster Details
+                        </h3>
+                        
+                        <div class="space-y-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Poster Title*</label>
-                                <input class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 py-3 px-4 border" type="text" name="deckTitle" id="deckTitle" value="" required>
+                                <label class="form-label required">Poster Title</label>
+                                <input type="text" 
+                                       class="form-input" 
+                                       name="deckTitle" 
+                                       id="deckTitle" 
+                                       placeholder="Enter your poster title"
+                                       required>
                             </div>
+                        </div>
+                    </div>
 
-                            <!-- Presenter Information -->
+                    <!-- Presenter Information Section -->
+                    <div class="form-section">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                            <i class="fas fa-user-graduate text-primary-600 mr-3"></i>
+                            Presenter Information
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Presenter Prefix*</label>
-                                <select class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 py-3 px-4 border" name="PresenterPrefix" id="PresenterPrefix">
+                                <label class="form-label required">Prefix</label>
+                                <select class="form-input" name="PresenterPrefix" id="PresenterPrefix">
                                     <option value="<%= prefix %>"><%= prefix %></option>
-                                    <option value="N/A">Select your preferred prefix (if any)</option>
+                                    <option value="N/A">Select prefix</option>
                                     <option value="Prof">Prof</option>
                                     <option value="Dr">Dr</option> 
                                     <option value="Mr">Mr</option>
@@ -204,68 +441,197 @@
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Presenter Name*</label>
-                                <input class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 py-3 px-4 border bg-gray-100" type="text" name="presenterName" id="presenterName" value="<%=firstname%> <%= lastname %>" required readonly>
+                                <label class="form-label required">Full Name</label>
+                                <input type="text" 
+                                       class="form-input bg-gray-50" 
+                                       name="presenterName" 
+                                       id="presenterName" 
+                                       value="<%=firstname%> <%= lastname %>"
+                                       readonly>
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <label class="form-label required">Email Address</label>
+                                <input type="email" 
+                                       class="form-input bg-gray-50" 
+                                       name="presenterEmail" 
+                                       id="presenterEmail" 
+                                       value="<%= email %>"
+                                       readonly>
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Presenter Email Address*</label>
-                                <input class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 py-3 px-4 border bg-gray-100" type="email" name="presenterEmail" id="presenterEmail" value="<%= email %>" required readonly>
+                                <label class="form-label required">Affiliation</label>
+                                <input type="text" 
+                                       class="form-input" 
+                                       name="presenterAffiliation" 
+                                       id="presenterAffiliation" 
+                                       placeholder="Your institution or organization"
+                                       required>
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Affiliation*</label>
-                                <input class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 py-3 px-4 border" type="text" name="presenterAffiliation" id="presenterAffiliation" value="" required>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Country*</label>
-                                <input class="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 py-3 px-4 border" type="text" name="presenterCountry" id="presenterCountry" value="" required>
-                            </div>
-
-                            <!-- Poster Upload -->
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Your Poster</label>
-                                <p class="text-gray-500 text-sm">Please consider accessibility when making your poster PDF, by ensuring text is selectable and images are described (for screen readers).</p>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Upload a PDF now (25Mb limit)*</label>
-                                <div class="flex">
-                                    <input type="file" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" id="PosterPDF" name="PosterPDF" accept=".pdf" required>
-                                </div>
-                            </div>
-
-                            <input type="submit" id="submitPoster" hidden/>
-
-                            <!-- Form Buttons -->
-                            <div class="flex flex-col sm:flex-row justify-between gap-4 pt-6">
-                                <a href="/logout" class="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
-                                    Cancel and Logout
-                                </a>
-                                <button type="submit" class="inline-flex justify-center rounded-md border border-transparent bg-primary-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
-                                    Submit Poster
-                                </button>
+                                <label class="form-label required">Country</label>
+                                <input type="text" 
+                                       class="form-input" 
+                                       name="presenterCountry" 
+                                       id="presenterCountry" 
+                                       placeholder="Your country"
+                                       required>
                             </div>
                         </div>
-                    </form>
-                </div>
+                    </div>
+
+                    <!-- File Upload Section -->
+                    <div class="form-section">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                            <i class="fas fa-file-pdf text-primary-600 mr-3"></i>
+                            Poster File
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            <div class="file-upload-area" id="fileUploadArea">
+                                <i class="fas fa-cloud-upload-alt text-4xl text-primary-500 mb-4"></i>
+                                <h4 class="text-lg font-semibold text-gray-900 mb-2">Upload Your Poster PDF</h4>
+                                <p class="text-gray-600 mb-4">Drag & drop your file here or click to browse</p>
+                                <p class="text-sm text-gray-500 mb-4">Maximum file size: 25MB • PDF format only</p>
+                                <input type="file" 
+                                       class="hidden" 
+                                       id="PosterPDF" 
+                                       name="PosterPDF" 
+                                       accept=".pdf"
+                                       required>
+                                <button type="button" 
+                                        class="btn-primary"
+                                        onclick="document.getElementById('PosterPDF').click()">
+                                    <i class="fas fa-folder-open mr-2"></i>Choose File
+                                </button>
+                                <div id="fileInfo" class="mt-4 text-sm text-gray-600 hidden"></div>
+                            </div>
+                            
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                <div class="flex items-start">
+                                    <i class="fas fa-lightbulb text-blue-500 mt-1 mr-3"></i>
+                                    <div>
+                                        <h5 class="font-semibold text-blue-900 mb-1">Accessibility Tip</h5>
+                                        <p class="text-blue-700 text-sm">Please ensure your PDF is accessible by using selectable text and providing image descriptions for screen readers.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Section -->
+                    <div class="form-section bg-gray-50">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                            <a href="/logout" class="btn-secondary w-full sm:w-auto text-center">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Cancel & Logout
+                            </a>
+                      <button type="submit" class="btn-primary w-full sm:w-auto" id="submitButton">
+    <span id="buttonText">
+        <i class="fas fa-paper-plane mr-2"></i>Submit Poster
+    </span>
+    <span id="buttonLoader" class="hidden">
+        <i class="fas fa-spinner fa-spin mr-2"></i>Submitting...
+    </span>
+</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </main>
     <!-- Main Content END -->
 
-<%- include('./partials/footer.ejs') %>
+    <%- include('./partials/footer.ejs') %>
 
+    <!-- Back to Top Button -->
+    <div class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <i class="fas fa-chevron-up"></i>
+    </div>
 
     <script>
+        // Add this to your existing JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('createPosterDeckForm');
+    const submitButton = document.getElementById('submitButton');
+    const buttonText = document.getElementById('buttonText');
+    const buttonLoader = document.getElementById('buttonLoader');
+    
+    // Reset button state when page loads (handles browser back button)
+    resetSubmitButton();
+    
+    form.addEventListener('submit', function(e) {
+        // Prevent double submission
+        if (submitButton.disabled) {
+            e.preventDefault();
+            return;
+        }
+        
+        // Show loading state
+        setButtonLoading(true);
+    });
+    
+    // Handle form reset events
+    form.addEventListener('reset', function() {
+        resetSubmitButton();
+    });
+    
+    // Also reset when the page becomes visible again (handles back/forward navigation)
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            resetSubmitButton();
+        }
+    });
+    
+    // Reset on page show event (for mobile browsers)
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted) {
+            resetSubmitButton();
+        }
+    });
+});
+
+function setButtonLoading(isLoading) {
+    const submitButton = document.getElementById('submitButton');
+    const buttonText = document.getElementById('buttonText');
+    const buttonLoader = document.getElementById('buttonLoader');
+    
+    if (isLoading) {
+        submitButton.disabled = true;
+        buttonText.classList.add('hidden');
+        buttonLoader.classList.remove('hidden');
+        submitButton.classList.add('opacity-75', 'cursor-not-allowed');
+    } else {
+        submitButton.disabled = false;
+        buttonText.classList.remove('hidden');
+        buttonLoader.classList.add('hidden');
+        submitButton.classList.remove('opacity-75', 'cursor-not-allowed');
+    }
+}
+
+function resetSubmitButton() {
+    setButtonLoading(false);
+}
+
+</script>
+
+    <script>
+        
         document.addEventListener('DOMContentLoaded', function () {
             var loaderOverlay = document.getElementById('loader-overlay');
             
-            window.addEventListener('load', function () {
+            // Hide loader when page is ready
+            setTimeout(function() {
                 loaderOverlay.style.opacity = 0;
                 loaderOverlay.style.visibility = 'hidden';
-            });
+            }, 1000);
+
+            // Initialize custom select
+            initializeCustomSelect();
+            
+            // Initialize file upload
+            initializeFileUpload();
         });
 
         function togglePasswordField() {
@@ -274,20 +640,208 @@
             
             if (passwordField.type === "password") {
                 passwordField.type = "text";
-                eyeIcon.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 640 512">
-                        <path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c8.4-19.3 10.6-41.4 4.8-63.3c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zM373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5L373 389.9z"/>
-                    </svg>
-                `;
+                eyeIcon.innerHTML = '<i class="fas fa-eye-slash"></i>';
             } else {
                 passwordField.type = "password";
-                eyeIcon.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 576 512">
-                        <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/>
-                    </svg>
-                `;
+                eyeIcon.innerHTML = '<i class="fas fa-eye"></i>';
             }
         }
+
+        function initializeCustomSelect() {
+            const searchInput = document.getElementById('meetingSearch');
+            const dropdown = document.getElementById('meetingDropdown');
+            const hiddenInput = document.getElementById('eventTitle');
+            let meetings = [];
+
+            // Fetch meetings data
+            fetch("/allchannels", {
+                method: "GET"
+            }).then(res => res.json())
+            .then(data => {
+                const AllChannelsData = JSON.parse(data.ChannelData);
+                meetings = AllChannelsData;
+
+                if (AllChannelsData.length > 0) {
+                    populateDropdown(AllChannelsData);
+                } else {
+                    dropdown.innerHTML = '<div class="select-option text-gray-500">No meetings available</div>';
+                }
+            });
+
+            function populateDropdown(meetingsData) {
+                dropdown.innerHTML = meetingsData.map(meeting => 
+                    `<div class="select-option" data-value="${meeting.channel}">${meeting.title}</div>`
+                ).join('');
+            }
+
+            // Show dropdown on focus
+            searchInput.addEventListener('focus', function() {
+                dropdown.style.display = 'block';
+            });
+
+            // Hide dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.style.display = 'none';
+                }
+            });
+
+            // Filter meetings on input
+            searchInput.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                const filteredMeetings = meetings.filter(meeting => 
+                    meeting.title.toLowerCase().includes(searchTerm)
+                );
+                populateDropdown(filteredMeetings);
+            });
+
+            // Handle option selection
+            dropdown.addEventListener('click', function(e) {
+                if (e.target.classList.contains('select-option')) {
+                    const selectedValue = e.target.getAttribute('data-value');
+                    const selectedText = e.target.textContent;
+                    
+                    searchInput.value = selectedText;
+                    hiddenInput.value = selectedValue;
+                    dropdown.style.display = 'none';
+                    
+                    // Add visual feedback
+                    document.querySelectorAll('.select-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    e.target.classList.add('selected');
+                }
+            });
+        }
+
+        function initializeFileUpload() {
+            const fileInput = document.getElementById('PosterPDF');
+            const fileUploadArea = document.getElementById('fileUploadArea');
+            const fileInfo = document.getElementById('fileInfo');
+            const maxSize = 25 * 1024 * 1024; // 25MB
+
+            fileInput.addEventListener('change', function(e) {
+                handleFileSelection(e.target.files[0]);
+            });
+
+            // Drag and drop functionality
+            fileUploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                fileUploadArea.classList.add('dragover');
+            });
+
+            fileUploadArea.addEventListener('dragleave', function() {
+                fileUploadArea.classList.remove('dragover');
+            });
+
+            fileUploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                fileUploadArea.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFileSelection(files[0]);
+                    fileInput.files = files;
+                }
+            });
+
+            function handleFileSelection(file) {
+                if (file) {
+                    if (file.size > maxSize) {
+                        showMessage('File size exceeds 25MB limit. Please choose a smaller file.', 'error');
+                        fileInput.value = '';
+                        return;
+                    }
+
+                    if (file.type !== 'application/pdf') {
+                        showMessage('Please select a PDF file.', 'error');
+                        fileInput.value = '';
+                        return;
+                    }
+
+                    const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+                    fileInfo.innerHTML = `
+                        <div class="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg p-3">
+                            <div class="flex items-center">
+                                <i class="fas fa-file-pdf text-green-500 text-xl mr-3"></i>
+                                <div>
+                                    <div class="font-medium text-green-800">${file.name}</div>
+                                    <div class="text-green-600 text-sm">${fileSize} MB</div>
+                                </div>
+                            </div>
+                            <button type="button" onclick="clearFileSelection()" class="text-green-600 hover:text-green-800">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `;
+                    fileInfo.classList.remove('hidden');
+                }
+            }
+        }
+
+        function clearFileSelection() {
+            const fileInput = document.getElementById('PosterPDF');
+            const fileInfo = document.getElementById('fileInfo');
+            fileInput.value = '';
+            fileInfo.classList.add('hidden');
+        }
+
+        function showMessage(message, type) {
+            const existingMessage = document.querySelector('.success-message, .error-message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type === 'error' ? 'error-message' : 'success-message';
+            messageDiv.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas ${type === 'error' ? 'fa-exclamation-triangle' : 'fa-check-circle'} mr-2"></i>
+                    ${message}
+                </div>
+            `;
+
+            document.querySelector('form').insertBefore(messageDiv, document.querySelector('form').firstChild);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+
+        // Password validation (your existing code)
+        const KeyMessage = document.getElementById("KeyMessage");
+        const PosteEventId = document.getElementById("posterSecretId");
+        
+        PosteEventId.addEventListener("change", function(){
+            if(PosteEventId.value !== ""){
+                fetch(`/validateKey/${PosteEventId.value}`, {
+                    method: "GET"
+                }).then(res => res.json())
+                .then(data =>{
+                    if(data.status === "error"){
+                        KeyMessage.innerHTML = `
+                            <div class="error-message">
+                                <i class="fas fa-exclamation-circle mr-2"></i>
+                                ${data.message}
+                            </div>
+                        `;
+                    }else if(data.status === "valid"){
+                        KeyMessage.innerHTML = `
+                            <div class="success-message">
+                                <i class="fas fa-check-circle mr-2"></i>
+                                ${data.message}
+                            </div>
+                        `;
+                    }
+                });
+            }else{
+                KeyMessage.innerHTML = `
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        Poster ID Number cannot be empty
+                    </div>
+                `;
+            }
+        });
     </script>
 
     <!-- JavaScript Libraries -->
@@ -295,10 +849,5 @@
     <script src="/js/bootstrap.bundle.min.js?v=<%= Date.now() %>"></script>
     <script src="/js/AllChannels.js?v=<%= Date.now() %>"></script>
     <script src="/js/createposter.js?v=<%= Date.now() %>"></script>
-
-    <!-- Back to top button -->
-    <div class="fixed bottom-8 right-8 bg-primary-600 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg hover:bg-primary-700 cursor-pointer transition-colors duration-200">
-        <i class="fas fa-arrow-up"></i>
-    </div>
 </body>
 </html>
