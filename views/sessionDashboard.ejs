@@ -60,6 +60,53 @@
             transform: translateY(-1px);
         }
     </style>
+    <style>
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .shadow-soft {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    
+    .shadow-medium {
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(168, 85, 247, 0.3);
+    }
+    
+    /* Smooth transitions for all interactive elements */
+    .transition-all {
+        transition: all 0.3s ease;
+    }
+    
+    /* Loading animation */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .poster-card {
+        animation: fadeIn 0.5s ease-out;
+    }
+</style>
 </head>
 
 <body class="font-poppins bg-gray-50">
@@ -70,7 +117,7 @@
 <!-- Main Content START -->
 <main class="py-8 px-4 sm:px-6 lg:px-8">
     <div class="max-w-4xl mx-auto">
-        <h1 class="text-2xl font-bold text-gray-900 mb-6">Presentations</h1>
+        <h1 class="text-1xl font-semibold text-gray-900 mb-6">Posters</h1>
         
         <!-- Presentations List -->
         <div class="bg-white shadow rounded-lg overflow-hidden">

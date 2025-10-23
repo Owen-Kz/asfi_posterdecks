@@ -170,6 +170,7 @@
             cursor: pointer;
             color: #6b7280;
             transition: color 0.2s ease;
+            z-index: 10;
         }
         
         .password-toggle:hover {
@@ -287,35 +288,32 @@
             border-radius: 8px;
             margin-bottom: 1rem;
         }
+
+        .btn-primary:disabled {
+            opacity: 0.75;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        .btn-primary:disabled:hover {
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .fa-spinner {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
     </style>
-
-    <style>
-    .btn-primary:disabled {
-        opacity: 0.75;
-        cursor: not-allowed;
-        transform: none !important;
-        box-shadow: none !important;
-    }
-    
-    .btn-primary:disabled:hover {
-        transform: none !important;
-        box-shadow: none !important;
-    }
-    
-    .hidden {
-        display: none !important;
-    }
-    
-    .fa-spinner {
-        animation: spin 1s linear infinite;
-    }
-    
-    @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-</style>
-
 </head>
 
 <body class="font-poppins bg-gradient-to-br from-primary-50 to-purple-100 min-h-screen">
@@ -355,7 +353,7 @@
                     </div>
                 </div>
 
-                <form id="createPosterDeckForm" enctype="multipart/form-data" action="/createdeck" method="post" class="divide-y divide-gray-100">
+                <form id="createPosterDeckForm" enctype="multipart/form-data" action="/createdeck" method="post" class="divide-y divide-gray-100" autocomplete="false">
                     <!-- Meeting Selection Section -->
                     <div class="form-section">
                         <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
@@ -371,7 +369,12 @@
                                     <input type="text" 
                                            class="select-search-input" 
                                            placeholder="Search for a meeting..."
-                                           id="meetingSearch" autocomplete="off" autocorrect="off" required>
+                                           id="meetingSearch" 
+                                           autocomplete="off"
+                                           autocorrect="off"
+                                           autocapitalize="off"
+                                           spellcheck="false"
+                                           required>
                                     <div class="select-dropdown" id="meetingDropdown">
                                         <!-- Options will be populated by JavaScript -->
                                     </div>
@@ -388,11 +391,13 @@
                                            class="form-input pr-12" 
                                            name="posterSecretId" 
                                            id="posterSecretId" 
-                                           autocomplete="off"
+                                           autocomplete="new-password"
                                            autocorrect="off"
+                                           autocapitalize="off"
+                                           spellcheck="false"
                                            placeholder="Enter your poster ID"
                                            required>
-                                    <span id="togglePassword" class="password-toggle">
+                                    <span id="togglePassword" class="password-toggle" onclick="togglePasswordField()">
                                         <i class="fas fa-eye"></i>
                                     </span>
                                 </div>
@@ -416,6 +421,10 @@
                                        name="deckTitle" 
                                        id="deckTitle" 
                                        placeholder="Enter your poster title"
+                                       autocomplete="off"
+                                       autocorrect="off"
+                                       autocapitalize="on"
+                                       spellcheck="true"
                                        required>
                             </div>
                         </div>
@@ -431,7 +440,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label class="form-label required">Prefix</label>
-                                <select class="form-input" name="PresenterPrefix" id="PresenterPrefix">
+                                <select class="form-input" name="PresenterPrefix" id="PresenterPrefix" autocomplete="off">
                                     <option value="<%= prefix %>"><%= prefix %></option>
                                     <option value="N/A">Select prefix</option>
                                     <option value="Prof">Prof</option>
@@ -449,7 +458,8 @@
                                        name="presenterName" 
                                        id="presenterName" 
                                        value="<%=firstname%> <%= lastname %>"
-                                       readonly>
+                                       readonly
+                                       autocomplete="off">
                             </div>
 
                             <div class="md:col-span-2">
@@ -459,7 +469,8 @@
                                        name="presenterEmail" 
                                        id="presenterEmail" 
                                        value="<%= email %>"
-                                       readonly>
+                                       readonly
+                                       autocomplete="off">
                             </div>
 
                             <div>
@@ -469,6 +480,10 @@
                                        name="presenterAffiliation" 
                                        id="presenterAffiliation" 
                                        placeholder="Your institution or organization"
+                                       autocomplete="organization"
+                                       autocorrect="off"
+                                       autocapitalize="on"
+                                       spellcheck="true"
                                        required>
                             </div>
 
@@ -479,6 +494,10 @@
                                        name="presenterCountry" 
                                        id="presenterCountry" 
                                        placeholder="Your country"
+                                       autocomplete="country"
+                                       autocorrect="off"
+                                       autocapitalize="on"
+                                       spellcheck="true"
                                        required>
                             </div>
                         </div>
@@ -529,14 +548,14 @@
                             <a href="/logout" class="btn-secondary w-full sm:w-auto text-center">
                                 <i class="fas fa-sign-out-alt mr-2"></i>Cancel & Logout
                             </a>
-                      <button type="submit" class="btn-primary w-full sm:w-auto" id="submitButton">
-    <span id="buttonText">
-        <i class="fas fa-paper-plane mr-2"></i>Submit Poster
-    </span>
-    <span id="buttonLoader" class="hidden">
-        <i class="fas fa-spinner fa-spin mr-2"></i>Submitting...
-    </span>
-</button>
+                            <button type="submit" class="btn-primary w-full sm:w-auto" id="submitButton">
+                                <span id="buttonText">
+                                    <i class="fas fa-paper-plane mr-2"></i>Submit Poster
+                                </span>
+                                <span id="buttonLoader" class="hidden">
+                                    <i class="fas fa-spinner fa-spin mr-2"></i>Submitting...
+                                </span>
+                            </button>
                         </div>
                     </div>
                 </form>
@@ -553,100 +572,100 @@
     </div>
 
     <script>
-        // Add this to your existing JavaScript
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('createPosterDeckForm');
-    const submitButton = document.getElementById('submitButton');
-    const buttonText = document.getElementById('buttonText');
-    const buttonLoader = document.getElementById('buttonLoader');
-    
-    // Reset button state when page loads (handles browser back button)
-    resetSubmitButton();
-    
-    form.addEventListener('submit', function(e) {
-        // Prevent double submission
-        if (submitButton.disabled) {
-            e.preventDefault();
-            return;
-        }
-        
-        // Show loading state
-        setButtonLoading(true);
-    });
-    
-    // Handle form reset events
-    form.addEventListener('reset', function() {
-        resetSubmitButton();
-    });
-    
-    // Also reset when the page becomes visible again (handles back/forward navigation)
-    document.addEventListener('visibilitychange', function() {
-        if (!document.hidden) {
-            resetSubmitButton();
-        }
-    });
-    
-    // Reset on page show event (for mobile browsers)
-    window.addEventListener('pageshow', function(event) {
-        if (event.persisted) {
-            resetSubmitButton();
-        }
-    });
-});
-
-function setButtonLoading(isLoading) {
-    const submitButton = document.getElementById('submitButton');
-    const buttonText = document.getElementById('buttonText');
-    const buttonLoader = document.getElementById('buttonLoader');
-    
-    if (isLoading) {
-        submitButton.disabled = true;
-        buttonText.classList.add('hidden');
-        buttonLoader.classList.remove('hidden');
-        submitButton.classList.add('opacity-75', 'cursor-not-allowed');
-    } else {
-        submitButton.disabled = false;
-        buttonText.classList.remove('hidden');
-        buttonLoader.classList.add('hidden');
-        submitButton.classList.remove('opacity-75', 'cursor-not-allowed');
-    }
-}
-
-function resetSubmitButton() {
-    setButtonLoading(false);
-}
-
-</script>
-
-    <script>
-        
-        document.addEventListener('DOMContentLoaded', function () {
-            var loaderOverlay = document.getElementById('loader-overlay');
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('createPosterDeckForm');
+            const submitButton = document.getElementById('submitButton');
+            const buttonText = document.getElementById('buttonText');
+            const buttonLoader = document.getElementById('buttonLoader');
             
-            // Hide loader when page is ready
-            setTimeout(function() {
-                loaderOverlay.style.opacity = 0;
-                loaderOverlay.style.visibility = 'hidden';
-            }, 1000);
+            // Reset button state when page loads (handles browser back button)
+            resetSubmitButton();
+            
+            form.addEventListener('submit', function(e) {
+                // Prevent double submission
+                if (submitButton.disabled) {
+                    e.preventDefault();
+                    return;
+                }
+                
+                // Show loading state
+                setButtonLoading(true);
+            });
+            
+            // Handle form reset events
+            form.addEventListener('reset', function() {
+                resetSubmitButton();
+            });
+            
+            // Also reset when the page becomes visible again (handles back/forward navigation)
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) {
+                    resetSubmitButton();
+                }
+            });
+            
+            // Reset on page show event (for mobile browsers)
+            window.addEventListener('pageshow', function(event) {
+                if (event.persisted) {
+                    resetSubmitButton();
+                }
+            });
 
             // Initialize custom select
             initializeCustomSelect();
             
             // Initialize file upload
             initializeFileUpload();
+
+            // Hide loader when page is ready
+            setTimeout(function() {
+                const loaderOverlay = document.getElementById('loader-overlay');
+                if (loaderOverlay) {
+                    loaderOverlay.style.opacity = 0;
+                    loaderOverlay.style.visibility = 'hidden';
+                }
+            }, 1000);
         });
 
         function togglePasswordField() {
             const passwordField = document.getElementById('posterSecretId');
             const eyeIcon = document.getElementById('togglePassword');
             
+            if (!passwordField || !eyeIcon) return;
+            
             if (passwordField.type === "password") {
                 passwordField.type = "text";
                 eyeIcon.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                eyeIcon.setAttribute('title', 'Hide password');
             } else {
                 passwordField.type = "password";
                 eyeIcon.innerHTML = '<i class="fas fa-eye"></i>';
+                eyeIcon.setAttribute('title', 'Show password');
             }
+        }
+
+        function setButtonLoading(isLoading) {
+            const submitButton = document.getElementById('submitButton');
+            const buttonText = document.getElementById('buttonText');
+            const buttonLoader = document.getElementById('buttonLoader');
+            
+            if (!submitButton || !buttonText || !buttonLoader) return;
+            
+            if (isLoading) {
+                submitButton.disabled = true;
+                buttonText.classList.add('hidden');
+                buttonLoader.classList.remove('hidden');
+                submitButton.classList.add('opacity-75', 'cursor-not-allowed');
+            } else {
+                submitButton.disabled = false;
+                buttonText.classList.remove('hidden');
+                buttonLoader.classList.add('hidden');
+                submitButton.classList.remove('opacity-75', 'cursor-not-allowed');
+            }
+        }
+
+        function resetSubmitButton() {
+            setButtonLoading(false);
         }
 
         function initializeCustomSelect() {
@@ -654,6 +673,8 @@ function resetSubmitButton() {
             const dropdown = document.getElementById('meetingDropdown');
             const hiddenInput = document.getElementById('eventTitle');
             let meetings = [];
+
+            if (!searchInput || !dropdown || !hiddenInput) return;
 
             // Fetch meetings data
             fetch("/allchannels", {
@@ -722,6 +743,8 @@ function resetSubmitButton() {
             const fileInfo = document.getElementById('fileInfo');
             const maxSize = 25 * 1024 * 1024; // 25MB
 
+            if (!fileInput || !fileUploadArea || !fileInfo) return;
+
             fileInput.addEventListener('change', function(e) {
                 handleFileSelection(e.target.files[0]);
             });
@@ -783,8 +806,10 @@ function resetSubmitButton() {
         function clearFileSelection() {
             const fileInput = document.getElementById('PosterPDF');
             const fileInfo = document.getElementById('fileInfo');
-            fileInput.value = '';
-            fileInfo.classList.add('hidden');
+            if (fileInput && fileInfo) {
+                fileInput.value = '';
+                fileInfo.classList.add('hidden');
+            }
         }
 
         function showMessage(message, type) {
@@ -802,48 +827,55 @@ function resetSubmitButton() {
                 </div>
             `;
 
-            document.querySelector('form').insertBefore(messageDiv, document.querySelector('form').firstChild);
-            
-            setTimeout(() => {
-                messageDiv.remove();
-            }, 5000);
+            const form = document.querySelector('form');
+            if (form) {
+                form.insertBefore(messageDiv, form.firstChild);
+                
+                setTimeout(() => {
+                    if (messageDiv.parentNode) {
+                        messageDiv.remove();
+                    }
+                }, 5000);
+            }
         }
 
-        // Password validation (your existing code)
-        // const KeyMessage = document.getElementById("KeyMessage");
+        // Password validation
         const PosteEventId = document.getElementById("posterSecretId");
+        const KeyMessage = document.getElementById("KeyMessage");
         
-        PosteEventId.addEventListener("change", function(){
-            if(PosteEventId.value !== ""){
-                fetch(`/validateKey/${PosteEventId.value}`, {
-                    method: "GET"
-                }).then(res => res.json())
-                .then(data =>{
-                    if(data.status === "error"){
-                        KeyMessage.innerHTML = `
-                            <div class="error-message">
-                                <i class="fas fa-exclamation-circle mr-2"></i>
-                                ${data.message}
-                            </div>
-                        `;
-                    }else if(data.status === "valid"){
-                        KeyMessage.innerHTML = `
-                            <div class="success-message">
-                                <i class="fas fa-check-circle mr-2"></i>
-                                ${data.message}
-                            </div>
-                        `;
-                    }
-                });
-            }else{
-                KeyMessage.innerHTML = `
-                    <div class="error-message">
-                        <i class="fas fa-exclamation-circle mr-2"></i>
-                        Poster ID Number cannot be empty
-                    </div>
-                `;
-            }
-        });
+        if (PosteEventId && KeyMessage) {
+            PosteEventId.addEventListener("change", function(){
+                if(PosteEventId.value !== ""){
+                    fetch(`/validateKey/${PosteEventId.value}`, {
+                        method: "GET"
+                    }).then(res => res.json())
+                    .then(data =>{
+                        if(data.status === "error"){
+                            KeyMessage.innerHTML = `
+                                <div class="error-message">
+                                    <i class="fas fa-exclamation-circle mr-2"></i>
+                                    ${data.message}
+                                </div>
+                            `;
+                        }else if(data.status === "valid"){
+                            KeyMessage.innerHTML = `
+                                <div class="success-message">
+                                    <i class="fas fa-check-circle mr-2"></i>
+                                    ${data.message}
+                                </div>
+                            `;
+                        }
+                    });
+                }else{
+                    KeyMessage.innerHTML = `
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-circle mr-2"></i>
+                            Poster ID Number cannot be empty
+                        </div>
+                    `;
+                }
+            });
+        }
     </script>
 
     <!-- JavaScript Libraries -->

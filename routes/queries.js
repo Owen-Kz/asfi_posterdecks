@@ -359,7 +359,7 @@ async function validateIdNumber(req, res, key){
 }
 
 async function RetrievePosterDecksTableForAdmin(req, res, presenterEmail){
-    const query = `SELECT * FROM posterdecks WHERE presenter_email = '${presenterEmail}'`
+    const query = `SELECT * FROM posterdecks WHERE presenter_email = '${presenterEmail}' ORDER BY id DESC`
     return executeQuery(query)
 }
 

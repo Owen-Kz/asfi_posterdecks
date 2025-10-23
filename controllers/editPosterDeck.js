@@ -1,17 +1,26 @@
 const { UpdatePosterDecks } = require("../routes/queries");
 
-async function EditDeck(req,res, newFileName, ImageFile){
+async function EditDeck(req, res, pdfUrl, presenterUrl, previewUrl) {
     try {
-    
-        const TableData  = await UpdatePosterDecks(req,res,newFileName,ImageFile)
+        console.log("📝 EditDeck called with Cloudinary URLs:");
+        console.log("PDF URL:", pdfUrl);
+        console.log("Presenter URL:", presenterUrl);
+        console.log("Preview URL:", previewUrl);
         
-        // res.render("success", {status:"Poster Uploaded Successfully", page:"/sessionDashboard"})
+        // Update the function call to pass Cloudinary URLs instead of local filenames
+        const TableData = await UpdatePosterDecks(req, res, pdfUrl, presenterUrl, previewUrl);
+        
+        console.log("✅ EditDeck completed successfully");
+        return { success: true, message: "Poster Updated Successfully" };
        
-        // const DummyDeck = await InsertDummyPosterDecks(req,res)
     } catch (error) {
-        res.render("success", {status:"Internal Server Error", page:"/sessionDashboard"})
-        console.error("Error", error.message)
+        console.error("❌ Error in EditDeck:", error.message);
+        return { 
+            success: false, 
+            error: "Internal Server Error: " + error.message,
+            page: "/editPoster"
+        };
     }
 }
 
-module.exports = EditDeck
+module.exports = EditDeck;

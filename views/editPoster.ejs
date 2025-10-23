@@ -1,244 +1,795 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="author" content="Weperch Technologies Ltd">
-	    <meta name="description" content="ASFI, African Science Frontiers Initiative, African Scientists, African Scholars, Scholars, Education">
-        <link rel="stylesheet" href="/css/posterDeck.css">
-		<link rel="stylesheet" href="/css/general.css">
-		
-        
-
-        <!-- Plugins CSS -->
-	<link rel="stylesheet" type="text/css" href="/css/choices.min.css">
-	<link rel="stylesheet" type="text/css" href="/css/bs-stepper.min.css">
-       
-        
-        <!-- Favicon -->
-        <link rel="shortcut icon" href="/files/images/ASFIScholar_Logo.png">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Weperch Technologies Ltd">
+    <meta name="description" content="ASFI, African Science Frontiers Initiative, African Scientists, African Scholars, Scholars, Education">
     
-        <link rel="stylesheet" href="/css/css/fontawesome.css">
-        <link rel="stylesheet" href="/css/css/fontawesome-all.css">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#faf5ff',
+                            100: '#f3e8ff',
+                            200: '#e9d5ff',
+                            300: '#d8b4fe',
+                            400: '#c084fc',
+                            500: '#a855f7',
+                            600: '#9333ea',
+                            700: '#7e22ce',
+                            800: '#6b21a8',
+                            900: '#581c87',
+                        }
+                    },
+                    fontFamily: {
+                        poppins: ['Poppins', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        'medium': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                        'large': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+                    }
+                }
+            }
+        }
+    </script>
     
-        <link rel="stylesheet" href="/css/material-design-iconic-font.css">
-        <link rel="stylesheet" href="/css/weather-icons/css/weather-icons-core.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-        <title>Posters |  ASFIScholar</title>
-
-
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/files/images/ASFIScholar_Logo.png">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <title>Edit Poster | ASFIScholar</title>
+    
+    <style>
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
         
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .custom-select {
+            position: relative;
+        }
+        
+        .select-search-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            background: white;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .select-search-input:focus {
+            outline: none;
+            border-color: #a855f7;
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+        }
+        
+        .select-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        
+        .select-option {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid #f3f4f6;
+            transition: all 0.2s ease;
+        }
+        
+        .select-option:hover {
+            background: #faf5ff;
+            color: #7e22ce;
+        }
+        
+        .select-option:last-child {
+            border-bottom: none;
+        }
+        
+        .select-option.selected {
+            background: #a855f7;
+            color: white;
+        }
+        
+        .file-upload-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+        
+        .file-upload-area:hover {
+            border-color: #a855f7;
+            background: #faf5ff;
+        }
+        
+        .file-upload-area.dragover {
+            border-color: #7e22ce;
+            background: #f3e8ff;
+        }
+        
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        .form-section {
+            border-bottom: 1px solid #f3f4f6;
+            padding: 2rem;
+        }
+        
+        .form-section:last-child {
+            border-bottom: none;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6b7280;
+            transition: color 0.2s ease;
+            z-index: 10;
+        }
+        
+        .password-toggle:hover {
+            color: #4b5563;
+        }
+        
+        .input-group {
+            position: relative;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #a855f7;
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+        }
+        
+        .form-input:read-only {
+            background: #f9fafb;
+            color: #6b7280;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .required::after {
+            content: "*";
+            color: #ef4444;
+            margin-left: 4px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(168, 85, 247, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #374151;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+            cursor: pointer;
+        }
+        
+        .btn-secondary:hover {
+            border-color: #a855f7;
+            color: #a855f7;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(168, 85, 247, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            z-index: 100;
+        }
+        
+        .back-to-top:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(168, 85, 247, 0.4);
+        }
+        
+        .success-message {
+            background: #d1fae5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .error-message {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.75;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        .btn-primary:disabled:hover {
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .fa-spinner {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 
-<body>
+<body class="font-poppins bg-gradient-to-br from-primary-50 to-purple-100 min-h-screen">
 
-	<div class="loader-overlay" id="loader-overlay">
-		<div class="wrapper">
-			<div class="circle"></div>
-			<div class="circle"></div>
-			<div class="circle"></div>
-			<div class="shadow"></div>
-			<div class="shadow"></div>
-			<div class="shadow"></div>
-			<span>Loading</span>
-		</div>
-	</div>
+    <div class="loader-overlay" id="loader-overlay">
+        <div class="flex flex-col items-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600 mb-4"></div>
+            <span class="text-primary-600 font-medium">Loading...</span>
+        </div>
+    </div>
 
-    <!-- NAVIGATION BAR  -->
-    <!-- <sidebar class="left-navigation-bar bg-shadow ">
-       
-             <script src="/js/navbar.js?v=<%= Date.now() %>"></script>
-     </sidebar> -->
-     <!-- END NAVIGATION BAR  -->
+    <!-- Header START -->
+     <!-- Header START -->
+    <%- include('./partials/header.ejs')%>
+    <!-- Header END -->
+    <!-- Header END -->
 
-<!-- Header START -->
-<header class="navbar-light navbar-sticky">
-	<!-- Logo Nav START -->
-	<nav class="navbar navbar-expand-xl">
-		<div class="container containerReg">
-            <!-- Logo START -->
-			<a class="navbar-brand" href="">
-				<img class="light-mode-item navbar-brand-item" src="/files/images/ASFIScholar_Logo.png" alt="logo">
-				<img class="dark-mode-item navbar-brand-item" src="/files/images/ASFIScholar_Logo.png" alt="logo">
-			</a>
-			<a href="/sessionDashboard"><span class="btn btn-primary">My Dashboard</span></a>
-		</div>
-	</nav>
-	<!-- Logo Nav END -->
-</header>
-<!-- Header END -->
+    <!-- Main Content START -->
+    <main class="py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto">
+            <!-- Header Section -->
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">Edit Your Poster</h1>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Update your poster information and make changes as needed.</p>
+            </div>
 
-<!-- **************** MAIN CONTENT START **************** -->
-<main>
+            <!-- Form Card -->
+            <div class="form-card">
+                <!-- Progress Indicator -->
+                <div class="bg-gradient-to-r from-primary-500 to-purple-600 px-8 py-6">
+                    <div class="flex items-center justify-between text-white">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-edit text-sm"></i>
+                            </div>
+                            <span class="font-medium">Edit Poster Form</span>
+                        </div>
+                        <span class="text-sm bg-white bg-opacity-20 px-3 py-1 rounded-full">Step 1 of 1</span>
+                    </div>
+                </div>
 
-<!-- =======================
-Upload Poster START -->
-<section>
-	<div class="container">
-		<div class="row">
-			<div class="col-md-8 mx-auto text-center">
-				<h4>Edit Poster</h4>
-			</div>
-		</div>
-        <br>
+                <form id="createPosterDeckForm" enctype="multipart/form-data" action="/editdeck" method="post" class="divide-y divide-gray-100" autocomplete="false">
+                    <!-- Meeting Selection Section -->
+                    <div class="form-section">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                            <i class="fas fa-calendar-alt text-primary-600 mr-3"></i>
+                            Meeting Information
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            <!-- Meeting Selector -->
+                            <div>
+                                <label class="form-label required">Meeting</label>
+                                <div class="custom-select">
+                                    <input type="text" 
+                                           class="select-search-input" 
+                                           value="<%= PosterMeeting %>"
+                                           id="meetingSearch" 
+                                           autocomplete="off"
+                                           autocorrect="off"
+                                           autocapitalize="off"
+                                           spellcheck="false"
+                                           readonly>
+                                    <input type="hidden" name="eventTitle" id="eventTitle" value="<%= PosterMeeting %>" required>
+                                </div>
+                                <p class="text-sm text-gray-500 mt-2">Meeting cannot be changed when editing a poster</p>
+                            </div>
 
-		<div class="card-body">
-		<!-- Step 1 content START -->
-		<div class="content">
-			<!-- Title -->
-			
+                            <!-- Poster ID -->
+                            <div>
+                                <label class="form-label required">Poster ID Number</label>
+                                <div class="input-group">
+                                    <input type="password" 
+                                           class="form-input pr-12 bg-gray-50" 
+                                           name="posterSecretId" 
+                                           id="posterSecretId" 
+                                           value="<%= PosterId %>"
+                                           autocomplete="new-password"
+                                           autocorrect="off"
+                                           autocapitalize="off"
+                                           spellcheck="false"
+                                           readonly
+                                           required>
+                                    <span id="togglePassword" class="password-toggle" onclick="togglePasswordField()">
+                                        <i class="fas fa-eye"></i>
+                                    </span>
+                                </div>
+                                <div id="KeyMessage" class="mt-2"></div>
+                            </div>
+                        </div>
+                    </div>
 
-			<hr> <!-- Divider -->
-			
-			<!-- Basic information START -->
-			<div class="row g-4">
-				<form id="createPosterDeckForm" enctype="multipart/form-data" action="/editdeck" method="post">
-				<!-- Event title -->
-				<div class="col-12">
-					<label class="form-label">Meeting*</label>
-					<div class="dropdown">
-						<select class="form-control" name="eventTitle" id="eventTitle" required>
-							<option value="<%=PosterMeeting%>">Select Meeting you want to add the deck to</option>
-							
-						</select>
-						
-					</div>
-				</div>
+                    <!-- Poster Details Section -->
+                    <div class="form-section">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                            <i class="fas fa-info-circle text-primary-600 mr-3"></i>
+                            Poster Details
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <label class="form-label required">Poster Title</label>
+                                <input type="text" 
+                                       class="form-input" 
+                                       name="deckTitle" 
+                                       id="deckTitle" 
+                                       value="<%= PosterTitle %>"
+                                       placeholder="Enter your poster title"
+                                       autocomplete="off"
+                                       autocorrect="off"
+                                       autocapitalize="on"
+                                       spellcheck="true"
+                                       required>
+                            </div>
+                        </div>
+                    </div>
 
-				<div class="col-12">
-					<label class="form-label">Poster ID*</label>
-					<div class="dropdown-id">
-						<input class="form-control" type="password" name="posterSecretId" id="posterSecretId" value="<%= PosterId %>" required readonly>
-						<!-- <span id="togglePassword" class="password-toggle" onclick="togglePasswordField()"><svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 576 512">! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc.<path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"/></svg></span> -->
-					</div>
-					<div id="KeyMessage" style="display:none;"></div>
-				</div>
-				<!-- Poster Title  -->
-				<div class="col-12">
-					<label class="form-label">Poster Title*</label>
-					<div class="dropdown">
-						<input class="form-control" type="text" name="deckTitle" id="deckTitle" value="<%= PosterTitle %>" required>
-						
-					</div>
-				</div>
+                    <!-- Presenter Information Section -->
+                    <div class="form-section">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                            <i class="fas fa-user-graduate text-primary-600 mr-3"></i>
+                            Presenter Information
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="form-label required">Prefix</label>
+                                <select class="form-input" name="PresenterPrefix" id="PresenterPrefix" autocomplete="off">
+                                    <option value="<%= prefix %>"><%= prefix %></option>
+                                    <option value="N/A">Select prefix</option>
+                                    <option value="Prof">Prof</option>
+                                    <option value="Dr">Dr</option> 
+                                    <option value="Mr">Mr</option>
+                                    <option value="Mrs">Mrs</option>
+                                    <option value="Miss">Miss</option>
+                                </select>
+                            </div>
 
-				<!-- Short description -->
-				<!-- <div class="col-12">
-					<label class="form-label">Abstract</label>
-					<textarea class="form-control" name="shortDescription" id="shortDescription" rows="10" placeholder="Enter A description for your presentation" required></textarea>
-				</div> -->
+                            <div>
+                                <label class="form-label required">Full Name</label>
+                                <input type="text" 
+                                       class="form-input bg-gray-50" 
+                                       name="presenterName" 
+                                       id="presenterName" 
+                                       value="<%=firstname%> <%= lastname %>"
+                                       readonly
+                                       autocomplete="off">
+                            </div>
 
-				<!-- Presenter Name -->
-				<div class="col-12">
-					<label class="form-label">Presenter Prefix*</label>
-					<div class="dropdown">
-						<select class="form-control" name="PresenterPrefix" id="PresenterPrefix">
-							<option value="<%= prefix  %>"><%= prefix  %></option>
-							<option value="N/A">Select your preffered prefix (if any)</option>
-							<option value="Prof">Prof</option>
-							<option value="Dr">Dr</option> 
-							<option value="Mr">Mr</option>
-							<option value="Mrs">Mrs</option>
-							<option value="Miss">Mis</option>
-							
-						</select>
-						
-					</div>
-				</div>
-				<div class="col-12">
-					<label class="form-label">Presenter Name*</label>
-					<input class="form-control" type="text" name="presenterName" id="presenterName" value="<%=firstname%> <%= lastname %>" required>
-				</div>
+                            <div class="md:col-span-2">
+                                <label class="form-label required">Email Address</label>
+                                <input type="email" 
+                                       class="form-input bg-gray-50" 
+                                       name="presenterEmail" 
+                                       id="presenterEmail" 
+                                       value="<%= email %>"
+                                       readonly
+                                       autocomplete="off">
+                            </div>
 
-				<!-- Presenter Email -->
-				<div class="col-12">
-					<label class="form-label">Presenter Email Address*</label>
-					<input class="form-control" type="email" name="presenterEmail" id="presenterEmail" value="<%= email  %>" required>
-				</div>
+                            <div>
+                                <label class="form-label required">Affiliation</label>
+                                <input type="text" 
+                                       class="form-input" 
+                                       name="presenterAffiliation" 
+                                       id="presenterAffiliation" 
+                                       value="<%= affiliation %>"
+                                       placeholder="Your institution or organization"
+                                       autocomplete="organization"
+                                       autocorrect="off"
+                                       autocapitalize="on"
+                                       spellcheck="true"
+                                       required>
+                            </div>
 
-				<div class="col-12">
-					<label class="form-label">Affiliation*</label>
-					<input class="form-control" type="text" name="presenterAffiliation" id="presenterAffiliation" value="<%= affiliation %>" required>
-				</div>
-				<div class="col-12">
-					<label class="form-label">Country *</label>
-					<input class="form-control" type="text" name="presenterCountry" id="presenterCountry" value="<%= country %>" required>
-				</div>
+                            <div>
+                                <label class="form-label required">Country</label>
+                                <input type="text" 
+                                       class="form-input" 
+                                       name="presenterCountry" 
+                                       id="presenterCountry" 
+                                       value="<%= country %>"
+                                       placeholder="Your country"
+                                       autocomplete="country"
+                                       autocorrect="off"
+                                       autocapitalize="on"
+                                       spellcheck="true"
+                                       required>
+                            </div>
+                        </div>
+                    </div>
 
-				<div class="col-12" style="display: none;">
-					<label class="form-label">Upload Your Picture (10Mb limit)</label>
-					<div class="input-group mb-3">
-						<input type="file" class="form-control" id="PresenterPic" value="avatar.jpg" name="PresenterPic" accept=".jpg, .jpeg, .png" >
-						<label class="input-group-text">.jpg/.jpeg/.png</label>
-					</div>
-				</div>
+                    <!-- File Upload Section -->
+                    <div class="form-section">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                            <i class="fas fa-file-pdf text-primary-600 mr-3"></i>
+                            Poster File
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            <div class="file-upload-area" id="fileUploadArea">
+                                <i class="fas fa-cloud-upload-alt text-4xl text-primary-500 mb-4"></i>
+                                <h4 class="text-lg font-semibold text-gray-900 mb-2">Update Your Poster PDF</h4>
+                                <p class="text-gray-600 mb-4">Drag & drop your file here or click to browse</p>
+                                <p class="text-sm text-gray-500 mb-4">Maximum file size: 25MB • PDF format only</p>
+                                <input type="file" 
+                                       class="hidden" 
+                                       id="PosterPDF" 
+                                       name="PosterPDF" 
+                                       accept=".pdf">
+                                <button type="button" 
+                                        class="btn-primary"
+                                        onclick="document.getElementById('PosterPDF').click()">
+                                    <i class="fas fa-folder-open mr-2"></i>Choose File
+                                </button>
+                                <div id="fileInfo" class="mt-4 text-sm text-gray-600">
+                                    <div class="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-file-pdf text-blue-500 text-xl mr-3"></i>
+                                            <div>
+                                                <div class="font-medium text-blue-800">Current poster file</div>
+                                                <div class="text-blue-600 text-sm">Upload a new file to replace the existing one</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                <div class="flex items-start">
+                                    <i class="fas fa-lightbulb text-blue-500 mt-1 mr-3"></i>
+                                    <div>
+                                        <h5 class="font-semibold text-blue-900 mb-1">Accessibility Tip</h5>
+                                        <p class="text-blue-700 text-sm">Please ensure your PDF is accessible by using selectable text and providing image descriptions for screen readers.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-				<div class="col-12">
-					<label class="form-label">Your Poster</label>
-					<p>Please consider accessibility when making your poster PDF, by ensuring text is selectable and images are described (for screen readers).</p>
-				</div>
+                    <!-- Submit Section -->
+                    <div class="form-section bg-gray-50">
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                            <a href="/logout" class="btn-secondary w-full sm:w-auto text-center">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Cancel & Logout
+                            </a>
+                            <button type="submit" class="btn-primary w-full sm:w-auto" id="submitButton">
+                                <span id="buttonText">
+                                    <i class="fas fa-save mr-2"></i>Update Poster
+                                </span>
+                                <span id="buttonLoader" class="hidden">
+                                    <i class="fas fa-spinner fa-spin mr-2"></i>Updating...
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+    <!-- Main Content END -->
 
-				<div class="col-12">
-					<label class="form-label">Upload a PDF now (25Mb limit)</label>
-					<div class="input-group mb-3">
-						<input type="file" class="form-control" id="PosterPDF" name="PosterPDF" accept=".pdf" required>
-						<label class="input-group-text">.pdf</label>
-					</div>
-				</div>
+    <!-- Back to Top Button -->
+    <div class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <i class="fas fa-chevron-up"></i>
+    </div>
 
-          
-				<input type="submit" id="submitPoster" hidden/>
-				<!-- Step 1 button -->
-				<div class="d-flex justify-content-between mt-3">
-					<a href="/logout">
-						<button type="button" class="btn btn-primary next-btn mb-0">Cancel and Logout</button>
-					</a>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('createPosterDeckForm');
+            const submitButton = document.getElementById('submitButton');
+            const buttonText = document.getElementById('buttonText');
+            const buttonLoader = document.getElementById('buttonLoader');
+            
+            // Reset button state when page loads (handles browser back button)
+            resetSubmitButton();
+            
+            form.addEventListener('submit', function(e) {
+                // Prevent double submission
+                if (submitButton.disabled) {
+                    e.preventDefault();
+                    return;
+                }
+                
+                // Show loading state
+                setButtonLoading(true);
+            });
+            
+            // Handle form reset events
+            form.addEventListener('reset', function() {
+                resetSubmitButton();
+            });
+            
+            // Also reset when the page becomes visible again (handles back/forward navigation)
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) {
+                    resetSubmitButton();
+                }
+            });
+            
+            // Reset on page show event (for mobile browsers)
+            window.addEventListener('pageshow', function(event) {
+                if (event.persisted) {
+                    resetSubmitButton();
+                }
+            });
 
-					<button type="submit" class="btn btn-primary next-btn mb-0">Submit</button>
-				</div>
-			</div>
-			<!-- Basic information START -->
-		</div>
-		<!-- Step 1 content END -->
-	</form>
-	</div>
+            // Initialize file upload
+            initializeFileUpload();
 
-		
-		</div>
-	</div>
-</section>
-<!-- =======================
-Upload Poster END -->
+            // Hide loader when page is ready
+            setTimeout(function() {
+                const loaderOverlay = document.getElementById('loader-overlay');
+                if (loaderOverlay) {
+                    loaderOverlay.style.opacity = 0;
+                    loaderOverlay.style.visibility = 'hidden';
+                }
+            }, 1000);
+        });
 
-</main>
-<!-- **************** MAIN CONTENT END **************** -->
+        function togglePasswordField() {
+            const passwordField = document.getElementById('posterSecretId');
+            const eyeIcon = document.getElementById('togglePassword');
+            
+            if (!passwordField || !eyeIcon) return;
+            
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                eyeIcon.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                eyeIcon.setAttribute('title', 'Hide password');
+            } else {
+                passwordField.type = "password";
+                eyeIcon.innerHTML = '<i class="fas fa-eye"></i>';
+                eyeIcon.setAttribute('title', 'Show password');
+            }
+        }
 
-<script>
-	document.addEventListener('DOMContentLoaded', function () {
-	  var loaderOverlay = document.getElementById('loader-overlay');
-	
-	  // Ensure the loader fades out gradually after the entire page has loaded
-	  window.addEventListener('load', function () {
-		loaderOverlay.style.opacity = 0;
-		loaderOverlay.style.visibility = 'hidden';
-	  });
-	});
-</script>
-	
+        function setButtonLoading(isLoading) {
+            const submitButton = document.getElementById('submitButton');
+            const buttonText = document.getElementById('buttonText');
+            const buttonLoader = document.getElementById('buttonLoader');
+            
+            if (!submitButton || !buttonText || !buttonLoader) return;
+            
+            if (isLoading) {
+                submitButton.disabled = true;
+                buttonText.classList.add('hidden');
+                buttonLoader.classList.remove('hidden');
+                submitButton.classList.add('opacity-75', 'cursor-not-allowed');
+            } else {
+                submitButton.disabled = false;
+                buttonText.classList.remove('hidden');
+                buttonLoader.classList.add('hidden');
+                submitButton.classList.remove('opacity-75', 'cursor-not-allowed');
+            }
+        }
 
+        function resetSubmitButton() {
+            setButtonLoading(false);
+        }
 
-<script src="/js/jquery-3.4.1.min.js?v=<%= Date.now() %>"></script>
-<!-- <script src="/js/mainjs.js?v=<%= Date.now() %>"></script> -->
+        function initializeFileUpload() {
+            const fileInput = document.getElementById('PosterPDF');
+            const fileUploadArea = document.getElementById('fileUploadArea');
+            const fileInfo = document.getElementById('fileInfo');
+            const maxSize = 25 * 1024 * 1024; // 25MB
 
-<!-- Back to top -->
-<div class="back-top"><i class="fas fa-arrow-up position-absolute top-50 start-50 translate-middle"></i></div>
+            if (!fileInput || !fileUploadArea || !fileInfo) return;
 
-<!-- Bootstrap JS -->
-<script src="/js/bootstrap.bundle.min.js?v=<%= Date.now() %>"></script>
-<script src="/js/AllChannels.js?v=<%= Date.now() %>"></script>
-<script src="/js/editPoster.js?v=<%= Date.now() %>"></script>
+            fileInput.addEventListener('change', function(e) {
+                handleFileSelection(e.target.files[0]);
+            });
 
+            // Drag and drop functionality
+            fileUploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                fileUploadArea.classList.add('dragover');
+            });
+
+            fileUploadArea.addEventListener('dragleave', function() {
+                fileUploadArea.classList.remove('dragover');
+            });
+
+            fileUploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                fileUploadArea.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFileSelection(files[0]);
+                    fileInput.files = files;
+                }
+            });
+
+            function handleFileSelection(file) {
+                if (file) {
+                    if (file.size > maxSize) {
+                        showMessage('File size exceeds 25MB limit. Please choose a smaller file.', 'error');
+                        fileInput.value = '';
+                        return;
+                    }
+
+                    if (file.type !== 'application/pdf') {
+                        showMessage('Please select a PDF file.', 'error');
+                        fileInput.value = '';
+                        return;
+                    }
+
+                    const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+                    fileInfo.innerHTML = `
+                        <div class="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg p-3">
+                            <div class="flex items-center">
+                                <i class="fas fa-file-pdf text-green-500 text-xl mr-3"></i>
+                                <div>
+                                    <div class="font-medium text-green-800">${file.name}</div>
+                                    <div class="text-green-600 text-sm">${fileSize} MB</div>
+                                </div>
+                            </div>
+                            <button type="button" onclick="clearFileSelection()" class="text-green-600 hover:text-green-800">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function clearFileSelection() {
+            const fileInput = document.getElementById('PosterPDF');
+            const fileInfo = document.getElementById('fileInfo');
+            if (fileInput && fileInfo) {
+                fileInput.value = '';
+                fileInfo.innerHTML = `
+                    <div class="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
+                        <div class="flex items-center">
+                            <i class="fas fa-file-pdf text-blue-500 text-xl mr-3"></i>
+                            <div>
+                                <div class="font-medium text-blue-800">Current poster file</div>
+                                <div class="text-blue-600 text-sm">Upload a new file to replace the existing one</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function showMessage(message, type) {
+            const existingMessage = document.querySelector('.success-message, .error-message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type === 'error' ? 'error-message' : 'success-message';
+            messageDiv.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas ${type === 'error' ? 'fa-exclamation-triangle' : 'fa-check-circle'} mr-2"></i>
+                    ${message}
+                </div>
+            `;
+
+            const form = document.querySelector('form');
+            if (form) {
+                form.insertBefore(messageDiv, form.firstChild);
+                
+                setTimeout(() => {
+                    if (messageDiv.parentNode) {
+                        messageDiv.remove();
+                    }
+                }, 5000);
+            }
+        }
+    </script>
+
+    <!-- JavaScript Libraries -->
+    <script src="/js/jquery-3.4.1.min.js?v=<%= Date.now() %>"></script>
+    <script src="/js/bootstrap.bundle.min.js?v=<%= Date.now() %>"></script>
+    <script src="/js/editPoster.js?v=<%= Date.now() %>"></script>
 </body>
-
 </html>
