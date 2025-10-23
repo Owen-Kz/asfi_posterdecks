@@ -282,66 +282,38 @@ router.post("/createdeck", upload.fields([
     }
 
     // 🧠 Generate PDF Preview
+let previewUrl = null;
+
 try {
-  console.log("Generating PDF preview...");
-  const pdfData = new Uint8Array(pdfFile.buffer);
-  const pdfDoc = await pdfjsLib.getDocument({ 
-    data: pdfData,
-    disableFontFace: true 
-  }).promise;
+  console.log("Uploading PDF to Cloudinary for preview generation...");
   
-  const firstPage = await pdfDoc.getPage(1);
-  const viewport = firstPage.getViewport({ scale: 0.5 });
+  // Upload PDF to Cloudinary and let it generate the preview
+  const previewResult = await directUploadToCloudinary(pdfFile.buffer, {
+    folder: "pdf_previews",
+    resource_type: "image", // Treat as image to get first page as preview
+    format: 'jpg',
+    page: 1, // First page only
+    quality: 'auto',
+    flags: 'attachment' // or 'sample' for preview
+  });
   
-  // Create a simple image representation without canvas
-  // We'll use a data URL approach that doesn't require canvas
-  const tempCanvas = {
-    width: viewport.width,
-    height: viewport.height,
-    getContext: () => ({
-      // Mock canvas context methods
-      fillRect: () => {},
-      clearRect: () => {},
-      getImageData: () => ({ data: new Uint8ClampedArray(viewport.width * viewport.height * 4) }),
-      putImageData: () => {},
-      setTransform: () => {},
-      drawImage: () => {},
-      save: () => {},
-      fillText: () => {},
-      restore: () => {},
-      beginPath: () => {},
-      moveTo: () => {},
-      lineTo: () => {},
-      closePath: () => {},
-      stroke: () => {},
-      translate: () => {},
-      scale: () => {},
-      rotate: () => {},
-      arc: () => {},
-      fill: () => {},
-      measureText: () => ({ width: 0 }),
-      transform: () => {},
-      rect: () => {},
-      clip: () => {},
-    })
-  };
-
-  await firstPage.render({ 
-    canvasContext: tempCanvas.getContext('2d'), 
-    viewport: viewport 
-  }).promise;
-
-  console.log("✅ PDF rendered successfully (no image generated)");
+  previewUrl = previewResult.secure_url;
+  console.log("✅ Cloudinary preview generated:", previewUrl);
   
-  // Since we can't generate image on server, set previewUrl to null
-  // The client will generate the preview instead
-  previewUrl = null;
-  
-  console.log("ℹ️ Preview image generation skipped on server");
-
 } catch (previewError) {
-  console.warn("⚠️ Preview generation failed, continuing without preview:", previewError.message);
-  previewUrl = null;
+  console.warn("⚠️ Cloudinary preview generation failed:", previewError.message);
+  
+  // Fallback: Use the main PDF URL but add a page parameter if supported
+  try {
+    if (pdfUrl) {
+      // Some PDF viewers support page parameters in the URL
+      previewUrl = pdfUrl + '#page=1';
+      console.log("✅ Using PDF URL with page parameter as preview");
+    }
+  } catch (fallbackError) {
+    console.warn("⚠️ Fallback preview also failed, continuing without preview");
+    previewUrl = null;
+  }
 }
 
     // 🧠 Save to database
