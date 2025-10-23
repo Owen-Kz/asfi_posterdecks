@@ -282,38 +282,27 @@ router.post("/createdeck", upload.fields([
     }
 
     // 🧠 Generate PDF Preview
-// let previewUrl = null;
 
 try {
-  console.log("Uploading PDF to Cloudinary for preview generation...");
+  console.log("Generating PDF preview...");
   
-  // Upload PDF to Cloudinary and let it generate the preview
-  const previewResult = await directUploadToCloudinary(pdfFile.buffer, {
+  const pdfUploadResult = await directUploadToCloudinary(pdfFile.buffer, {
     folder: "pdf_previews",
-    resource_type: "image", // Treat as image to get first page as preview
-    format: 'jpg',
-    page: 1, // First page only
-    quality: 'auto',
-    flags: 'attachment' // or 'sample' for preview
+    resource_type: "raw",
+    public_id: `preview_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
   });
   
-  previewUrl = previewResult.secure_url;
-  console.log("✅ Cloudinary preview generated:", previewUrl);
+  const pdfPublicId = pdfUploadResult.public_id;
+  const imagePublicId = pdfPublicId.replace('.pdf', '');
+  
+  // Construct the image preview URL
+  previewUrl = `https://res.cloudinary.com/dll8awuig/image/upload/q_auto:good,f_jpg,pg_1/${imagePublicId}.jpg`;
+  
+  console.log("✅ PDF preview URL:", previewUrl);
   
 } catch (previewError) {
-  console.warn("⚠️ Cloudinary preview generation failed:", previewError.message);
-  
-  // Fallback: Use the main PDF URL but add a page parameter if supported
-  try {
-    if (pdfUrl) {
-      // Some PDF viewers support page parameters in the URL
-      previewUrl = pdfUrl + '#page=1';
-      console.log("✅ Using PDF URL with page parameter as preview");
-    }
-  } catch (fallbackError) {
-    console.warn("⚠️ Fallback preview also failed, continuing without preview");
-    previewUrl = null;
-  }
+  console.warn("⚠️ Preview generation failed:", previewError.message);
+  previewUrl = null;
 }
 
     // 🧠 Save to database
