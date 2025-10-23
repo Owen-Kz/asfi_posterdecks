@@ -282,7 +282,7 @@ router.post("/createdeck", upload.fields([
     }
 
     // 🧠 Generate PDF Preview
-let previewUrl = null;
+// let previewUrl = null;
 
 try {
   console.log("Uploading PDF to Cloudinary for preview generation...");
