@@ -21,7 +21,7 @@ async function PosterDeckPreviews(req, res) {
             const PosterId = DeckView[0].poster_deck_id
             const PresenterEmail = DeckView[0].presenter_email
             const PresenterImage = DeckView[0].presenter_image
-            const ViewsCount = TotalViewsCount[0].views_count
+            const ViewsCount = TotalViewsCount[0].views_count || 0
             const DownloadsCount = TotalDownloadsCount[0].downloads_count
             const PosterMeeting = DeckView[0].poster_deck_meeting
             let affiliation = ""
