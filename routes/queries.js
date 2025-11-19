@@ -222,8 +222,8 @@ async function InsertIntoPosterDecks(req, newFileName, ImageFile, previewImageUr
 
         await updateKeyCount(posterSecretId);
         const DeckId = getRandomString();
-        
-        await CreateNewDeck(
+  
+        await CreateNewDeck(req,
             posterSecretId, eventTitle, deckTitle, FullPresenterName, 
             presenterEmail, presenterAffiliation, presenterCountry, 
             newFileName, ImageFile, DeckId, previewImageUrl
@@ -246,12 +246,12 @@ async function InsertIntoPosterDecks(req, newFileName, ImageFile, previewImageUr
     }
 }
 
-async function CreateNewDeck(posterSecretId, eventTitle, deckTitle, presenterName, presenterEmail, presenterAffiliation, presenterCountry, newFileName, ImageFile, DeckId, previewImageUrl) {
+async function CreateNewDeck(req, posterSecretId, eventTitle, deckTitle, presenterName, presenterEmail, presenterAffiliation, presenterCountry, newFileName, ImageFile, DeckId, previewImageUrl) {
     const sanitizedPresenterName = presenterName.replace(/'/g, "''").replace(/\\/g, '\\\\');
     const sanitizedDeckTitle = deckTitle.replace(/'/g, "''").replace(/\\/g, '\\\\');
 
     await sendEmail(presenterEmail, sanitizedPresenterName, eventTitle, sanitizedDeckTitle, DeckId)
-    await CreateDeckChatRoom(sanitizedDeckTitle,`A Poster Presented By ${sanitizedPresenterName}`, DeckId)
+    await CreateDeckChatRoom(req, sanitizedDeckTitle,`A Poster Presented By ${sanitizedPresenterName}`, DeckId)
     // First, ensure the posterdecks table exists
     const createTableQuery = `CREATE TABLE IF NOT EXISTS posterdecks (
         id INT AUTO_INCREMENT PRIMARY KEY,

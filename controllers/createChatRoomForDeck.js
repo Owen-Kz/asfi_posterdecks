@@ -1,14 +1,15 @@
 const { config } = require("dotenv")
 
-const CreateDeckChatRoom = async (title,description, id) =>{
+const CreateDeckChatRoom = async (req,title,description, id) =>{
     try{
         const data = {
             spaceTitle:title,
             shortDescription:description,
-            Buffer:id
+            bufferSpace:id,
+            privateSpace:"no",
         }
-        console.log(JSON.stringify(data))
-        return fetch(`${process.env.ASFISCHOLAR_ENDPOINT}/external/api/createSpace?fromPosters=true`,{
+     
+        return fetch(`${process.env.ASFISCHOLAR_ENDPOINT}/external/api/createSpace?fromPosters=true&token=${req.cookies.posterUser}`,{
             method:"POST",
             body: JSON.stringify(data),
             headers:{
@@ -16,7 +17,6 @@ const CreateDeckChatRoom = async (title,description, id) =>{
             }
         }).then(res =>res.json())
         .then(data =>{
-            console.log(data)
             return true
         })
     }catch(error){
