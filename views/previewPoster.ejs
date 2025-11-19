@@ -404,12 +404,21 @@
         </section>
         
         <!-- Related Posters -->
-        <section class="mt-12">
-            <h4 class="text-xl font-bold text-gray-900 mb-6 text-center">More Related Posters</h4>
-            <div class="bg-white rounded-xl overflow-visible">
-                <iframe src="/posterlist/<%=meeting%>" frameborder="0" id="posterListFrame" class="w-full h-[120vh] overflow-visible"></iframe>
-            </div>
-        </section>
+     <!-- Related Posters -->
+<section class="mt-12">
+    <h4 class="text-xl font-bold text-gray-900 mb-6 text-center">More Related Posters</h4>
+    <div class="bg-white rounded-xl overflow-visible">
+        <iframe 
+            src="/posterlist/<%=meeting%>" 
+            frameborder="0" 
+            id="posterListFrame" 
+            class="w-full overflow-visible border-0"
+            scrolling="no"
+            onload="resizeIframe(this)">
+        </iframe>
+    </div>
+</section>
+
     </div>
 </main>
 <!-- Main Content END -->
@@ -436,6 +445,31 @@
 <div class="fixed bottom-8 right-8 back-top bg-purple-600 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg hover:bg-purple-700 cursor-pointer">
     <i class="fas fa-arrow-up"></i>
 </div>
+
+
+<script>
+function resizeIframe(iframe) {
+    iframe.style.height = iframe.contentWindow.document.documentElement.scrollHeight + 'px';
+    
+    // Listen for dynamic content changes
+    const observer = new MutationObserver(function(mutations) {
+        iframe.style.height = iframe.contentWindow.document.documentElement.scrollHeight + 'px';
+    });
+    
+    // Observe the iframe's document for changes
+    try {
+        const iframeDoc = iframe.contentWindow.document;
+        observer.observe(iframeDoc.body, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            characterData: true
+        });
+    } catch (e) {
+        console.log('Could not observe iframe changes');
+    }
+}
+</script>
 <Script>
     document.addEventListener('DOMContentLoaded', function () {
     var loaderOverlay = document.getElementById('loader-overlay');
