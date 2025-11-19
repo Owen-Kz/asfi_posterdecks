@@ -458,12 +458,12 @@
 </main>
 <!-- Main Content END -->
 
-<!-- Chat Box -->
-<div class="chatBox fixed bottom-4 md:pb-12  sm:pb-12 lg:right-4 lg:w-[30vw] lg:h-[80vh] md:w-[100vw] md:h-[100vh] sm:w-[100vw] sm:h-[100vh] bg-white rounded-t-lg shadow-xl hidden" id="chatBox" style="z-index: 998928;">
+<!-- Chat Box with improved iframe -->
+<div class="chatBox fixed bottom-4 md:pb-12 sm:pb-12 lg:right-4 lg:w-[30vw] lg:h-[80vh] md:w-[100vw] md:h-[100vh] sm:w-[100vw] sm:h-[100vh] bg-white rounded-t-lg shadow-xl hidden" id="chatBox" style="z-index: 998928;">
     <div class="bg-purple-700 text-white p-3 flex justify-between items-center rounded-t-lg">
         <h3 class="font-medium">Chat with Presenter</h3>
         <div class="flex">
-            <button id="return" class="text-white hover:text-gray-200 mr-2" onclick="changeSource(`/chat/presenter/<%=PosterId%>`)">
+            <button id="return" class="text-white hover:text-gray-200 mr-2">
                 <i class="fas fa-chevron-left"></i>
             </button>
             <button id="closeChat" class="text-white hover:text-gray-200">
@@ -471,8 +471,84 @@
             </button>
         </div>
     </div>
-    <iframe src="/chat/presenter/<%=PosterId%>" frameborder="0" id="chatFrame" class="w-full h-full" style="display: flex; box-sizing: border-box; padding: 0px; margin:0px"></iframe>
+    <iframe 
+        src="/chat/presenter/<%=PosterId%>" 
+        frameborder="0" 
+        id="chatFrame" 
+        class="w-full h-full rounded-b-lg"
+        style="border: none; display: block;"
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const chatFrame = document.getElementById('chatFrame');
+    const closeChat = document.getElementById('closeChat');
+    const returnBtn = document.getElementById('return');
+    
+    // Close chat handler
+    closeChat.addEventListener('click', function() {
+        document.getElementById('chatBox').classList.add('hidden');
+    });
+    
+    // Return button handler
+    returnBtn.addEventListener('click', function() {
+        changeSource('/chat/presenter/<%=PosterId%>');
+    });
+    
+    // Iframe load handler
+    chatFrame.addEventListener('load', function() {
+        try {
+            const iframeDoc = this.contentDocument || this.contentWindow.document;
+            
+            // Ensure forms and inputs are properly sized
+            const inputs = iframeDoc.querySelectorAll('input, textarea, button');
+            inputs.forEach(input => {
+                input.style.fontSize = '14px';
+                input.style.padding = '8px 12px';
+                input.style.boxSizing = 'border-box';
+            });
+            
+            // Fix form submission
+            const forms = iframeDoc.querySelectorAll('form');
+            forms.forEach(form => {
+                form.style.margin = '0';
+                form.addEventListener('submit', function(e) {
+                    // Allow form to submit normally
+                    console.log('Form submitted in iframe');
+                });
+            });
+            
+            // Fix enter key in textareas/inputs
+            const textElements = iframeDoc.querySelectorAll('input[type="text"], textarea');
+            textElements.forEach(element => {
+                element.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        if (e.target.type === 'textarea') {
+                            // Allow new lines in textarea
+                            return true;
+                        } else {
+                            // Prevent default and trigger submit
+                            e.preventDefault();
+                            const form = e.target.closest('form');
+                            if (form) {
+                                form.dispatchEvent(new Event('submit', { bubbles: true }));
+                            }
+                        }
+                    }
+                });
+            });
+            
+        } catch (error) {
+            console.log('Iframe access restricted:', error);
+        }
+    });
+});
+
+function changeSource(url) {
+    document.getElementById('chatFrame').src = url;
+}
+</script>
 
 
 <%- include('./partials/footer.ejs') %>
