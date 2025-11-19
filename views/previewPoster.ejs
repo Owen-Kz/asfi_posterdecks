@@ -403,21 +403,57 @@
             </div>
         </section>
         
-        <!-- Related Posters -->
-     <!-- Related Posters -->
+<!-- Related Posters -->
 <section class="mt-12">
     <h4 class="text-xl font-bold text-gray-900 mb-6 text-center">More Related Posters</h4>
-    <div class="bg-white rounded-xl overflow-visible">
-        <iframe 
-            src="/posterlist/<%=meeting%>" 
-            frameborder="0" 
-            id="posterListFrame" 
-            class="w-full overflow-visible border-0"
-            scrolling="no"
-            onload="resizeIframe(this)">
-        </iframe>
+    <div class="bg-transparent" id="relatedPostersContainer">
+        <!-- Loading State -->
+        <div id="postersLoading" class="flex justify-center items-center py-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600"></div>
+            <span class="ml-3 text-gray-600">Loading related posters...</span>
+        </div>
+        
+        <!-- Posters Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 hidden" id="postersGrid">
+            <!-- Posters will be populated here by JavaScript -->
+        </div>
+        
+        <!-- Empty State -->
+        <div id="postersEmpty" class="hidden text-center py-16">
+            <div class="bg-gradient-to-br from-primary-100 to-primary-200 rounded-full p-6 mb-4 inline-block">
+                <i class="fas fa-images text-4xl text-primary-600"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">No Related Posters</h3>
+            <p class="text-gray-600 max-w-md mx-auto">Be the first to share your research! Upload your poster to get started.</p>
+            <a href="/uploadPoster" class="mt-4 bg-primary-500 hover:bg-primary-600 text-white font-medium py-2 px-6 rounded-lg transition-colors inline-block">
+                Upload Poster
+            </a>
+        </div>
+        
+        <!-- Error State -->
+        <div id="postersError" class="hidden text-center py-16">
+            <div class="bg-red-100 rounded-full p-6 mb-4 inline-block">
+                <i class="fas fa-exclamation-triangle text-4xl text-red-600"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Connection Error</h3>
+            <p class="text-gray-600 mb-4" id="postersErrorMessage">Unable to load posters. Please try again later.</p>
+            <button onclick="loadRelatedPosters()" class="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-6 rounded-lg transition-colors">
+                Retry
+            </button>
+        </div>
+        
+        <!-- Load More Button -->
+        <div id="loadMoreContainer" class="flex justify-center mt-8 hidden">
+            <button id="loadMorePosters" class="bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 flex items-center">
+                <i class="fas fa-plus mr-2"></i>
+                Load More Posters
+            </button>
+        </div>
     </div>
 </section>
+
+
+
 
     </div>
 </main>
@@ -448,27 +484,243 @@
 
 
 <script>
-function resizeIframe(iframe) {
-    iframe.style.height = iframe.contentWindow.document.documentElement.scrollHeight + 'px';
+// Related Posters functionality
+let currentPostersPage = 1;
+let totalPostersPages = 1;
+const postersPerPage = 8;
+
+function loadRelatedPosters(page = 1) {
+    const loadingEl = document.getElementById('postersLoading');
+    const gridEl = document.getElementById('postersGrid');
+    const emptyEl = document.getElementById('postersEmpty');
+    const errorEl = document.getElementById('postersError');
+    const loadMoreEl = document.getElementById('loadMoreContainer');
     
-    // Listen for dynamic content changes
-    const observer = new MutationObserver(function(mutations) {
-        iframe.style.height = iframe.contentWindow.document.documentElement.scrollHeight + 'px';
+    // Show loading, hide others
+    loadingEl.classList.remove('hidden');
+    gridEl.classList.add('hidden');
+    emptyEl.classList.add('hidden');
+    errorEl.classList.add('hidden');
+    loadMoreEl.classList.add('hidden');
+    
+    console.log("Fetching posters for meeting:", '<%=meeting%>');
+    
+    fetch(`/getposterdecks/<%=meeting%>?page=${page}&limit=${postersPerPage}`)
+        .then(response => {
+            console.log("POSTER RESPONSE STATUS:", response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("POSTER DATA", data);
+            if (data.success) {
+                const posters = JSON.parse(data.PosterDecks);
+                totalPostersPages = data.totalPages;
+                
+                console.log("Parsed posters:", posters);
+                console.log("Total posters:", posters.length);
+                
+                if (posters.length > 0) {
+                    renderPostersGrid(posters, page === 1);
+                    updateLoadMoreButton();
+                } else {
+                    showEmptyState();
+                }
+            } else {
+                throw new Error('Failed to load posters: ' + (data.message || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error loading related posters:', error);
+            showErrorState(error.message);
+        });
+}
+
+function renderPostersGrid(posters, clearExisting = true) {
+    const gridEl = document.getElementById('postersGrid');
+    const loadingEl = document.getElementById('postersLoading');
+    const emptyEl = document.getElementById('postersEmpty');
+    
+    if (clearExisting) {
+        gridEl.innerHTML = '';
+    }
+    
+    const currentPosterId = '<%=PosterId%>';
+    let filteredPosters = posters.filter(poster => poster.poster_deck_id !== currentPosterId);
+    
+    console.log("All posters:", posters);
+    console.log("Current poster ID:", currentPosterId);
+    console.log("Filtered posters:", filteredPosters);
+    
+    if (filteredPosters.length === 0) {
+        showEmptyState();
+        return;
+    }
+    
+    filteredPosters.forEach(poster => {
+        const { 
+            poster_deck_title, 
+            poster_deck_id, 
+            poster_deck_owner, 
+            poster_preview_image
+        } = poster;
+        
+        const hasPreview = poster_preview_image && poster_preview_image !== 'null';
+        const previewImage = hasPreview ? poster_preview_image : '/images/default-poster-preview.jpg';
+        
+        const posterCard = `
+            <a href="/event/poster/${poster_deck_id}" class="block h-full poster-card" target="_blank" rel="noopener noreferrer">
+                <div class="h-full bg-white rounded-xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 border border-gray-100 flex flex-col">
+                    <!-- Image Container -->
+                    <div class="poster-img-container flex-grow bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center overflow-hidden relative h-48">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-10 transition-all duration-300 z-10"></div>
+                        ${hasPreview ? `
+                            <img src="${previewImage}" 
+                                 alt="${poster_deck_title}" 
+                                 class="poster-image w-full h-full object-cover"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                        ` : ''}
+                        <!-- Fallback when no image or image fails to load -->
+                        <div class="${hasPreview ? 'hidden' : 'flex'} w-full h-full items-center justify-center flex-col text-purple-400">
+                            <i class="fas fa-file-pdf text-4xl mb-2"></i>
+                            <span class="text-sm font-medium">PDF Poster</span>
+                        </div>
+                        
+                        <!-- Hover Overlay -->
+                        <div class="absolute inset-0 bg-primary-500 bg-opacity-0 hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+                            <div class="bg-white rounded-full p-3 shadow-lg transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                                <i class="fas fa-eye text-primary-600 text-lg"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Info Container -->
+                    <div class="poster-info p-4 flex flex-col flex-shrink-0 bg-white">
+                        <h3 class="poster-title text-base font-bold text-gray-800 line-clamp-2 mb-2 leading-tight">
+                            ${poster_deck_title}
+                        </h3>
+                        <div class="flex items-center justify-between mt-auto pt-3 border-t border-gray-100">
+                            <div class="flex items-center text-sm text-gray-600">
+                                <i class="fas fa-user-circle mr-2 text-purple-500"></i>
+                                <span class="font-medium truncate max-w-[120px]">${poster_deck_owner}</span>
+                            </div>
+                            <div class="text-purple-500 hover:text-purple-600 transition-colors">
+                                <i class="fas fa-external-link-alt text-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>`;
+        
+        gridEl.innerHTML += posterCard;
     });
     
-    // Observe the iframe's document for changes
-    try {
-        const iframeDoc = iframe.contentWindow.document;
-        observer.observe(iframeDoc.body, {
-            childList: true,
-            subtree: true,
-            attributes: true,
-            characterData: true
-        });
-    } catch (e) {
-        console.log('Could not observe iframe changes');
+    loadingEl.classList.add('hidden');
+    gridEl.classList.remove('hidden');
+    emptyEl.classList.add('hidden');
+}
+
+function updateLoadMoreButton() {
+    const loadMoreEl = document.getElementById('loadMoreContainer');
+    
+    if (currentPostersPage < totalPostersPages) {
+        loadMoreEl.classList.remove('hidden');
+    } else {
+        loadMoreEl.classList.add('hidden');
     }
 }
+
+function showEmptyState() {
+    const loadingEl = document.getElementById('postersLoading');
+    const emptyEl = document.getElementById('postersEmpty');
+    const gridEl = document.getElementById('postersGrid');
+    
+    loadingEl.classList.add('hidden');
+    gridEl.classList.add('hidden');
+    emptyEl.classList.remove('hidden');
+}
+
+function showErrorState(message) {
+    const loadingEl = document.getElementById('postersLoading');
+    const errorEl = document.getElementById('postersError');
+    const errorMessageEl = document.getElementById('postersErrorMessage');
+    const gridEl = document.getElementById('postersGrid');
+    
+    loadingEl.classList.add('hidden');
+    gridEl.classList.add('hidden');
+    errorMessageEl.textContent = message || 'Unable to load posters. Please try again later.';
+    errorEl.classList.remove('hidden');
+}
+
+// Event Listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Load related posters when page loads
+    loadRelatedPosters();
+    
+    // Load more posters button
+    document.getElementById('loadMorePosters')?.addEventListener('click', function() {
+        if (currentPostersPage < totalPostersPages) {
+            currentPostersPage++;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Loading...';
+            this.disabled = true;
+            
+            fetch(`/getposterdecks/<%=meeting%>?page=${currentPostersPage}&limit=${postersPerPage}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const posters = JSON.parse(data.PosterDecks);
+                        renderPostersGrid(posters, false);
+                        updateLoadMoreButton();
+                    }
+                })
+                .finally(() => {
+                    this.innerHTML = '<i class="fas fa-plus mr-2"></i> Load More Posters';
+                    this.disabled = false;
+                });
+        }
+    });
+});
+
+// Add the matching styles
+const additionalStyles = `
+    .poster-card {
+        transition: all 0.3s ease;
+    }
+    
+    .poster-card:hover {
+        transform: translateY(-4px);
+    }
+    
+    .poster-image {
+        transition: transform 0.3s ease;
+    }
+    
+    .poster-card:hover .poster-image {
+        transform: scale(1.05);
+    }
+    
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .shadow-card {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+    
+    .shadow-card-hover {
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+`;
+
+// Inject styles
+const styleSheet = document.createElement('style');
+styleSheet.textContent = additionalStyles;
+document.head.appendChild(styleSheet);
 </script>
 <Script>
     document.addEventListener('DOMContentLoaded', function () {

@@ -74,7 +74,9 @@ async function PosterDeckPreviews(req, res) {
                 affiliation: affiliation,
                 country: country,
                 isOwner: isOwner,
-                is_link: is_link
+                is_link: is_link,
+                meeting: DeckView[0].poster_deck_meeting,
+                meetingID: DeckView[0].poster_deck_meeting
             })
         } else {
             res.render("loginExternal")

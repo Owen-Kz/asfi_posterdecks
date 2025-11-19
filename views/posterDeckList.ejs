@@ -93,7 +93,9 @@
     }
   </style>
 </head>
-
+<body class="bg-transparent">
+  <main class="py-8 overflow-visible">
+    <section class="">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="posterDeckListContainer">
         <input type="text" value="<%=meetingID%>" id="meetingID" readonly hidden>
         <!-- Populated by JS -->
@@ -104,8 +106,8 @@
           Load More Posters
         </button>
       </div>
-    <!-- </section> -->
-  <!-- </main> -->
+    </section>
+  </main>
 
   <script>
     const meetingID = document.getElementById("meetingID").value;
@@ -281,4 +283,5 @@
         window.parent.postMessage({ type: 'resizeIframe', height: document.documentElement.scrollHeight }, '*');
     }
   </script>
+</body>
 </html>
