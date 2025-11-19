@@ -518,9 +518,7 @@ function loadRelatedPosters(page = 1) {
                 const posters = JSON.parse(data.PosterDecks);
                 totalPostersPages = data.totalPages;
                 
-                console.log("Parsed posters:", posters);
-                console.log("Total posters:", posters.length);
-                
+            
                 if (posters.length > 0) {
                     renderPostersGrid(posters, page === 1);
                     updateLoadMoreButton();
