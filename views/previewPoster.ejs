@@ -313,7 +313,7 @@
                     
                     <!-- Presenter Info -->
                     <div class="mb-6">
-                        <h5 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Presented By</h5>
+                        <h6 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Presented By</h6>
                         <div class="flex items-center">
                             <img alt="Presenter" class="circular-image" id="presenterImage" src="<%= PresenterImage %>">
                             <div class="ml-4">
@@ -377,7 +377,7 @@
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <h4 class="font-medium text-gray-900 mb-2">Poster Ratings</h4>
                             <div class="flex items-center mb-1">
-                                <span class="text-l font-bold text-primary-600 mr-2" id="average-rating">0</span>
+                                <span class="text-2xl font-bold text-primary-600 mr-2" id="average-rating">0</span>
                                 <span class="text-gray-500">/ 5</span>
                             </div>
                             <div class="flex mb-2" id="average-star-rating">
@@ -393,7 +393,7 @@
                             <p class="text-sm text-gray-600 mb-2">Average: <span id="user-average-rating">0</span>/5</p>
                             <div class="star-rating flex" id="user-star-rating">
                                 <% for(let i=1; i<=5; i++) { %>
-                                    <span class="star text-gray-300 text-l hover:text-yellow-400 mr-1" data-value="<%=i%>">&#9733;</span>
+                                    <span class="star text-gray-300 text-2xl hover:text-yellow-400 mr-1" data-value="<%=i%>">&#9733;</span>
                                 <% } %>
                             </div>
                         </div>
