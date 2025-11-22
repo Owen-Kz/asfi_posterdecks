@@ -304,7 +304,7 @@
                 <!-- Poster Info -->
                 <div class="md:w-1/3 p-6 border-l h-full border-gray-200">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-2xl font-regular text-gray-900"><%=PosterTitle%></h2>
+                        <h2 class="text-l font-medium text-gray-900"><%=PosterTitle%></h2>
                         <span class="flex items-center text-gray-500">
                             <i class="fas fa-eye mr-1"></i>
                             <span id="view_count_container"><%=ViewsCount%></span>
@@ -377,7 +377,7 @@
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <h4 class="font-medium text-gray-900 mb-2">Poster Ratings</h4>
                             <div class="flex items-center mb-1">
-                                <span class="text-2xl font-bold text-primary-600 mr-2" id="average-rating">0</span>
+                                <span class="text-l font-bold text-primary-600 mr-2" id="average-rating">0</span>
                                 <span class="text-gray-500">/ 5</span>
                             </div>
                             <div class="flex mb-2" id="average-star-rating">
@@ -393,7 +393,7 @@
                             <p class="text-sm text-gray-600 mb-2">Average: <span id="user-average-rating">0</span>/5</p>
                             <div class="star-rating flex" id="user-star-rating">
                                 <% for(let i=1; i<=5; i++) { %>
-                                    <span class="star text-gray-300 text-2xl hover:text-yellow-400 mr-1" data-value="<%=i%>">&#9733;</span>
+                                    <span class="star text-gray-300 text-l hover:text-yellow-400 mr-1" data-value="<%=i%>">&#9733;</span>
                                 <% } %>
                             </div>
                         </div>
@@ -589,7 +589,6 @@ function loadRelatedPosters(page = 1) {
             return response.json();
         })
         .then(data => {
-            console.log("POSTER DATA", data);
             if (data.success) {
                 const posters = JSON.parse(data.PosterDecks);
                 totalPostersPages = data.totalPages;
@@ -622,11 +621,7 @@ function renderPostersGrid(posters, clearExisting = true) {
     
     const currentPosterId = '<%=PosterId%>';
     let filteredPosters = posters.filter(poster => poster.poster_deck_id !== currentPosterId);
-    
-    console.log("All posters:", posters);
-    console.log("Current poster ID:", currentPosterId);
-    console.log("Filtered posters:", filteredPosters);
-    
+
     if (filteredPosters.length === 0) {
         showEmptyState();
         return;
